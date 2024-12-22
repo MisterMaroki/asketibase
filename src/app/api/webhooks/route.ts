@@ -1,6 +1,5 @@
 import Stripe from 'stripe';
 
-import { upsertUserSubscription } from '@/features/account/controllers/upsert-user-subscription';
 import { upsertPrice } from '@/features/pricing/controllers/upsert-price';
 import { upsertProduct } from '@/features/pricing/controllers/upsert-product';
 import { stripeAdmin } from '@/libs/stripe/stripe-admin';
@@ -41,27 +40,10 @@ export async function POST(req: Request) {
         case 'price.updated':
           await upsertPrice(event.data.object as Stripe.Price);
           break;
-        case 'customer.subscription.created':
-        case 'customer.subscription.updated':
-        case 'customer.subscription.deleted':
-          const subscription = event.data.object as Stripe.Subscription;
-          await upsertUserSubscription({
-            subscriptionId: subscription.id,
-            customerId: subscription.customer as string,
-            isCreateAction: false,
-          });
-          break;
+
         case 'checkout.session.completed':
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
 
-          if (checkoutSession.mode === 'subscription') {
-            const subscriptionId = checkoutSession.subscription;
-            await upsertUserSubscription({
-              subscriptionId: subscriptionId as string,
-              customerId: checkoutSession.customer as string,
-              isCreateAction: true,
-            });
-          }
           break;
         default:
           throw new Error('Unhandled relevant event!');

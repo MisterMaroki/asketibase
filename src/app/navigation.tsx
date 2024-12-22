@@ -3,6 +3,7 @@ import { IoMenu } from 'react-icons/io5';
 
 import { AccountMenu } from '@/components/account-menu';
 import { Logo } from '@/components/logo';
+import { ResetButton } from '@/components/reset';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTrigger } from '@/components/ui/sheet';
 import { getSession } from '@/features/account/controllers/get-session';
@@ -14,12 +15,13 @@ export async function Navigation() {
 
   return (
     <div className='relative flex items-center gap-6'>
+      <ResetButton />
       {session ? (
         <AccountMenu signOut={signOut} />
       ) : (
         <>
           <Button variant='sexy' className='hidden flex-shrink-0 lg:flex' asChild>
-            <Link href='/signup'>Get started for free</Link>
+            <Link href='/signup'>Admin</Link>
           </Button>
           <Sheet>
             <SheetTrigger className='block lg:hidden'>
@@ -30,7 +32,7 @@ export async function Navigation() {
                 <Logo />
                 <SheetDescription className='py-8'>
                   <Button variant='sexy' className='flex-shrink-0' asChild>
-                    <Link href='/signup'>Get started for free</Link>
+                    <Link href='/signup'>Admin</Link>
                   </Button>
                 </SheetDescription>
               </SheetHeader>

@@ -12,11 +12,11 @@ export async function upsertPrice(price: Stripe.Price) {
     active: price.active,
     currency: price.currency,
     description: price.nickname ?? null,
-    type: price.type,
+    // type: price.type,
     unit_amount: price.unit_amount ?? null,
-    interval: price.recurring?.interval ?? null,
-    interval_count: price.recurring?.interval_count ?? null,
-    trial_period_days: price.recurring?.trial_period_days ?? null,
+    // interval: price.recurring?.interval ?? null,
+    // interval_count: price.recurring?.interval_count ?? null,
+    // trial_period_days: price.recurring?.trial_period_days ?? null,
     metadata: price.metadata,
   };
 

@@ -40,7 +40,7 @@ export async function createCheckoutAction({ price }: { price: Price }) {
         quantity: 1,
       },
     ],
-    mode: price.type === 'recurring' ? 'subscription' : 'payment',
+    mode: 'payment',
     allow_promotion_codes: true,
     success_url: `${getURL()}/account`,
     cancel_url: `${getURL()}/`,

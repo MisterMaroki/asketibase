@@ -1,9 +1,3 @@
-<p align="center">
-  <h1 align="center">next-supabase-stripe-starter</h1>
-  <p align="center">
-    <a href="https://twitter.com/KolbySisk"><img src="/delete-me/github-banner.png" /></a>
-  </p>
-</p>
 
 <p align="center">
   <a href="https://twitter.com/kolbysisk" rel="nofollow"><img src="https://img.shields.io/badge/created%20by-@kolbysisk-e57060.svg" alt="Created by Kolby Sisk"></a>

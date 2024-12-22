@@ -3,7 +3,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { createSupabaseServerClient } from '@/libs/supabase/supabase-server-client';
+import { createSupabaseServerClient } from '@/libs/supabase/server-client';
 import { getURL } from '@/utils/get-url';
 
 const siteUrl = getURL();
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code');
 
   if (code) {
-    const supabase = createSupabaseServerClient();
+    const supabase = await createSupabaseServerClient();
     await supabase.auth.exchangeCodeForSession(code);
 
     const {
@@ -23,20 +23,18 @@ export async function GET(request: NextRequest) {
     if (!user?.id) {
       return NextResponse.redirect(`${siteUrl}/login`);
     }
+    // Get the user first from user id in users table
+    if (user.email) {
+      // Check if user's email is in admins table
+      const { data: isAdmin } = await supabase.from('admins').select('email').eq('email', user.email).single();
 
-    // Check if user is subscribed, if not redirect to pricing page
-    const { data: userSubscription } = await supabase
-      .from('subscriptions')
-      .select('*, prices(*, products(*))')
-      .in('status', ['trialing', 'active'])
-      .maybeSingle();
-
-    if (!userSubscription) {
-      return NextResponse.redirect(`${siteUrl}/pricing`);
-    } else {
-      return NextResponse.redirect(`${siteUrl}`);
+      if (!isAdmin) {
+        return NextResponse.redirect(`${siteUrl}/membership`);
+      } else {
+        return NextResponse.redirect(`${siteUrl}`);
+      }
     }
-  }
 
-  return NextResponse.redirect(siteUrl);
+    return NextResponse.redirect(siteUrl);
+  }
 }
