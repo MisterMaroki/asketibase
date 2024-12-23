@@ -6,12 +6,12 @@ import { Logo } from '@/components/logo';
 import { ResetButton } from '@/components/reset';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTrigger } from '@/components/ui/sheet';
-import { getSession } from '@/features/account/controllers/get-session';
+import { getUser } from '@/features/membership/actions/get-user';
 
 import { signOut } from './(auth)/auth-actions';
 
 export async function Navigation() {
-  const session = await getSession();
+  const session = await getUser();
 
   return (
     <div className='relative flex items-center gap-6'>

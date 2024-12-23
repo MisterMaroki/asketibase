@@ -3,23 +3,20 @@
 import { redirect } from 'next/navigation';
 
 import { DURATION_TYPES } from '@/constants/membership';
-import { getOrCreateCustomer } from '@/features/account/controllers/get-or-create-customer';
-import { getSession } from '@/features/account/controllers/get-session';
-import { getUser } from '@/features/account/controllers/get-user';
-import { Price } from '@/features/pricing/types';
-import { stripeAdmin } from '@/libs/stripe/stripe-admin';
-import { createSupabaseServerClient } from '@/libs/supabase/server-client';
+import { getUser } from '@/features/membership/actions/get-user';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
-import { Member } from '@/store/membership-store';
 import { getURL } from '@/utils/get-url';
 
+import { validateApplication } from '../validations/application';
 import { ApplicationSchema } from '../validations/schemas';
 
 export async function generateQuoteAction(data: ApplicationSchema) {
-  console.log('🚀 ~ generateQuoteAction ~ data:', data);
+  const valid = validateApplication(data);
+  if (!valid.success) {
+    throw new Error(JSON.stringify(valid.errors));
+  }
   // 1. Get the user from session
   const user = await getUser();
-  console.log('🚀 ~ generateQuoteAction ~ user:', user);
 
   if (!user) {
     return redirect(`${getURL()}/signup`);
@@ -86,6 +83,7 @@ export async function generateQuoteAction(data: ApplicationSchema) {
 
     // Calculate age factor
     const age = calculateAge(new Date(member.dateOfBirth));
+    console.log('🚀 ~ memberPrices ~ age:', age);
     const ageFactor = ageFactors.find((af) => age >= af.min_age && age <= af.max_age)?.daily_rate || 0;
 
     // Get coverage factor
@@ -107,6 +105,7 @@ export async function generateQuoteAction(data: ApplicationSchema) {
       memberId: member.id,
       countryPrice,
       ageFactor,
+      name: `${member.firstName} ${member.lastName}`,
       coverageFactor,
       medicalFactor,
       dailyTotal,
@@ -131,7 +130,6 @@ export async function generateQuoteAction(data: ApplicationSchema) {
     })
     .select()
     .single();
-  console.log('🚀 ~ generateQuoteAction ~ applicationError:', applicationError);
 
   if (applicationError) throw new Error('Failed to create application', applicationError);
 
@@ -150,10 +148,22 @@ export async function generateQuoteAction(data: ApplicationSchema) {
     })
     .select()
     .single();
+  console.log('🚀 ~ generateQuoteAction ~ quote:', quote);
 
   if (quoteError) throw new Error('Failed to create quote');
 
-  return { quote };
+  return {
+    id: quote.id,
+    currency: data.currency,
+    coverageType: data.coverageType,
+    duration: data.durationType,
+    startDate: data.startDate,
+    endDate: calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
+    members: memberPrices,
+    totalPremium: totalPrice,
+    discountApplied: 0,
+    finalPremium: totalPrice,
+  };
 }
 
 function calculateAge(birthDate: Date): number {

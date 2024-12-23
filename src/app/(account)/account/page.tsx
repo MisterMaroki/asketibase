@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import { getSession } from '@/features/account/controllers/get-session';
+import { getUser } from '@/features/membership/actions/get-user';
 import { getProducts } from '@/features/pricing/controllers/get-products';
 import { Price, ProductWithPrices } from '@/features/pricing/types';
 
 export default async function AccountPage() {
-  const [session, products] = await Promise.all([getSession(), getProducts()]);
+  const [session, products] = await Promise.all([getUser(), getProducts()]);
 
   if (!session) {
     redirect('/login');

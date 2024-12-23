@@ -22,6 +22,12 @@ export function StepIndicator({ currentStep, steps }: StepIndicatorProps) {
       <StepProgress progress={progress} color='#9ef0e4' />
       <div className='mx-auto flex max-w-3xl justify-between px-6'>
         {steps.map((step, index) => {
+          const isEligibility = index === 0;
+
+          if (isEligibility) {
+            return null;
+          }
+
           const isCompleted = index + 1 < currentStep;
           const isCurrent = index + 1 === currentStep;
 

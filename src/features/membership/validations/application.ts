@@ -1,5 +1,3 @@
-'use client';
-
 import { type ApplicationSchema, applicationSchema } from './schemas';
 
 export function validateApplication(data: Partial<ApplicationSchema>) {

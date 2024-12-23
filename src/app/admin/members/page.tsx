@@ -24,7 +24,7 @@ export default async function MembersPage() {
     .order('created_at', { ascending: false });
 
   return (
-    <main className='container mx-auto p-8'>
+    <main className='container mx-auto '>
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>

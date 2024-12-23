@@ -6,5 +6,5 @@ import { useMembershipStore } from '@/store/membership-store';
 export function ResetButton() {
   const reset = useMembershipStore((state) => state.reset);
 
-  return <Button onClick={reset}>Reset</Button>;
+  return <Button onClick={reset}>(DEV)Reset Form</Button>;
 }

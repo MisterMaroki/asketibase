@@ -6,7 +6,7 @@ import { CountryBasePricesTable } from './components/CountryBasePricesTable';
 
 export default function PricingPage() {
   return (
-    <main className='container mx-auto p-8'>
+    <main className='container mx-auto '>
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>

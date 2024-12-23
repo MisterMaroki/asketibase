@@ -2,11 +2,26 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Coins, FileText, LayoutDashboard, LogOut, Receipt, Settings, Shield, Users } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Coins,
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Receipt,
+  Settings,
+  Shield,
+  Users,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ActionResponse } from '@/types/action-response';
 import { cn } from '@/utils/cn';
+import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -17,15 +32,10 @@ const navigation = [
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
-export function Sidebar({ signOut }: { signOut: () => Promise<ActionResponse> }) {
+function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> }) {
   const pathname = usePathname();
   return (
-    <div className='flex w-64 flex-col border-r '>
-      <div className='flex items-center gap-2 p-6 pl-2'>
-        <Shield className='h-6 w-6 text-primary' />
-        <span className='font-semibold'>Admin Portal</span>
-      </div>
-
+    <div className='flex h-[calc(100vh-120px)] flex-col '>
       <nav className='flex-1 pb-4 pl-1 pr-4'>
         {navigation.map((item) => {
           const isActive = pathname === item.href;
@@ -56,5 +66,29 @@ export function Sidebar({ signOut }: { signOut: () => Promise<ActionResponse> })
         </Button>
       </div>
     </div>
+  );
+}
+
+export function Sidebar({ signOut }: { signOut: () => Promise<ActionResponse> }) {
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <div className='hidden flex-col border-r md:flex md:w-64'>
+        <SidebarContent signOut={signOut} />
+      </div>
+
+      {/* Mobile sidebar */}
+      <Sheet>
+        <SheetTrigger asChild className='fixed -left-2 top-20 z-50 md:hidden'>
+          <div className='flex items-center gap-2 rounded-r-md border border-primary p-2'>
+            <DoubleArrowRightIcon className='h-5 w-5' />
+            {/* <p className=' '>Hi</p> */}
+          </div>
+        </SheetTrigger>
+        <SheetContent side='left' className='w-64 p-0'>
+          <SidebarContent signOut={signOut} />
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

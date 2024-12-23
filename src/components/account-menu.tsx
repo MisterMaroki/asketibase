@@ -46,7 +46,7 @@ export function AccountMenu({ signOut }: { signOut: () => Promise<ActionResponse
           <Link href='/admin'>Admin</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href='/memberships'>Membership Form</Link>
+          <Link href='/membership'>Membership Form</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>

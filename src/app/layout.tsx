@@ -1,13 +1,10 @@
-import { PropsWithChildren, useEffect } from 'react';
-import type { Metadata } from 'next';
-import { Montserrat, Montserrat_Alternates } from 'next/font/google';
-import Link from 'next/link';
-import { IoLogoFacebook, IoLogoInstagram, IoLogoTwitter } from 'react-icons/io5';
+import { PropsWithChildren } from 'react';
+import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 
 import { Logo } from '@/components/logo';
 import { Background } from '@/components/ui/background';
 import { Toaster } from '@/components/ui/toaster';
-import { useMembershipStore } from '@/store/membership-store';
 import { cn } from '@/utils/cn';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -17,16 +14,17 @@ import '@/styles/globals.css';
 
 export const dynamic = 'force-dynamic';
 
-const montserrat = Montserrat({
-  variable: '--font-montserrat',
+const inter = Inter({
   subsets: ['latin'],
 });
 
-const montserratAlternates = Montserrat_Alternates({
-  variable: '--font-montserrat-alternates',
-  weight: ['500', '600', '700'],
-  subsets: ['latin'],
-});
+export const viewport: Viewport = {
+  viewportFit: 'cover',
+  initialScale: 1,
+  width: 'device-width',
+
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   title: 'Health Coverage Application',
@@ -35,15 +33,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang='en'>
-      <body className={cn('font-sans antialiased', montserrat.variable, montserratAlternates.variable)}>
-        <div className='m-auto flex h-full max-w-[1440px] flex-col '>
+    <html lang='en' suppressHydrationWarning>
+      <body className={cn('font-sans antialiased', inter.className)}>
+        {/* <div className='flex h-full  bg-black/60 backdrop-blur-xl'> */}
+        <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
+          <div className='absolute inset-0 bg-black/60 backdrop-blur-xl' />
           <AppBar />
           <main className='relative flex-1'>
-            <div className='relative h-full bg-black/60 px-4 backdrop-blur-xl'>{children}</div>
+            <div className='relative h-full '>{children}</div>
           </main>
           {/* <Footer /> */}
         </div>
+        {/* </div> */}
         <Toaster />
         <Analytics />
         <Background />
@@ -54,7 +55,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
 
 async function AppBar() {
   return (
-    <header className='flex items-center justify-between bg-black/60 p-6 backdrop-blur-xl'>
+    <header className='z-50  flex items-center justify-between p-4 md:p-6'>
       <Logo />
       <Navigation />
     </header>

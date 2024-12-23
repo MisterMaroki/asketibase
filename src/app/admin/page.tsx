@@ -40,7 +40,7 @@ export default async function AdminPage() {
   const recentAlerts = 0; // TODO: Implement alerts system
 
   return (
-    <main className='container mx-auto p-8'>
+    <main className='container mx-auto '>
       <div className='mb-8 flex items-center justify-between'>
         <h1 className='flex items-center gap-2 text-3xl font-bold'>
           <Shield className='h-8 w-8 text-primary' />

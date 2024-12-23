@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function SettingsPage() {
   return (
-    <main className='container mx-auto p-8'>
+    <main className='container mx-auto '>
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>

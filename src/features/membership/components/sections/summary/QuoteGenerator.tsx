@@ -1,25 +1,93 @@
 'use client';
 
 import { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { FieldError } from 'react-hook-form';
 
+import QuoteSummary from '@/components/QuoteSummary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { generateQuoteAction } from '@/features/membership/actions/generate-quote';
 import { getApplicationValidationErrors, isApplicationValid } from '@/features/membership/validations/application';
 import { MemberSchema } from '@/features/membership/validations/schemas';
+import { createCheckoutAction } from '@/features/pricing/actions/create-checkout-action';
+import { Price } from '@/features/pricing/types';
 // import { createApplication } from '@/lib/applications/service';
 // import { fetchQuoteDetails } from '@/lib/quotes/fetch';
 // import { generateQuote } from '@/lib/quotes/service';
 // import { registerPrimaryMember } from '@/lib/users/service';
 import { useMembershipStore } from '@/store/membership-store';
+import { loadStripe } from '@stripe/stripe-js';
 
-import { PricingSummary } from './PricingSummary';
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
+
+// function CheckoutForm({ id }: { id: string }) {
+
+//   return (
+//     <form action={createCheckoutAction} method='POST'>
+//       <section>
+//         <button type='submit' role='link'>
+//           Checkout
+//         </button>
+//       </section>
+//       <style jsx>
+//         {`
+//           section {
+//             background: #ffffff;
+//             display: flex;
+//             flex-direction: column;
+//             width: 400px;
+//             height: 112px;
+//             border-radius: 6px;
+//             justify-content: space-between;
+//           }
+//           button {
+//             height: 36px;
+//             background: #556cd6;
+//             border-radius: 4px;
+//             color: white;
+//             border: 0;
+//             font-weight: 600;
+//             cursor: pointer;
+//             transition: all 0.2s ease;
+//             box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
+//           }
+//           button:hover {
+//             opacity: 0.8;
+//           }
+//         `}
+//       </style>
+//     </form>
+//   );
+// }
+interface QuoteType {
+  id: string;
+  currency: string;
+  coverageType: string;
+  duration: string;
+  startDate: string;
+  endDate: string;
+  members: Array<{
+    memberId: string;
+    countryPrice: number;
+    ageFactor: number;
+    name: string;
+    coverageFactor: number;
+    medicalFactor: number;
+    dailyTotal: number;
+    total: number;
+  }>;
+  totalPremium: number;
+  discountApplied: number;
+  finalPremium: number;
+}
 
 export function QuoteGenerator() {
-  const [quote, setQuote] = useState<any>(null);
+  const [quote, setQuote] = useState<QuoteType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,13 +122,17 @@ export function QuoteGenerator() {
   const canContinue = isApplicationValid(applicationData as any);
 
   const handleGenerateQuote = async () => {
+    if (quote) {
+      await createCheckoutAction(quote.id);
+      return;
+    }
     try {
       setIsLoading(true);
       setError(null);
       setQuote(null);
 
       // // Generate quote
-      const { quote } = await generateQuoteAction({
+      const quote = await generateQuoteAction({
         membershipType: membershipType!,
         coverageType: coverageType!,
         durationType: durationType!,
@@ -74,6 +146,7 @@ export function QuoteGenerator() {
       });
 
       if (quote) {
+        console.log('🚀 ~ handleGenerateQuote ~ quote:', quote);
         setQuote(quote);
       } else {
         throw new Error('Failed to generate quote');
@@ -110,14 +183,14 @@ export function QuoteGenerator() {
 
       {quote && (
         <div className='mt-8'>
-          <PricingSummary quote={quote} />
-          <div className='mt-4 flex justify-end'>
-            <Button className='min-w-[200px]'>Proceed to Payment</Button>
-          </div>
+          <QuoteSummary {...quote} />
         </div>
       )}
 
       <div className='mt-8 flex justify-end space-x-4'>
+        {/* {quote ? (
+          <CheckoutForm id={quote.id} />
+        ) : ( */}
         <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='min-w-[200px]'>
           {isLoading ? (
             <>
@@ -128,6 +201,7 @@ export function QuoteGenerator() {
             'Generate Quote'
           )}
         </Button>
+        {/* )} */}
       </div>
     </div>
   );

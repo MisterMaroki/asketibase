@@ -24,7 +24,7 @@ export function MemberSummary({ member, isPrimary, isComplete }: MemberSummaryPr
               {member.salutation} {member.firstName} {member.lastName}
             </span>
             {isPrimary && (
-              <Badge variant='secondary' className='font-normal'>
+              <Badge variant='secondary' className='font-normal '>
                 Primary Member
               </Badge>
             )}
