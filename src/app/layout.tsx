@@ -27,8 +27,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Health Coverage Application',
-  description: 'International health coverage application system',
+  title: 'ASKETI Global Travel Protection',
+  description: 'Global travel protection for modern global citizens',
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
@@ -55,7 +55,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
 
 async function AppBar() {
   return (
-    <header className='z-50  flex items-center justify-between p-4 md:p-6'>
+    <header className='z-50 flex items-center justify-between p-4 md:p-6'>
       <Logo />
       <Navigation />
     </header>
