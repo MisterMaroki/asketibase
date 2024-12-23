@@ -18,16 +18,16 @@ function HeroSection() {
       <Container className='relative rounded py-20 lg:py-[140px]'>
         <div className='relative z-10 items-center space-y-8 text-center'>
           <div className='mb flex w-full items-center justify-center gap-4'>
-            <Shield className='h-12 w-12 text-primary' />
+            {/* <Shield className='h-12 w-12 text-primary' /> */}
             <h1 className='text-5xl font-bold tracking-wider'>ASKETI</h1>
           </div>
-          <h2 className='bg-gradient-to-r from-primary/80 to-secondary bg-clip-text text-4xl font-bold  sm:text-5xl lg:text-6xl'>
-            Global Health Protection
-          </h2>
-          <p className='mx-auto max-w-2xl text-xl leading-relaxed text-muted-foreground'>
+          {/* <h2 className='bg-gradient-to-r from-primary/80 to-secondary bg-clip-text text-4xl font-bold  sm:text-5xl lg:text-6xl'>
+            Global Travel Protection
+          </h2> */}
+          {/* <p className='mx-auto max-w-2xl text-xl leading-relaxed text-muted-foreground'>
             Premium international health coverage designed for modern global citizens. Experience world-class protection
             with ASKETI, anywhere you go.
-          </p>
+          </p> */}
 
           <div className='mt-8'>
             <Link href='/membership'>

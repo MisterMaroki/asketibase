@@ -37,8 +37,8 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body className={cn('font-sans antialiased', inter.className)}>
         {/* <div className='flex h-full  bg-black/60 backdrop-blur-xl'> */}
         <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
-          <div className='absolute inset-0 bg-black/60 backdrop-blur-xl' />
           <AppBar />
+          <div className='absolute inset-0 bg-black/40 backdrop-blur-xl' />
           <main className='relative flex-1'>
             <div className='relative h-full '>{children}</div>
           </main>
