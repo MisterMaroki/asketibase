@@ -36,6 +36,11 @@ function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> })
   const pathname = usePathname();
   return (
     <div className='flex h-[calc(100vh-120px)] flex-col '>
+      <div className='flex items-center gap-2 p-6 pl-4 md:hidden'>
+        {/* <Shield className='h-6 w-6 text-primary' /> */}
+        <span className='font-semibold'>ASKETI Admin</span>
+      </div>
+
       <nav className='flex-1 pb-4 pl-1 pr-4'>
         {navigation.map((item) => {
           const isActive = pathname === item.href;
