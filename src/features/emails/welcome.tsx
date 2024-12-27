@@ -13,7 +13,7 @@ export function WelcomeEmail() {
       <Tailwind config={tailwindConfig}>
         <Body className='mx-auto my-auto bg-slate-500 px-2 py-10 font-sans'>
           <Container className='mx-auto mt-[40px] w-[464px] overflow-hidden rounded-md bg-white'>
-            <Section className={`h-[255px] w-full bg-black bg-[url('${baseUrl + '/hero-shape.png'}')] bg-center`}>
+            <Section className={`h-[255px] w-full bg-black  bg-center`}>
               <Heading className='mb-0 mt-[70px] text-center text-[48px] font-bold text-white'>Welcome!</Heading>
             </Section>
             <Section className='p-8'>

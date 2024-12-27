@@ -30,17 +30,15 @@ export const columns: ColumnDef<any>[] = [
     header: 'Nationality',
   },
   {
-    accessorKey: 'applications',
+    accessorKey: memberships,
     header: 'Coverage',
     cell: ({ row }) => {
-      const application = row.getValue('applications') as any;
+      const membership = row.getValue(memberships) as any;
       return (
-        <div className="space-y-1">
-          <Badge variant="outline">
-            {application?.membership_type}
-          </Badge>
-          <Badge variant="outline" className="ml-2">
-            {application?.coverage_type}
+        <div className='space-y-1'>
+          <Badge variant='outline'>{membership?.membership_type}</Badge>
+          <Badge variant='outline' className='ml-2'>
+            {membership?.coverage_type}
           </Badge>
         </div>
       );
@@ -50,11 +48,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'is_primary',
     header: 'Role',
     cell: ({ row }) => {
-      return row.getValue('is_primary') ? (
-        <Badge>Primary</Badge>
-      ) : (
-        <Badge variant="secondary">Dependent</Badge>
-      );
+      return row.getValue('is_primary') ? <Badge>Primary</Badge> : <Badge variant='secondary'>Dependent</Badge>;
     },
   },
 ];

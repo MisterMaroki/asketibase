@@ -1,69 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { FieldError } from 'react-hook-form';
 
 import QuoteSummary from '@/components/QuoteSummary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { createCheckoutAction } from '@/features/membership/actions/create-checkout-action';
 import { generateQuoteAction } from '@/features/membership/actions/generate-quote';
-import { getApplicationValidationErrors, isApplicationValid } from '@/features/membership/validations/application';
+import { getApplicationValidationErrors, isApplicationValid } from '@/features/membership/validations/membership';
 import { MemberSchema } from '@/features/membership/validations/schemas';
-import { createCheckoutAction } from '@/features/pricing/actions/create-checkout-action';
-import { Price } from '@/features/pricing/types';
-// import { createApplication } from '@/lib/applications/service';
-// import { fetchQuoteDetails } from '@/lib/quotes/fetch';
-// import { generateQuote } from '@/lib/quotes/service';
-// import { registerPrimaryMember } from '@/lib/users/service';
 import { useMembershipStore } from '@/store/membership-store';
-import { loadStripe } from '@stripe/stripe-js';
 
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
-// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
-
-// function CheckoutForm({ id }: { id: string }) {
-
-//   return (
-//     <form action={createCheckoutAction} method='POST'>
-//       <section>
-//         <button type='submit' role='link'>
-//           Checkout
-//         </button>
-//       </section>
-//       <style jsx>
-//         {`
-//           section {
-//             background: #ffffff;
-//             display: flex;
-//             flex-direction: column;
-//             width: 400px;
-//             height: 112px;
-//             border-radius: 6px;
-//             justify-content: space-between;
-//           }
-//           button {
-//             height: 36px;
-//             background: #556cd6;
-//             border-radius: 4px;
-//             color: white;
-//             border: 0;
-//             font-weight: 600;
-//             cursor: pointer;
-//             transition: all 0.2s ease;
-//             box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
-//           }
-//           button:hover {
-//             opacity: 0.8;
-//           }
-//         `}
-//       </style>
-//     </form>
-//   );
-// }
 interface QuoteType {
   id: string;
   currency: string;
@@ -80,8 +30,10 @@ interface QuoteType {
     medicalFactor: number;
     dailyTotal: number;
     total: number;
+    isPrimary: boolean;
   }>;
   totalPremium: number;
+  taxAmount: number;
   discountApplied: number;
   finalPremium: number;
 }
@@ -91,6 +43,8 @@ export function QuoteGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
+  const errorParam = searchParams.get('error');
   const {
     membershipType,
     coverageType,
@@ -105,8 +59,8 @@ export function QuoteGenerator() {
     setStep,
   } = useMembershipStore();
   const router = useRouter();
-  // Prepare application data for validation
-  const applicationData = {
+  // Prepare membership data for validation
+  const membershipData = {
     membershipType,
     coverageType,
     durationType,
@@ -118,20 +72,47 @@ export function QuoteGenerator() {
     referralSource,
   };
 
-  const validationErrors = getApplicationValidationErrors(applicationData as any);
-  const canContinue = isApplicationValid(applicationData as any);
+  const validationErrors = getApplicationValidationErrors(membershipData as any);
+  const canContinue = isApplicationValid(membershipData as any);
+
+  useEffect(() => {
+    if (errorParam) {
+      // Wait for next tick to ensure DOM is fully rendered
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
+      }, 100);
+    }
+  }, [errorParam]);
 
   const handleGenerateQuote = async () => {
     if (quote) {
-      await createCheckoutAction(quote.id);
-      return;
+      setIsLoading(true);
+      setError(null);
+      try {
+        await createCheckoutAction(quote.id);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Failed to process your membership');
+      } finally {
+        setIsLoading(false);
+        return;
+      }
     }
     try {
       setIsLoading(true);
       setError(null);
       setQuote(null);
 
-      // // Generate quote
+      // Clear error param from URL without refresh
+      if (errorParam) {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('error');
+        router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+      }
+
+      // Generate quote
       const quote = await generateQuoteAction({
         membershipType: membershipType!,
         coverageType: coverageType!,
@@ -139,7 +120,7 @@ export function QuoteGenerator() {
         startDate: startDate!,
         endDate: endDate!,
         currency: currency!,
-        members: members as MemberSchema[],
+        members: members.map((member, i) => ({ ...member, isPrimary: i === 0 })) as MemberSchema[],
         referralCode,
         referralSource,
         medicalState,
@@ -147,13 +128,21 @@ export function QuoteGenerator() {
 
       if (quote) {
         console.log('🚀 ~ handleGenerateQuote ~ quote:', quote);
+
         setQuote(quote);
+
+        setTimeout(() => {
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          });
+        }, 100);
       } else {
         throw new Error('Failed to generate quote');
       }
     } catch (err) {
-      console.error('Failed to process application:', err);
-      setError(err instanceof Error ? err.message : 'Failed to process your application');
+      console.error('Failed to process membership:', err);
+      setError(err instanceof Error ? err.message : 'Failed to process your membership');
     } finally {
       setIsLoading(false);
     }
@@ -187,16 +176,24 @@ export function QuoteGenerator() {
         </div>
       )}
 
-      <div className='mt-8 flex justify-end space-x-4'>
+      <div className='mt-8 flex flex-col justify-end gap-4 '>
+        {errorParam && (
+          <Alert variant='destructive'>
+            <AlertCircle className='h-4 w-4' />
+            <AlertDescription>There was an error processing your payment. Please try again.</AlertDescription>
+          </Alert>
+        )}
         {/* {quote ? (
           <CheckoutForm id={quote.id} />
         ) : ( */}
-        <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='min-w-[200px]'>
+        <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='w-full '>
           {isLoading ? (
             <>
               <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              Processing...
+              {quote ? 'Loading Stripe Checkout...' : 'Processing...'}
             </>
+          ) : quote ? (
+            'Checkout in Stripe'
           ) : (
             'Generate Quote'
           )}

@@ -1,10 +1,12 @@
 import React from 'react';
-import { ChevronDownIcon, ChevronUpIcon, ClipboardList, PencilIcon } from 'lucide-react';
+import { CalendarDaysIcon, ChevronDownIcon, ChevronUpIcon, ClipboardList, PencilIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { formatDate } from '@/libs/format-date';
+import { formatPrice, formatPriceWithCurrency } from '@/libs/membership/currency';
 
 interface MemberQuote {
   memberId: string;
@@ -27,6 +29,7 @@ interface QuoteSummaryProps {
   totalPremium: number;
   discountApplied: number;
   finalPremium: number;
+  taxAmount: number;
 }
 
 export default function QuoteSummary({
@@ -39,9 +42,14 @@ export default function QuoteSummary({
   totalPremium,
   discountApplied,
   finalPremium,
+  taxAmount,
 }: QuoteSummaryProps) {
-  console.log('🚀 ~ members:', members);
   const [isOpen, setIsOpen] = React.useState(false);
+
+  // Calculate the number of days
+  const daysDifference = Math.ceil(
+    (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)
+  );
 
   return (
     <Card className=''>
@@ -62,22 +70,20 @@ export default function QuoteSummary({
               <p className='text-sm text-gray-400'>Currency</p>
               <p className='font-medium'>{currency}</p>
             </div>
-            <div>
-              <p className='text-sm text-gray-400'>Coverage Type</p>
-              <p className='font-medium'>{coverageType}</p>
-            </div>
-            <div>
-              <p className='text-sm text-gray-400'>Duration</p>
-              <p className='font-medium'>{duration}</p>
-            </div>
           </div>
 
           <div>
             <p className='mb-1 text-sm text-gray-400'>Coverage Period</p>
             <div className='rounded-md bg-muted/50 p-3'>
-              <div className='flex justify-between text-sm'>
-                <span>Start: {startDate}</span>
-                <span>End: {endDate}</span>
+              <div className='flex flex-col gap-2'>
+                <div className='flex justify-between text-sm'>
+                  <span>Start: {formatDate(new Date(startDate))}</span>
+                  <span>End: {formatDate(new Date(endDate))}</span>
+                </div>
+                <div className='flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary'>
+                  <CalendarDaysIcon className='h-4 w-4' />
+                  <span>{daysDifference} days coverage</span>
+                </div>
               </div>
             </div>
           </div>
@@ -103,19 +109,19 @@ export default function QuoteSummary({
                         <TableRow>
                           <TableCell className='text-gray-400'>Base Premium</TableCell>
                           <TableCell className='text-right'>
-                            {currency} {member.countryPrice ? member.countryPrice.toFixed(2) : 0}
+                            {currency} {formatPrice(member.countryPrice)}
                           </TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className='text-gray-400'>Medical Premium</TableCell>
                           <TableCell className='text-right'>
-                            {currency} {member.medicalFactor ? member.medicalFactor.toFixed(2) : 0}
+                            {currency} {formatPrice(member.medicalFactor)}
                           </TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className='font-medium'>Total Premium</TableCell>
                           <TableCell className='text-right font-medium'>
-                            {currency} {member.total ? member.total.toFixed(2) : 0}
+                            {currency} {formatPrice(member.total)}
                           </TableCell>
                         </TableRow>
                       </TableBody>
@@ -131,19 +137,23 @@ export default function QuoteSummary({
               <TableRow>
                 <TableCell className='font-medium text-gray-400'>Total Premium</TableCell>
                 <TableCell className='text-right font-medium'>
-                  {currency} {totalPremium.toFixed(2)}
+                  {formatPriceWithCurrency(totalPremium, currency)}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className='text-gray-400'>Discount Applied</TableCell>
                 <TableCell className='text-right text-teal-400'>
-                  - {currency} {discountApplied.toFixed(2)}
+                  - {formatPriceWithCurrency(discountApplied, currency)}
                 </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className='font-medium text-gray-400'>Tax</TableCell>
+                <TableCell className='text-right font-medium'>{formatPriceWithCurrency(taxAmount, currency)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className='text-lg font-medium'>Final Premium</TableCell>
                 <TableCell className='text-right text-lg font-bold text-teal-400'>
-                  {currency} {finalPremium.toFixed(2)}
+                  {formatPriceWithCurrency(finalPremium, currency)}
                 </TableCell>
               </TableRow>
             </TableBody>

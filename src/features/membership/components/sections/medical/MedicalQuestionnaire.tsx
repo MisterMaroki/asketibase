@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertTriangle, User } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -64,6 +64,11 @@ export function MedicalQuestionnaire({ memberId, memberName, onComplete }: Medic
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [isDeclined, setIsDeclined] = useState(false);
+
+  // when answers changes, scroll down a bit
+  useEffect(() => {
+    window.scrollBy(0, 250);
+  }, [answers]);
 
   const handleAnswer = (answer: boolean) => {
     const question = QUESTIONS[currentQuestion];

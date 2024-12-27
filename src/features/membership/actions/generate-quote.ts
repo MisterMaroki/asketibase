@@ -3,11 +3,12 @@
 import { redirect } from 'next/navigation';
 
 import { DURATION_TYPES } from '@/constants/membership';
-import { getUser } from '@/features/membership/actions/get-user';
+import { getUser } from '@/features/membership/controllers/get-user';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 import { getURL } from '@/utils/get-url';
 
-import { validateApplication } from '../validations/application';
+import { createMember } from '../controllers/members';
+import { validateApplication } from '../validations/membership';
 import { ApplicationSchema } from '../validations/schemas';
 
 export async function generateQuoteAction(data: ApplicationSchema) {
@@ -28,14 +29,15 @@ export async function generateQuoteAction(data: ApplicationSchema) {
 
   // Calculate number of days based on duration type
   let numberOfDays = 0;
+  console.log('🚀 ~ generateQuoteAction ~ durationType:', data.durationType);
   switch (data.durationType) {
-    case 'expat':
+    case 'expat_year':
       numberOfDays = 365;
       break;
-    case 'annual':
+    case 'multi_trip':
       numberOfDays = 45;
       break;
-    case 'single':
+    case 'single_trip':
       if (!data.startDate || !data.endDate) {
         throw new Error('Start date and end date are required for single duration');
       }
@@ -49,10 +51,7 @@ export async function generateQuoteAction(data: ApplicationSchema) {
   const { data: countryPrices, error: countryError } = await supabaseAdminClient
     .from('country_base_prices')
     .select('*')
-    .in(
-      'id',
-      data.members.map((m) => m.countryOfResidence)
-    );
+    .in('id', Array.from(new Set(data.members.map((m) => [m.countryOfResidence, m.nationality]).flat())));
 
   if (countryError) throw new Error('Failed to fetch country prices');
 
@@ -76,54 +75,14 @@ export async function generateQuoteAction(data: ApplicationSchema) {
 
   if (medicalError) throw new Error('Failed to fetch medical factors');
 
-  // Calculate price for each member
-  const memberPrices = data.members.map((member) => {
-    // Get base price for member's country
-    const countryPrice = countryPrices.find((cp) => cp.country === member.countryOfResidence)?.base_price || 0;
-
-    // Calculate age factor
-    const age = calculateAge(new Date(member.dateOfBirth));
-    console.log('🚀 ~ memberPrices ~ age:', age);
-    const ageFactor = ageFactors.find((af) => age >= af.min_age && age <= af.max_age)?.daily_rate || 0;
-
-    // Get coverage factor
-    const coverageFactor = coverageFactors[0]?.daily_rate || 0;
-
-    if (!member.id) {
-      throw new Error('Member ID is required');
-    }
-    // Get medical factor if applicable
-    const medicalFactor = data.medicalState.completedMembers[member.id]
-      ? medicalFactors.find((mf) => mf.risk_level === data.medicalState.completedMembers[member.id as string])
-          ?.daily_rate || 0
-      : 0;
-
-    const dailyTotal = countryPrice + ageFactor + coverageFactor + medicalFactor;
-    const memberTotal = dailyTotal * numberOfDays;
-
-    return {
-      memberId: member.id,
-      countryPrice,
-      ageFactor,
-      name: `${member.firstName} ${member.lastName}`,
-      coverageFactor,
-      medicalFactor,
-      dailyTotal,
-      total: memberTotal,
-    };
-  });
-
-  // Calculate total quote price
-  const totalPrice = memberPrices.reduce((sum, mp) => sum + mp.total, 0);
-
-  // 1. Create a new application record
-  const { data: application, error: applicationError } = await supabaseAdminClient
-    .from('applications')
+  // 1. Create a new membership record
+  const { data: membership, error: membershipError } = await supabaseAdminClient
+    .from('memberships')
     .insert({
       user_id: user.id,
       membership_type: data.membershipType,
       coverage_type: data.coverageType,
-      duration_type: data.durationType,
+      duration_type: data.durationType as 'expat_year' | 'multi_trip' | 'single_trip',
       currency: data.currency,
       start_date: data.startDate,
       end_date: calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
@@ -131,19 +90,82 @@ export async function generateQuoteAction(data: ApplicationSchema) {
     .select()
     .single();
 
-  if (applicationError) throw new Error('Failed to create application', applicationError);
+  if (membershipError) throw new Error('Failed to create membership', membershipError);
+
+  // Calculate price for each member
+  const memberPrices = data.members
+    .sort((a, b) => (a.isPrimary ? -1 : 1))
+    .map((member, i) => {
+      // Get base price for member's country
+      const countryOfRes = countryPrices.find((cp) => cp.id === member.countryOfResidence);
+      const countryNationality = countryPrices.find((cp) => cp.id === member.nationality);
+      const countryPrice = countryOfRes?.base_price || 0;
+
+      // Calculate age factor
+      const age = calculateAge(new Date(member.dateOfBirth));
+      const ageFactor = ageFactors.find((af) => age >= af.min_age && age <= af.max_age)?.daily_rate || 0;
+
+      // Get coverage factor
+      const coverageFactor = coverageFactors[0]?.daily_rate || 0;
+
+      if (!member.id) {
+        throw new Error('Member ID is required');
+      }
+      const riskLevel = data.medicalState.completedMembers[member.id];
+      // Get medical factor if applicable
+      const medicalFactor = riskLevel ? medicalFactors.find((mf) => mf.risk_level === riskLevel)?.daily_rate || 0 : 0;
+
+      const dailyTotal = countryPrice + ageFactor + coverageFactor + medicalFactor;
+      const memberTotal = dailyTotal * numberOfDays;
+
+      createMember({
+        membership_id: membership.id,
+        first_name: member.firstName,
+        last_name: member.lastName,
+        date_of_birth: member.dateOfBirth,
+        salutation: member.salutation,
+        gender: member.gender,
+        email: member.email,
+        contact_number: member.contactNumber,
+        address: member.address,
+        country_of_residence: countryOfRes?.country as string,
+        country_code: member.countryCode,
+        is_primary: !!member.isPrimary,
+        nationality: countryNationality?.nationality as string,
+        has_conditions: !!riskLevel,
+      });
+
+      return {
+        memberId: member.id,
+        countryPrice,
+        ageFactor,
+        name: `${member.firstName} ${member.lastName}`,
+        coverageFactor,
+        medicalFactor,
+        dailyTotal,
+        total: memberTotal,
+        isPrimary: !!member.isPrimary,
+      };
+    });
+
+  // Calculate total quote price
+  const totalPrice = memberPrices.reduce((sum, mp) => sum + mp.total, 0);
+  const totalTax = totalPrice * 0.2;
+  const totalPriceWithTax = totalPrice + totalTax;
 
   // Create quote record
   const { data: quote, error: quoteError } = await supabaseAdminClient
     .from('quotes')
     .insert({
-      application_id: application.id,
+      membership_id: membership.id,
       currency: data.currency,
       member_prices: memberPrices,
       base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice * numberOfDays, 0),
       coverage_loading_price: memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0),
       medical_loading_price: memberPrices.reduce((sum, mp) => sum + mp.medicalFactor * numberOfDays, 0),
       total_price: totalPrice,
+      tax_amount: totalTax,
+      total_price_with_tax: totalPriceWithTax,
       discount_amount: 0,
     })
     .select()
@@ -154,15 +176,17 @@ export async function generateQuoteAction(data: ApplicationSchema) {
 
   return {
     id: quote.id,
+    membershipId: membership.id,
     currency: data.currency,
     coverageType: data.coverageType,
     duration: data.durationType,
     startDate: data.startDate,
-    endDate: calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
+    endDate: data.endDate || calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
     members: memberPrices,
     totalPremium: totalPrice,
+    taxAmount: totalTax,
     discountApplied: 0,
-    finalPremium: totalPrice,
+    finalPremium: totalPriceWithTax,
   };
 }
 
@@ -182,5 +206,11 @@ function calculateEndDate(startDate: string, durationType: keyof typeof DURATION
     endDate.setFullYear(endDate.getFullYear() + 1);
     return endDate.toISOString().split('T')[0];
   }
+  if (durationType === 'multi_trip') {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 45);
+    return endDate.toISOString().split('T')[0];
+  }
+
   return startDate;
 }

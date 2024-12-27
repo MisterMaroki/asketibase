@@ -24,9 +24,7 @@ const steps = [
 export function MembershipForm() {
   const searchParams = useSearchParams();
 
-  const { currentStep, setStep, medicalState } = useMembershipStore((state) => state);
-  console.log('🚀 ~ MembershipForm ~ currentStep:', currentStep);
-  console.log('🚀 ~ MembershipForm ~ medicalState:', medicalState);
+  const { currentStep, setStep } = useMembershipStore((state) => state);
 
   useEffect(() => {
     const step = searchParams.get('step');

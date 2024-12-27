@@ -1,23 +1,20 @@
-'use client';
+import { subYears } from 'date-fns';
 
-import { format, parseISO, subYears } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-
+import { BlackDOBInput } from '@/components/dob-input';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { COUNTRY_CODES, SALUTATIONS } from '@/constants/options';
-import { cn } from '@/utils/cn';
+import { isMemberValid } from '@/features/membership/validations/member-fields';
 
 import { AddressInput } from './AddressInput';
 
 interface Country {
   id: string;
   country: string;
+  nationality: string | null;
+  base_price: number;
 }
 
 interface MemberFormFieldsProps {
@@ -96,31 +93,14 @@ export function MemberFormFields({
       {/* Date of Birth and Gender fields */}
       <div className='grid gap-4 sm:grid-cols-2'>
         <div className='space-y-2'>
-          <Label>Date of Birth</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                type='button'
-                variant='outline'
-                className={cn(
-                  'w-full justify-start text-left font-normal',
-                  !member?.dateOfBirth && 'text-muted-foreground'
-                )}
-              >
-                <CalendarIcon className='mr-2 h-4 w-4' />
-                {member?.dateOfBirth ? format(parseISO(member.dateOfBirth), 'PPP') : 'Select date'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-auto p-0' align='start'>
-              <Calendar
-                mode='single'
-                selected={parseISO(member?.dateOfBirth || '')}
-                onSelect={(date) => onFieldChange('dateOfBirth', date?.toISOString())}
-                disabled={(date) => date > maxDate || date < minDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <Label htmlFor='dob'>Date of Birth</Label>
+          <BlackDOBInput value={member?.dateOfBirth || null} onChange={(date) => onFieldChange('dateOfBirth', date)} />
+          {/* <DobSelector
+            value={member?.dateOfBirth || null}
+            onChange={(date) => onFieldChange('dateOfBirth', date)}
+            maxDate={maxDate}
+            minDate={minDate}
+          /> */}
         </div>
 
         <div className='space-y-2'>
@@ -159,11 +139,13 @@ export function MemberFormFields({
             <SelectValue placeholder={isLoadingCountries ? 'Loading...' : 'Select nationality'} />
           </SelectTrigger>
           <SelectContent>
-            {countries.map((country) => (
-              <SelectItem key={country.id} value={country.id}>
-                {country.country}
-              </SelectItem>
-            ))}
+            {countries
+              .filter((country) => country.nationality && country.nationality !== 'n/a')
+              .map((country) => (
+                <SelectItem key={country.id} value={country.id}>
+                  {country.nationality}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
@@ -241,7 +223,7 @@ export function MemberFormFields({
       <AddressInput value={member?.address || ''} onChange={(value) => onFieldChange('address', value)} />
 
       {showSubmitButton && (
-        <Button type='submit' className='w-full'>
+        <Button type='submit' className='w-full' disabled={isLoadingCountries || !isMemberValid(member)}>
           {member?.id ? 'Update Details' : 'Add Member'}
         </Button>
       )}

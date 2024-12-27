@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 
+import { handlePaid } from '@/features/membership/actions/handle-paid';
 import { upsertPrice } from '@/features/pricing/controllers/upsert-price';
 import { upsertProduct } from '@/features/pricing/controllers/upsert-product';
 import { stripeAdmin } from '@/libs/stripe/stripe-admin';
@@ -15,7 +16,7 @@ const relevantEvents = new Set([
   'customer.subscription.updated',
   'customer.subscription.deleted',
 ]);
-
+export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   const body = await req.text();
   const sig = req.headers.get('stripe-signature') as string;
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
 
         case 'checkout.session.completed':
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
-
+          await handlePaid(checkoutSession);
           break;
         default:
           throw new Error('Unhandled relevant event!');

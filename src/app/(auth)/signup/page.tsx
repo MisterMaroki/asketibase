@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { getSession } from '@/features/membership/actions/get-session';
+import { getSession } from '@/features/membership/controllers/get-session';
 
 import { signInWithEmail } from '../auth-actions';
 import { AuthUI } from '../auth-ui';

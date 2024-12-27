@@ -57,62 +57,6 @@ export type Database = {
         }
         Relationships: []
       }
-      applications: {
-        Row: {
-          coverage_type: string
-          created_at: string | null
-          currency: string
-          duration_type: string
-          end_date: string | null
-          id: string
-          membership_type: string
-          referral_code: string | null
-          referral_source: string | null
-          start_date: string
-          status: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          coverage_type: string
-          created_at?: string | null
-          currency: string
-          duration_type: string
-          end_date?: string | null
-          id?: string
-          membership_type: string
-          referral_code?: string | null
-          referral_source?: string | null
-          start_date: string
-          status?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          coverage_type?: string
-          created_at?: string | null
-          currency?: string
-          duration_type?: string
-          end_date?: string | null
-          id?: string
-          membership_type?: string
-          referral_code?: string | null
-          referral_source?: string | null
-          start_date?: string
-          status?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "applications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       country_base_prices: {
         Row: {
           base_price: number
@@ -188,10 +132,31 @@ export type Database = {
             foreignKeyName: "customers_id_fkey"
             columns: ["id"]
             isOneToOne: true
-            referencedRelation: "users"
+            referencedRelation: "members"
             referencedColumns: ["id"]
           },
         ]
+      }
+      fires: {
+        Row: {
+          code: string
+          created_at: string
+          discount_percent: number
+          id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          discount_percent?: number
+          id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          discount_percent?: number
+          id?: string
+        }
+        Relationships: []
       }
       logs: {
         Row: {
@@ -219,41 +184,6 @@ export type Database = {
           timestamp?: string
         }
         Relationships: []
-      }
-      medical_declarations: {
-        Row: {
-          created_at: string | null
-          has_conditions: boolean
-          id: string
-          member_id: string
-          risk_level: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          has_conditions: boolean
-          id?: string
-          member_id: string
-          risk_level?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          has_conditions?: boolean
-          id?: string
-          member_id?: string
-          risk_level?: number | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "medical_declarations_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "members"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       medical_risk_factors: {
         Row: {
@@ -285,7 +215,6 @@ export type Database = {
       members: {
         Row: {
           address: string
-          application_id: string
           contact_number: string
           country_code: string
           country_of_residence: string
@@ -294,16 +223,17 @@ export type Database = {
           email: string
           first_name: string
           gender: string
+          has_conditions: boolean
           id: string
           is_primary: boolean
           last_name: string
+          membership_id: string
           nationality: string
           salutation: string
           updated_at: string | null
         }
         Insert: {
           address: string
-          application_id: string
           contact_number: string
           country_code: string
           country_of_residence: string
@@ -312,16 +242,17 @@ export type Database = {
           email: string
           first_name: string
           gender: string
+          has_conditions?: boolean
           id?: string
           is_primary?: boolean
           last_name: string
+          membership_id: string
           nationality: string
           salutation: string
           updated_at?: string | null
         }
         Update: {
           address?: string
-          application_id?: string
           contact_number?: string
           country_code?: string
           country_of_residence?: string
@@ -330,19 +261,80 @@ export type Database = {
           email?: string
           first_name?: string
           gender?: string
+          has_conditions?: boolean
           id?: string
           is_primary?: boolean
           last_name?: string
+          membership_id?: string
           nationality?: string
           salutation?: string
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "members_application_id_fkey"
-            columns: ["application_id"]
+            foreignKeyName: "members_membership_id_fkey"
+            columns: ["membership_id"]
             isOneToOne: false
-            referencedRelation: "applications"
+            referencedRelation: "memberships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memberships: {
+        Row: {
+          coverage_type: string
+          created_at: string | null
+          currency: string
+          duration_type: Database["public"]["Enums"]["duration_type"]
+          end_date: string | null
+          id: string
+          membership_number: number
+          membership_type: string
+          referral_code: string | null
+          referral_source: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["membership_status"]
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          coverage_type: string
+          created_at?: string | null
+          currency: string
+          duration_type: Database["public"]["Enums"]["duration_type"]
+          end_date?: string | null
+          id?: string
+          membership_number?: number
+          membership_type: string
+          referral_code?: string | null
+          referral_source?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["membership_status"]
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          coverage_type?: string
+          created_at?: string | null
+          currency?: string
+          duration_type?: Database["public"]["Enums"]["duration_type"]
+          end_date?: string | null
+          id?: string
+          membership_number?: number
+          membership_type?: string
+          referral_code?: string | null
+          referral_source?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["membership_status"]
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -414,7 +406,6 @@ export type Database = {
       }
       quotes: {
         Row: {
-          application_id: string
           base_price: number
           coverage_loading_price: number
           created_at: string
@@ -423,10 +414,12 @@ export type Database = {
           id: string
           medical_loading_price: number
           member_prices: Json
+          membership_id: string
+          tax_amount: number
           total_price: number
+          total_price_with_tax: number
         }
         Insert: {
-          application_id: string
           base_price: number
           coverage_loading_price: number
           created_at?: string
@@ -435,10 +428,12 @@ export type Database = {
           id?: string
           medical_loading_price: number
           member_prices: Json
+          membership_id: string
+          tax_amount?: number
           total_price: number
+          total_price_with_tax?: number
         }
         Update: {
-          application_id?: string
           base_price?: number
           coverage_loading_price?: number
           created_at?: string
@@ -447,14 +442,78 @@ export type Database = {
           id?: string
           medical_loading_price?: number
           member_prices?: Json
+          membership_id?: string
+          tax_amount?: number
           total_price?: number
+          total_price_with_tax?: number
         }
         Relationships: [
           {
-            foreignKeyName: "quotes_application_id_fkey"
-            columns: ["application_id"]
+            foreignKeyName: "quotes_membership_id_fkey"
+            columns: ["membership_id"]
             isOneToOne: false
-            referencedRelation: "applications"
+            referencedRelation: "memberships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stripe_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          id: string
+          membership_id: string
+          quote_id: string
+          session_id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency: string
+          id?: string
+          membership_id: string
+          quote_id: string
+          session_id: string
+          status: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          id?: string
+          membership_id?: string
+          quote_id?: string
+          session_id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_payments_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stripe_payments_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stripe_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -494,7 +553,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      duration_type: "expat_year" | "multi_trip" | "single_trip"
+      membership_status: "draft" | "paid" | "sent" | "active" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never

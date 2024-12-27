@@ -10,7 +10,7 @@ export function LoadingState() {
               <div key={i} className='pulse-wave-bar' />
             ))}
           </div>
-          <p className='animate-fade-in text-muted-foreground'>Restoring your application...</p>
+          <p className='animate-fade-in text-muted-foreground'>Restoring your membership...</p>
         </div>
       </Card>
     </div>

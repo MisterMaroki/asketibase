@@ -50,7 +50,7 @@ export function MemberList() {
                   )}
                 </h4>
                 <div className='space-y-1 text-sm text-muted-foreground'>
-                  <p>Born: {format(member.dateOfBirth!, 'PPP')}</p>
+                  <p>Born: {format(member.dateOfBirth ?? new Date(), 'PPP')}</p>
                   <p>Gender: {member.gender}</p>
                   <p className='max-w-md truncate'>{member.address}</p>
                 </div>
@@ -85,7 +85,12 @@ export function MemberList() {
             <DialogTitle>Edit Member Details</DialogTitle>
           </DialogHeader>
           {editingMember && (
-            <MemberForm existingMember={editingMember as any} onSubmit={() => setEditingMember(null)} />
+            <MemberForm
+              existingMember={editingMember as any}
+              onSubmit={() => {
+                setEditingMember(null);
+              }}
+            />
           )}
         </DialogContent>
       </Dialog>

@@ -44,7 +44,6 @@ export type MembershipState = {
   medicalState: {
     memberConditions: Record<string, boolean>;
     completedMembers: Record<string, number>;
-    hasDeclinedMember: boolean;
   };
   errors: Record<string, string>;
   // };
@@ -81,11 +80,11 @@ const defaultMember: Member = {
   lastName: 'Smith',
   dateOfBirth: '1990-01-01',
   gender: 'male',
-  nationality: 'adcd6d95-e964-442e-aed2-c89e86007459',
+  nationality: '669ae8ab-a40b-4be3-b1ab-24e35b108418',
   countryCode: '+1',
   contactNumber: '2025550123',
   email: 'john.smith@example.com',
-  countryOfResidence: 'adcd6d95-e964-442e-aed2-c89e86007459',
+  countryOfResidence: '669ae8ab-a40b-4be3-b1ab-24e35b108418',
   address: '123 Main St, New York, NY 10001',
 };
 
@@ -99,15 +98,14 @@ const defaultState = {
   currency: 'USD',
   startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
   endDate: null,
-  // members: [defaultMember],
-  members: [],
+  members: [defaultMember],
+  // members: [],
   referralCode: 'WELCOME10',
   referralSource: null,
   originalState: null,
   medicalState: {
     memberConditions: {},
     completedMembers: {},
-    hasDeclinedMember: false,
   },
   errors: {},
 };
@@ -181,7 +179,6 @@ export const useMembershipStore = create<MembershipState>()(
                 completedMembers: Object.fromEntries(
                   Object.entries(state.medicalState.completedMembers).filter(([k]) => k !== id)
                 ),
-                hasDeclinedMember: state.medicalState.hasDeclinedMember,
               }
             : state.medicalState;
 
@@ -201,7 +198,6 @@ export const useMembershipStore = create<MembershipState>()(
           medicalState: {
             memberConditions: {},
             completedMembers: {},
-            hasDeclinedMember: false,
           },
         }),
       setError: (field, message) =>
@@ -219,7 +215,7 @@ export const useMembershipStore = create<MembershipState>()(
           originalState: {
             membershipType: state.membershipType,
             coverageType: state.coverageType,
-            members: JSON.parse(JSON.stringify(state.members)),
+            members: state.members,
           },
         })),
       clearOriginalState: () => set({ originalState: null }),

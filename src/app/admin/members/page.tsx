@@ -14,7 +14,7 @@ export default async function MembersPage() {
     .select(
       `
     *,
-    applications (
+    memberships (
       membership_type,
       coverage_type,
       status

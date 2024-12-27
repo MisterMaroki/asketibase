@@ -5,6 +5,8 @@ import { createClient } from '@/libs/supabase/client';
 interface Country {
   id: string;
   country: string;
+  nationality: string | null;
+  base_price: number;
 }
 
 export function useCountries() {

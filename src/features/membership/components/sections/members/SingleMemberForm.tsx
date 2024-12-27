@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { UserCircle } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
 import { useCountries } from '@/hooks/use-countries';
 import { useMembershipStore } from '@/store/membership-store';
 
@@ -15,7 +16,7 @@ export function SingleMemberForm() {
   const { countries, isLoading: loadingCountries } = useCountries();
   const [showErrors, setShowErrors] = useState(false);
   const existingMember = members[0];
-
+  const { toast } = useToast();
   const handleFieldChange = (field: string, value: any) => {
     // console.log('🚀 ~ handleFieldChange ~ field, value:', field, value);
     const memberData = existingMember
@@ -24,8 +25,16 @@ export function SingleMemberForm() {
 
     if (existingMember) {
       updateMember(existingMember.id, memberData);
+      toast({
+        title: 'Member updated',
+        description: 'Member updated successfully',
+      });
     } else {
       addMember(memberData as any);
+      toast({
+        title: 'Member added',
+        description: 'Member added successfully',
+      });
     }
 
     // Show validation after first attempt to continue

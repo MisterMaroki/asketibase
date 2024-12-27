@@ -1,31 +1,34 @@
 /*
-  # Update applications schema
+ # Update memberships schema
+ 
+ 1. Changes
+ - Remove nationality column from memberships table
+ - Add NOT NULL constraint to membership_id in quotes table
+ 
+ 2. Data Migration
+ - No data migration needed since we're removing a column
+ */
+-- Remove nationality column from memberships
+ALTER TABLE
+  memberships DROP COLUMN IF EXISTS nationality;
 
-  1. Changes
-    - Remove nationality column from applications table
-    - Add NOT NULL constraint to application_id in quotes table
-    
-  2. Data Migration
-    - No data migration needed since we're removing a column
-*/
+-- Add NOT NULL constraint to membership_id in quotes
+ALTER TABLE
+  quotes
+ALTER COLUMN
+  membership_id
+SET
+  NOT NULL;
 
--- Remove nationality column from applications
-ALTER TABLE applications DROP COLUMN IF EXISTS nationality;
+-- Update membership policies to reflect schema changes
+DROP POLICY IF EXISTS "Users can read own memberships" ON memberships;
 
--- Add NOT NULL constraint to application_id in quotes
-ALTER TABLE quotes 
-  ALTER COLUMN application_id SET NOT NULL;
+DROP POLICY IF EXISTS "Users can create memberships" ON memberships;
 
--- Update application policies to reflect schema changes
-DROP POLICY IF EXISTS "Users can read own applications" ON applications;
-DROP POLICY IF EXISTS "Users can create applications" ON applications;
+CREATE POLICY "Users can read own memberships" ON memberships FOR
+SELECT
+  TO authenticated USING (user_id = auth.uid());
 
-CREATE POLICY "Users can read own applications"
-  ON applications FOR SELECT
-  TO authenticated
-  USING (user_id = auth.uid());
-
-CREATE POLICY "Users can create applications"
-  ON applications FOR INSERT
-  TO authenticated
-  WITH CHECK (user_id = auth.uid());
+CREATE POLICY "Users can create memberships" ON memberships FOR
+INSERT
+  TO authenticated WITH CHECK (user_id = auth.uid());

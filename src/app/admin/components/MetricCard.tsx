@@ -44,19 +44,19 @@ export function MetricCards({
         title='Total Applications'
         value={totalApplications}
         icon={FileText}
-        description='Total applications submitted'
+        description='Total memberships submitted'
       />
       <MetricCard
         title='Active Members'
         value={activeMembers}
         icon={Users}
-        description='Total members across all applications'
+        description='Total members across all memberships'
       />
       <MetricCard
         title='Pending Applications'
         value={pendingApplications}
         icon={Activity}
-        description='Applications awaiting review'
+        description=Memberships awaiting review'
       />
       <MetricCard
         title='Recent Alerts'

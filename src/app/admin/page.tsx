@@ -23,7 +23,7 @@ export default async function AdminPage() {
     .select(
       `
     *,
-    applications (
+    memberships (
       *,
       quotes (
         *
@@ -35,8 +35,8 @@ export default async function AdminPage() {
 
   const totalApplications = members?.length || 0;
   const activeMembers =
-    members?.reduce((acc, member) => acc + (member.applications?.status === 'active' ? 1 : 0), 0) || 0;
-  const pendingApplications = members?.filter((member) => member.applications?.status === 'draft').length || 0;
+    members?.reduce((acc, member) => acc + (membermemberships?.status === 'active' ? 1 : 0), 0) || 0;
+  const pendingApplications = members?.filter((member) => membermemberships?.status === 'draft').length || 0;
   const recentAlerts = 0; // TODO: Implement alerts system
 
   return (
@@ -54,19 +54,19 @@ export default async function AdminPage() {
             title='Total Applications'
             value={totalApplications}
             icon={FileText}
-            description='Total applications submitted'
+            description='Total memberships submitted'
           />
           <MetricCard
             title='Active Members'
             value={activeMembers}
             icon={Users}
-            description='Total members across all applications'
+            description='Total members across all memberships'
           />
           <MetricCard
             title='Pending Applications'
             value={pendingApplications}
             icon={Activity}
-            description='Applications awaiting review'
+            description=Memberships awaiting review'
           />
           <MetricCard
             title='Recent Alerts'

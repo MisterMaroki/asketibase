@@ -6,7 +6,7 @@ import { Logo } from '@/components/logo';
 import { ResetButton } from '@/components/reset';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTrigger } from '@/components/ui/sheet';
-import { getUser } from '@/features/membership/actions/get-user';
+import { getUser } from '@/features/membership/controllers/get-user';
 
 import { signOut } from './(auth)/auth-actions';
 

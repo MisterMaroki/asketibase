@@ -25,7 +25,7 @@ import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Applications', href: '/admin/applications', icon: FileText },
+  { name: memberships, href: '/admin/memberships', icon: FileText },
   { name: 'Quotes', href: '/admin/quotes', icon: Receipt },
   { name: 'Members', href: '/admin/members', icon: Users },
   { name: 'Pricing', href: '/admin/pricing', icon: Coins },

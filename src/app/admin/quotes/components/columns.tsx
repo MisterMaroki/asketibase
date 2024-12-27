@@ -15,11 +15,11 @@ export const columns: ColumnDef<any>[] = [
     },
   },
   {
-    accessorKey: 'application_id',
+    accessorKey: 'membership_id',
     header: 'Customer',
     cell: ({ row }) => {
-      const applicationId = row.getValue('application_id') as string;
-      return applicationId || 'N/A';
+      const membershipId = row.getValue('membership_id') as string;
+      return membershipId || 'N/A';
     },
   },
   {

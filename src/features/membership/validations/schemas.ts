@@ -20,6 +20,7 @@ export const addressSchema = z
 // Member schemas
 export const memberSchema = z.object({
   id: z.string().optional(),
+  isPrimary: z.boolean().optional(),
   salutation: z.enum(SALUTATIONS as unknown as [string, ...string[]]),
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
@@ -36,7 +37,7 @@ export const memberSchema = z.object({
 export type MemberSchema = z.infer<typeof memberSchema>;
 
 // Application schemas
-export const applicationSchema = z.object({
+export const membershipSchema = z.object({
   membershipType: z.enum(Object.keys(MEMBERSHIP_TYPES) as [string, ...string[]]),
   coverageType: z.enum(Object.keys(COVERAGE_TYPES) as [string, ...string[]]),
   durationType: z.enum(Object.values(DURATION_TYPES) as [string, ...string[]]),
@@ -49,8 +50,7 @@ export const applicationSchema = z.object({
   medicalState: z.object({
     memberConditions: z.record(z.string(), z.boolean()),
     completedMembers: z.record(z.string(), z.number()),
-    hasDeclinedMember: z.boolean(),
   }),
 });
 
-export type ApplicationSchema = z.infer<typeof applicationSchema>;
+export type ApplicationSchema = z.infer<typeof membershipSchema>;

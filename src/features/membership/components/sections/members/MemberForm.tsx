@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { useToast } from '@/components/ui/use-toast';
+import { isMemberValid } from '@/features/membership/validations/member-fields';
 import type { MemberSchema } from '@/features/membership/validations/schemas';
 import { useCountries } from '@/hooks/use-countries';
 import { useMembershipStore } from '@/store/membership-store';
@@ -16,20 +18,33 @@ interface MemberFormProps {
 export function MemberForm({ existingMember, onSubmit }: MemberFormProps) {
   const { addMember, updateMember, membershipType, members } = useMembershipStore();
   const { countries, isLoading: loadingCountries } = useCountries();
+  const { toast } = useToast();
 
   const [currentMember, setCurrentMember] = useState<MemberSchema | null>(existingMember || null);
 
   const handleFieldChange = (field: string, value: any) => {
+    console.log('🚀 ~ handleFieldChange ~ value:', field, value);
     const memberData = { ...currentMember, [field]: value };
     setCurrentMember(memberData as any);
   };
 
   const handleSubmit = () => {
+    if (!currentMember) return;
+    const valid = isMemberValid(currentMember);
+    if (!valid) return;
     console.log('🚀 ~ handleSubmit ~ existingMember?.id:', existingMember?.id);
     if (existingMember?.id) {
       updateMember(existingMember.id, currentMember as any);
+      toast({
+        title: 'Member updated',
+        description: 'Member updated successfully',
+      });
     } else {
       addMember(currentMember as any);
+      toast({
+        title: 'Member added',
+        description: 'Member added successfully',
+      });
       setCurrentMember(null);
     }
 

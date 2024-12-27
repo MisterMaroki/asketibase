@@ -6,7 +6,7 @@ import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { MEMBER_LIMITS } from '@/constants/membership';
-import { isMemberValid } from '@/features/membership/validations/member-fields';
+import { getMemberValidationErrors, isMemberValid } from '@/features/membership/validations/member-fields';
 import { useMembershipStore } from '@/store/membership-store';
 
 import { MultiMemberManager } from './members/MultiMemberManager';
@@ -24,6 +24,7 @@ export function MemberInformation() {
   const hasValidMemberCount =
     membershipType === 'INDIVIDUAL' ? members.length === 1 : members.length >= 1 && members.length <= maxMembers;
   const allMembersComplete = members.every(isMemberValid);
+  console.log('🚀 ~ MemberInformation ~ allMembersComplete:', allMembersComplete);
   const canContinue = hasValidMemberCount && allMembersComplete;
   const allMembersScreeningComplete = members.every((member) => medicalState.completedMembers[member.id] !== undefined);
   const getMemberRequirementMessage = () => {
@@ -39,7 +40,9 @@ export function MemberInformation() {
       }
     }
     if (!allMembersComplete) {
-      return 'Please complete all required fields for each member';
+      const errors = members.map((member) => getMemberValidationErrors(member)).flat();
+      console.log('🚀 ~ getMemberRequirementMessage ~ errors:', errors);
+      return errors.join('\n');
     }
     return null;
   };

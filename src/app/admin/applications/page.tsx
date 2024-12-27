@@ -9,8 +9,8 @@ import { columns } from '../components/columns';
 import { DataTable } from '../components/DataTable';
 
 export default async function ApplicationsPage() {
-  const applications = await supabaseAdminClient
-    .from('applications')
+  const memberships = await supabaseAdminClient
+    .from('memberships')
     .select(
       `
             *,
@@ -38,7 +38,7 @@ export default async function ApplicationsPage() {
         </CardHeader>
         <CardContent>
           <Suspense fallback={<LoadingState />}>
-            <DataTable columns={columns} data={applications.data || []} />
+            <DataTable columns={columns} data={memberships.data || []} />
           </Suspense>
         </CardContent>
       </Card>

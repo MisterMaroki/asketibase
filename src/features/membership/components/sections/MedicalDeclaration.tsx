@@ -20,7 +20,7 @@ export function MedicalDeclaration() {
     useMembershipStore();
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
   const [showQuestions, setShowQuestions] = useState(false);
-  const { memberConditions, completedMembers, hasDeclinedMember } = medicalState;
+  const { memberConditions, completedMembers } = medicalState;
 
   const isMemberScreeningComplete = (memberId: string) => {
     // Member has no pre-existing conditions (risk level 0)
@@ -49,7 +49,6 @@ export function MedicalDeclaration() {
     setMedicalState({
       ...medicalState,
       completedMembers: { ...medicalState.completedMembers, [memberId]: riskLevel },
-      hasDeclinedMember: riskLevel === 2 ? true : medicalState.hasDeclinedMember,
     });
   };
 
@@ -70,8 +69,6 @@ export function MedicalDeclaration() {
         [memberId]: hasConditions,
       },
       completedMembers: updatedCompletedMembers,
-      // Reset declined status if this was the member that caused it
-      hasDeclinedMember: hasDeclinedMember && completedMembers[memberId] === 2 ? false : hasDeclinedMember,
     });
   };
 
@@ -178,10 +175,12 @@ export function MedicalDeclaration() {
           <div className='flex justify-end space-x-4'>
             <Button
               onClick={handleNext}
-              disabled={!allMembersAnswered || !allMembersScreeningComplete || hasDeclinedMember}
+              disabled={!allMembersAnswered || !allMembersScreeningComplete}
               className='min-w-[200px]'
             >
-              {hasDeclinedMember ? 'Coverage Declined' : 'Continue to Quote'}
+              {Object.values(medicalState.completedMembers).some((riskLevel) => riskLevel === 2)
+                ? 'Coverage Declined'
+                : 'Continue to Quote'}
             </Button>
           </div>
         </div>

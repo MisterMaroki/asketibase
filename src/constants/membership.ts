@@ -34,18 +34,31 @@ export const DURATION_TYPES = {
   single_trip: 'single_trip',
 } as const;
 
+export const DURATION_MAX_TRIP_DURATION = {
+  expat_year: 365,
+  multi_trip: 28,
+  single_trip: 180,
+} as const;
+
+export const getDurationDetails = (durationType: keyof typeof DURATION_TYPES) => {
+  return DURATION_DETAILS[durationType];
+};
+
 export const DURATION_DETAILS = {
   expat_year: {
     title: 'Expat Year',
     description: '365 Days Contiguous Coverage from Membership Start Date - No Maximum Trip Duration',
+    maxTripDuration: DURATION_MAX_TRIP_DURATION.expat_year,
   },
   multi_trip: {
     title: 'Annual Multi-Trip',
     description: 'Multiple Trips a Year, Maximum 28 Day Trip Duration (Maximum 45 Days Aggregated Duration Per Year)',
+    maxTripDuration: DURATION_MAX_TRIP_DURATION.multi_trip,
   },
   single_trip: {
     title: 'Single Trip Cover',
     description: 'Policy Holder Specifies Coverage Duration: Minimum 7 Days; Maximum 180 Day',
+    maxTripDuration: DURATION_MAX_TRIP_DURATION.single_trip,
   },
 } as const;
 

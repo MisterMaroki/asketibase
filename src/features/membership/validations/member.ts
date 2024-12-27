@@ -2,7 +2,7 @@
 
 import type { Member } from '@/store/membership-store';
 
-import { type MemberSchema,memberSchema } from './schemas';
+import { type MemberSchema, memberSchema } from './schemas';
 
 export function validateMember(member: Partial<Member>) {
   try {
@@ -12,12 +12,12 @@ export function validateMember(member: Partial<Member>) {
     if (error instanceof Error) {
       return {
         success: false,
-        errors: JSON.parse(error.message)
+        errors: JSON.parse(error.message),
       };
     }
     return {
       success: false,
-      errors: ['Invalid member data']
+      errors: ['Invalid member data'],
     };
   }
 }
@@ -29,9 +29,8 @@ export function isMemberValid(member: Partial<Member>): boolean {
 
 export function getMemberValidationErrors(member: Partial<Member>): string[] {
   const result = validateMember(member);
+  console.log('🚀 ~ getMemberValidationErrors ~ result:', result);
   if (result.success) return [];
-  
-  return Array.isArray(result.errors) ? 
-    result.errors : 
-    Object.values(result.errors).flat();
+
+  return Array.isArray(result.errors) ? result.errors : Object.values(result.errors).flat();
 }

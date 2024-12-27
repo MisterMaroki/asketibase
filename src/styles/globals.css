@@ -26,8 +26,8 @@
     --radius: 0.5rem;
   }
   ::selection {
-    @apply text-black;
-    @apply bg-cyan-400;
+    @apply text-white;
+    @apply bg-teal-300/20;
   }
   *:focus-visible {
     @apply outline;

@@ -36,6 +36,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang='en' suppressHydrationWarning>
       <body className={cn('font-sans antialiased', inter.className)}>
         {/* <div className='flex h-full  bg-black/60 backdrop-blur-xl'> */}
+        <Toaster />
         <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
           <AppBar />
           <div className='absolute inset-0 bg-black/40 backdrop-blur-xl' />
@@ -45,7 +46,6 @@ export default function RootLayout({ children }: PropsWithChildren) {
           {/* <Footer /> */}
         </div>
         {/* </div> */}
-        <Toaster />
         <Analytics />
         <Background />
       </body>

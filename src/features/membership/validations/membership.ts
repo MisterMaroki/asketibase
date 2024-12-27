@@ -1,8 +1,8 @@
-import { type ApplicationSchema, applicationSchema } from './schemas';
+import { type ApplicationSchema, membershipSchema } from './schemas';
 
 export function validateApplication(data: Partial<ApplicationSchema>) {
   try {
-    applicationSchema.safeParse(data);
+    membershipSchema.safeParse(data);
     return { success: true, errors: null };
   } catch (error) {
     if (error instanceof Error) {
@@ -13,7 +13,7 @@ export function validateApplication(data: Partial<ApplicationSchema>) {
     }
     return {
       success: false,
-      errors: ['Invalid application data'],
+      errors: ['Invalid membership data'],
     };
   }
 }
@@ -25,7 +25,6 @@ export function isApplicationValid(data: Partial<ApplicationSchema>): boolean {
 
 export function getApplicationValidationErrors(data: Partial<ApplicationSchema>) {
   const result = validateApplication(data);
-  console.log('🚀 ~ getApplicationValidationErrors ~ result:', result);
   if (result.success) return [];
 
   return Array.isArray(result.errors) ? result.errors : Object.values(result.errors).flat();
