@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { createClient } from '@/libs/supabase/client';
 
-interface Country {
+export interface Country {
   id: string;
   country: string;
+  country_code: string | null;
   nationality: string | null;
   base_price: number;
 }

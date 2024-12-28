@@ -12,7 +12,10 @@ type UpsertReq = {
 };
 
 export async function upsertPayment(payment: UpsertReq) {
-  const { data, error } = await supabaseAdminClient.from('stripe_payments').upsert(payment).select();
+  const { data, error } = await supabaseAdminClient
+    .from('stripe_payments')
+    .upsert(payment as any)
+    .select();
   if (error) {
     console.error(error);
   }

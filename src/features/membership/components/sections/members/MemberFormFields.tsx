@@ -7,16 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { COUNTRY_CODES, SALUTATIONS } from '@/constants/options';
 import { isMemberValid } from '@/features/membership/validations/member-fields';
+import { Country } from '@/hooks/use-countries';
 
 import { AddressInput } from './AddressInput';
-
-interface Country {
-  id: string;
-  country: string;
-  country_code: string;
-  nationality: string | null;
-  base_price: number;
-}
 
 interface MemberFormFieldsProps {
   member?: any;

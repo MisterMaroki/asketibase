@@ -34,12 +34,12 @@ export async function signInWithEmail(email: string, password: string): Promise<
 
   if (error) {
     console.error(error);
-    return { data: null, error: error };
+    return { data: null, error: error.message, success: false };
   }
 
   redirect('/admin');
 
-  return { data: null, error: null };
+  return { data: null, error: undefined, success: true };
 }
 
 export async function signOut(): Promise<ActionResponse> {
@@ -48,10 +48,10 @@ export async function signOut(): Promise<ActionResponse> {
 
   if (error) {
     console.error(error);
-    return { data: null, error: error };
+    return { data: null, error: error.message, success: false };
   }
 
   redirect('/');
 
-  return { data: null, error: null };
+  return { data: null, error: undefined, success: true };
 }
