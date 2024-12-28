@@ -146,7 +146,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                     <div className='mb-3 flex items-center justify-between'>
                       <div className='text-sm font-medium'>Quote #{quote.id.slice(0, 8)}</div>
                       <Badge variant='outline' className='capitalize'>
-                        {quote.status}
+                        {membership?.status}
                       </Badge>
                     </div>
                     <div className='grid gap-2 text-sm'>
@@ -159,7 +159,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                       <div className='flex justify-between'>
                         <span className='text-muted-foreground'>Tax</span>
                         <span>
-                          {quote.tax} {quote.currency}
+                          {quote.tax_amount} {quote.currency}
                         </span>
                       </div>
                       <Separator className='my-1' />
@@ -182,6 +182,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
 
   const renderMembershipContent = () => {
     if (!data) return null;
+    const membership = data.memberships;
     const members = data.members || [];
     const quotes = data.quotes || [];
 
@@ -285,7 +286,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                         <div className='text-sm text-muted-foreground'>{format(new Date(quote.created_at), 'PPP')}</div>
                       </div>
                       <Badge variant='outline' className='capitalize'>
-                        {quote.status}
+                        {membership?.status}
                       </Badge>
                     </div>
                     <div className='grid gap-2 text-sm'>
@@ -298,7 +299,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                       <div className='flex justify-between'>
                         <span className='text-muted-foreground'>Tax</span>
                         <span>
-                          {quote.tax} {quote.currency}
+                          {quote.tax_amount} {quote.currency}
                         </span>
                       </div>
                       <Separator className='my-1' />
