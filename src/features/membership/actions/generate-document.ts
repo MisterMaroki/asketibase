@@ -102,6 +102,10 @@ export async function generateAndSendDocument(data: DocumentData) {
         },
       ],
     });
+    if (emailResult.error) {
+      console.error('Error sending email:', emailResult.error);
+      throw new Error('Error sending email');
+    }
 
     console.log('Email sent successfully:', emailResult);
     return true;
@@ -142,7 +146,7 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
       coverage_type: COVERAGE_TYPES[quote.memberships.coverage_type as keyof typeof COVERAGE_TYPES] || '',
       start_date: formatDate(new Date(quote.memberships.start_date || '')),
       end_date: formatDate(new Date(quote.memberships.end_date || '')),
-      base_price: formatPriceWithCurrency(quote.base_price, quote.memberships.currency),
+      base_price: formatPriceWithCurrency(quote.base_price + quote.coverage_loading_price, quote.memberships.currency),
       medical_risk_premium: formatPriceWithCurrency(quote.medical_loading_price, quote.memberships.currency),
       discount: formatPriceWithCurrency(quote.discount_amount, quote.memberships.currency),
       subtotal: formatPriceWithCurrency(quote.total_price, quote.memberships.currency),

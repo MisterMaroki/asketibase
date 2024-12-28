@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
+import { getDurationDetails } from '@/constants/membership';
 import { getOrCreateCustomer } from '@/features/membership/controllers/get-or-create-customer';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { getQuoteWithMembership } from '@/features/membership/controllers/quote-memberships';
@@ -21,7 +22,6 @@ export async function createCheckoutAction(id: string) {
   //   redirect(`${getURL()}/membership?step=5&error=true`);
   // }
   const quote = await getQuoteWithMembership(id);
-  console.log('🚀 ~ createCheckoutAction ~ quote:', quote);
   if (!quote) {
     redirect(`${getURL()}/membership?step=5&error=true`);
   }
@@ -35,7 +35,6 @@ export async function createCheckoutAction(id: string) {
   }
 
   const tx = await supabaseAdminClient.from('stripe_payments').select('*').eq('quote_id', quote.id).single();
-  console.log('🚀 ~ createCheckoutAction ~ tx:', tx);
 
   if (quote.memberships.status !== 'draft' && tx.data?.status === 'paid') {
     redirect(`${getURL()}/membership/success?quoteId=${quote.id}&sessionId=${tx.data.session_id}`);
@@ -65,6 +64,9 @@ export async function createCheckoutAction(id: string) {
           currency: quote.currency,
           product_data: {
             name: 'Asketi Membership',
+            description: `Membership Type: ${quote.memberships.membership_type} |
+              Coverage Type: ${quote.memberships.coverage_type} |
+              Duration Type: ${getDurationDetails(quote.memberships.duration_type).title}`,
           },
           unit_amount: quote.total_price * 100,
         },

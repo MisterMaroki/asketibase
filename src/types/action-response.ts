@@ -1,6 +1,5 @@
-export type ActionResponse =
-  | {
-      data: any;
-      error: any;
-    }
-  | undefined;
+export type ActionResponse = {
+  success: boolean;
+  error?: string;
+  data?: any;
+};

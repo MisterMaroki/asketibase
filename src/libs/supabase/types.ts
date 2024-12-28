@@ -139,18 +139,21 @@ export type Database = {
       }
       fires: {
         Row: {
+          active: boolean
           code: string
           created_at: string
           discount_percent: number
           id: string
         }
         Insert: {
+          active?: boolean
           code: string
           created_at?: string
           discount_percent?: number
-          id: string
+          id?: string
         }
         Update: {
+          active?: boolean
           code?: string
           created_at?: string
           discount_percent?: number
@@ -290,7 +293,6 @@ export type Database = {
           id: string
           membership_number: number
           membership_type: string
-          referral_code: string | null
           referral_source: string | null
           start_date: string
           status: Database["public"]["Enums"]["membership_status"]
@@ -306,7 +308,6 @@ export type Database = {
           id?: string
           membership_number?: number
           membership_type: string
-          referral_code?: string | null
           referral_source?: string | null
           start_date: string
           status?: Database["public"]["Enums"]["membership_status"]
@@ -322,7 +323,6 @@ export type Database = {
           id?: string
           membership_number?: number
           membership_type?: string
-          referral_code?: string | null
           referral_source?: string | null
           start_date?: string
           status?: Database["public"]["Enums"]["membership_status"]
@@ -415,6 +415,7 @@ export type Database = {
           medical_loading_price: number
           member_prices: Json
           membership_id: string
+          referral_code_id: string | null
           tax_amount: number
           total_price: number
           total_price_with_tax: number
@@ -429,6 +430,7 @@ export type Database = {
           medical_loading_price: number
           member_prices: Json
           membership_id: string
+          referral_code_id?: string | null
           tax_amount?: number
           total_price: number
           total_price_with_tax?: number
@@ -443,6 +445,7 @@ export type Database = {
           medical_loading_price?: number
           member_prices?: Json
           membership_id?: string
+          referral_code_id?: string | null
           tax_amount?: number
           total_price?: number
           total_price_with_tax?: number
@@ -453,6 +456,13 @@ export type Database = {
             columns: ["membership_id"]
             isOneToOne: false
             referencedRelation: "memberships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_referral_code_id_fkey"
+            columns: ["referral_code_id"]
+            isOneToOne: false
+            referencedRelation: "fires"
             referencedColumns: ["id"]
           },
         ]

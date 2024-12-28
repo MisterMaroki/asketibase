@@ -8,7 +8,7 @@ import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 import { columns } from '../components/columns';
 import { DataTable } from '../components/DataTable';
 
-export default async function ApplicationsPage() {
+export default async function MembershipsPage() {
   const memberships = await supabaseAdminClient
     .from('memberships')
     .select(
@@ -33,7 +33,7 @@ export default async function ApplicationsPage() {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <FileText className='h-5 w-5 text-primary' />
-            Applications
+            Memberships
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -462,14 +462,12 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
             <Text style={styles.paymentValue}>{data.medical_risk_premium}</Text>
           </View>
           <View style={styles.paymentRow}>
-            <Text style={styles.paymentLabel}>Discount Applied</Text>
-            <Text style={styles.paymentValue}>
-              -{data.currency} {data.discount}
-            </Text>
-          </View>
-          <View style={styles.paymentRow}>
             <Text style={styles.paymentLabel}>Subtotal</Text>
             <Text style={styles.paymentValue}>{data.subtotal}</Text>
+          </View>
+          <View style={styles.paymentRow}>
+            <Text style={styles.paymentLabel}>Discount Applied</Text>
+            <Text style={styles.paymentValue}>-{data.discount}</Text>
           </View>
           <View style={styles.paymentRow}>
             <Text style={styles.paymentLabel}>TAX @ 20%</Text>

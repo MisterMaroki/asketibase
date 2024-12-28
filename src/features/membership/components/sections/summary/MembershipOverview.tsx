@@ -1,7 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ClipboardList, Pencil, Ticket } from 'lucide-react';
+import { ClipboardList, Loader2, Pencil, Ticket } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MEMBER_LIMITS } from '@/constants/membership';
 import { REFERRAL_SOURCES } from '@/constants/options';
+import { checkReferralCode } from '@/features/membership/controllers/check-referral-code';
 import { useCountries } from '@/hooks/use-countries';
 import { useMembershipStore } from '@/store/membership-store';
 
@@ -17,6 +19,8 @@ import { MemberSummary } from './MemberSummary';
 
 export function MembershipOverview() {
   const router = useRouter();
+  const [isValidatingCode, setIsValidatingCode] = useState(false);
+  const [validDiscount, setValidDiscount] = useState<number | null>(null);
   const {
     membershipType,
     coverageType,
@@ -33,6 +37,28 @@ export function MembershipOverview() {
     setStep,
     saveOriginalState,
   } = useMembershipStore();
+
+  useEffect(() => {
+    const validateCode = async () => {
+      if (!referralCode) {
+        setValidDiscount(null);
+        return;
+      }
+
+      setIsValidatingCode(true);
+      try {
+        const result = await checkReferralCode(referralCode);
+        setValidDiscount(result?.discount_percent || null);
+      } catch (error) {
+        setValidDiscount(null);
+      } finally {
+        setIsValidatingCode(false);
+      }
+    };
+
+    const debounceTimeout = setTimeout(validateCode, 600);
+    return () => clearTimeout(debounceTimeout);
+  }, [referralCode]);
 
   const isMultiMemberPlan = membershipType && membershipType !== 'INDIVIDUAL';
   const memberLimit = membershipType ? MEMBER_LIMITS[membershipType] : 0;
@@ -115,14 +141,26 @@ export function MembershipOverview() {
               <Ticket className='h-4 w-4 text-primary' />
               Referral Details
             </h3>
-            <div className='flex gap-4'>
-              <Input
-                placeholder='Enter referral code (optional)'
-                value={referralCode}
-                onChange={(e) => setReferralCode(e.target.value)}
-                className='max-w-xs'
-              />
-              {referralCode && <p className='flex items-center text-sm text-primary'>10% discount applied</p>}
+            <div className='flex items-center gap-4'>
+              <div className='relative max-w-xs'>
+                <Input
+                  placeholder='Enter referral code'
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
+                  className='pr-8'
+                />
+                {isValidatingCode && (
+                  <div className='absolute right-2 top-1/2 -translate-y-1/2'>
+                    <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+                  </div>
+                )}
+              </div>
+              {validDiscount !== null && (
+                <p className='flex items-center text-sm text-primary'>{validDiscount}% discount will be applied</p>
+              )}
+              {referralCode && validDiscount === null && !isValidatingCode && (
+                <p className='flex items-center text-sm text-destructive'>Invalid referral code</p>
+              )}
             </div>
 
             <div className='mt-4 space-y-2'>

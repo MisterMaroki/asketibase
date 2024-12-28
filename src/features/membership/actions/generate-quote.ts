@@ -7,6 +7,7 @@ import { getUser } from '@/features/membership/controllers/get-user';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 import { getURL } from '@/utils/get-url';
 
+import { checkReferralCode } from '../controllers/check-referral-code';
 import { createMember } from '../controllers/members';
 import { validateApplication } from '../validations/membership';
 import { ApplicationSchema } from '../validations/schemas';
@@ -16,6 +17,17 @@ export async function generateQuoteAction(data: ApplicationSchema) {
   if (!valid.success) {
     throw new Error(JSON.stringify(valid.errors));
   }
+
+  // Check referral code if provided
+  let discountObject = null;
+  if (data.referralCode && data.referralCode.length > 5) {
+    const referralCode = await checkReferralCode(data.referralCode);
+    if (!referralCode) {
+      discountObject = null;
+    }
+    discountObject = referralCode;
+  }
+
   // 1. Get the user from session
   const user = await getUser();
 
@@ -98,8 +110,8 @@ export async function generateQuoteAction(data: ApplicationSchema) {
     .map((member, i) => {
       // Get base price for member's country
       const countryOfRes = countryPrices.find((cp) => cp.id === member.countryOfResidence);
-      const countryNationality = countryPrices.find((cp) => cp.id === member.nationality);
       const countryPrice = countryOfRes?.base_price || 0;
+      const countryNationality = countryPrices.find((cp) => cp.id === member.nationality);
 
       // Calculate age factor
       const age = calculateAge(new Date(member.dateOfBirth));
@@ -118,22 +130,24 @@ export async function generateQuoteAction(data: ApplicationSchema) {
       const dailyTotal = countryPrice + ageFactor + coverageFactor + medicalFactor;
       const memberTotal = dailyTotal * numberOfDays;
 
-      createMember({
-        membership_id: membership.id,
-        first_name: member.firstName,
-        last_name: member.lastName,
-        date_of_birth: member.dateOfBirth,
-        salutation: member.salutation,
-        gender: member.gender,
-        email: member.email,
-        contact_number: member.contactNumber,
-        address: member.address,
-        country_of_residence: countryOfRes?.country as string,
-        country_code: member.countryCode,
-        is_primary: !!member.isPrimary,
-        nationality: countryNationality?.nationality as string,
-        has_conditions: !!riskLevel,
-      });
+      if (memberTotal > 0) {
+        createMember({
+          membership_id: membership.id,
+          first_name: member.firstName,
+          last_name: member.lastName,
+          date_of_birth: member.dateOfBirth,
+          salutation: member.salutation,
+          gender: member.gender,
+          email: member.email,
+          contact_number: member.contactNumber,
+          address: member.address,
+          country_of_residence: countryOfRes?.country as string,
+          country_code: member.countryCode,
+          is_primary: !!member.isPrimary,
+          nationality: countryNationality?.nationality as string,
+          has_conditions: !!riskLevel,
+        });
+      }
 
       return {
         memberId: member.id,
@@ -150,8 +164,14 @@ export async function generateQuoteAction(data: ApplicationSchema) {
 
   // Calculate total quote price
   const totalPrice = memberPrices.reduce((sum, mp) => sum + mp.total, 0);
-  const totalTax = totalPrice * 0.2;
-  const totalPriceWithTax = totalPrice + totalTax;
+  const discountAmount = discountObject ? (totalPrice * discountObject.discount_percent) / 100 : 0;
+  const priceAfterDiscount = totalPrice - discountAmount;
+  const totalTax = priceAfterDiscount * 0.2;
+  const totalPriceWithTax = priceAfterDiscount + totalTax;
+
+  if (!totalPriceWithTax || isNaN(totalPriceWithTax) || totalPriceWithTax === 0) {
+    throw new Error('Total price with tax is 0');
+  }
 
   // Create quote record
   const { data: quote, error: quoteError } = await supabaseAdminClient
@@ -162,11 +182,15 @@ export async function generateQuoteAction(data: ApplicationSchema) {
       member_prices: memberPrices,
       base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice * numberOfDays, 0),
       coverage_loading_price: memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0),
-      medical_loading_price: memberPrices.reduce((sum, mp) => sum + mp.medicalFactor * numberOfDays, 0),
+      medical_loading_price: memberPrices.reduce(
+        (sum, mp) => sum + (mp.medicalFactor + mp.ageFactor) * numberOfDays,
+        0
+      ),
       total_price: totalPrice,
       tax_amount: totalTax,
       total_price_with_tax: totalPriceWithTax,
-      discount_amount: 0,
+      discount_amount: discountAmount,
+      referral_code_id: discountObject?.id || null,
     })
     .select()
     .single();
@@ -185,8 +209,9 @@ export async function generateQuoteAction(data: ApplicationSchema) {
     members: memberPrices,
     totalPremium: totalPrice,
     taxAmount: totalTax,
-    discountApplied: 0,
+    discountApplied: discountAmount,
     finalPremium: totalPriceWithTax,
+    referralCode: data.referralCode || '',
   };
 }
 

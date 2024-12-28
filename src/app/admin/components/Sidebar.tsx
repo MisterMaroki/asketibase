@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Percent,
   Receipt,
   Settings,
   Shield,
@@ -25,11 +26,12 @@ import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: memberships, href: '/admin/memberships', icon: FileText },
+  { name: 'Memberships', href: '/admin/memberships', icon: FileText },
   { name: 'Quotes', href: '/admin/quotes', icon: Receipt },
   { name: 'Members', href: '/admin/members', icon: Users },
   { name: 'Pricing', href: '/admin/pricing', icon: Coins },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+  { name: 'Discount Codes', href: '/admin/discount-codes', icon: Percent },
+  // { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> }) {

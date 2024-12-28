@@ -5,10 +5,10 @@ import { Tables } from '@/libs/supabase/types';
 
 import { columns } from './columns';
 
-interface CountryBasePricesTableProps {
-  data: Tables<'country_base_prices'>[];
+interface DiscountCodesTableProps {
+  data: Tables<'fires'>[];
 }
 
-export function CountryBasePricesTable({ data }: CountryBasePricesTableProps) {
+export function DiscountCodesTable({ data }: DiscountCodesTableProps) {
   return <DataTable columns={columns} data={data} />;
 }

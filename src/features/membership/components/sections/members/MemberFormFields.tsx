@@ -13,6 +13,7 @@ import { AddressInput } from './AddressInput';
 interface Country {
   id: string;
   country: string;
+  country_code: string;
   nationality: string | null;
   base_price: number;
 }

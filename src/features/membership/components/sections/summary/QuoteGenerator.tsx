@@ -35,6 +35,7 @@ interface QuoteType {
   totalPremium: number;
   taxAmount: number;
   discountApplied: number;
+  referralCode: string;
   finalPremium: number;
 }
 

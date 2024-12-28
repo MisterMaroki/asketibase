@@ -1,7 +1,11 @@
+'use server';
+
 import Stripe from 'stripe';
 
 import { getQuoteWithMembership, updateApplication } from '../controllers/quote-memberships';
 import { upsertPayment } from '../controllers/upsert-payment';
+
+import { generateIfNotSent } from './generate-document';
 
 export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
   console.log('🚀 ~ handlePaid ~ checkoutSession:', checkoutSession);
@@ -36,6 +40,8 @@ export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
     quote_id: quote.id,
     status: 'paid',
   });
+
+  generateIfNotSent(quote.id);
 
   return payment;
 }

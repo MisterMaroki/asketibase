@@ -1,12 +1,17 @@
+import { Suspense } from 'react';
 import { Coins } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LoadingState } from '@/features/membership/components/LoadingState';
 
 import { CountryBasePricesTable } from './components/CountryBasePricesTable';
+import { getCountryBasePrices } from './actions';
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const prices = await getCountryBasePrices();
+
   return (
-    <main className='container mx-auto '>
+    <main className='container mx-auto'>
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
@@ -15,7 +20,9 @@ export default function PricingPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CountryBasePricesTable />
+          <Suspense fallback={<LoadingState />}>
+            <CountryBasePricesTable data={prices} />
+          </Suspense>
         </CardContent>
       </Card>
     </main>

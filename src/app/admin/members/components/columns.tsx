@@ -3,9 +3,20 @@
 import { format } from 'date-fns';
 
 import { Badge } from '@/components/ui/badge';
+import { Tables } from '@/libs/supabase/types';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const columns: ColumnDef<any>[] = [
+import { MemberActions } from './MemberActions';
+
+type Member = Tables<'members'> & {
+  memberships: {
+    membership_type: string;
+    coverage_type: string;
+    status: string;
+  } | null;
+};
+
+export const columns: ColumnDef<Member>[] = [
   {
     accessorKey: 'first_name',
     header: 'First Name',
@@ -30,15 +41,17 @@ export const columns: ColumnDef<any>[] = [
     header: 'Nationality',
   },
   {
-    accessorKey: memberships,
+    accessorKey: 'memberships',
     header: 'Coverage',
     cell: ({ row }) => {
-      const membership = row.getValue(memberships) as any;
+      const membership = row.getValue('memberships') as Member['memberships'];
+      if (!membership) return null;
+
       return (
         <div className='space-y-1'>
-          <Badge variant='outline'>{membership?.membership_type}</Badge>
+          <Badge variant='outline'>{membership.membership_type}</Badge>
           <Badge variant='outline' className='ml-2'>
-            {membership?.coverage_type}
+            {membership.coverage_type}
           </Badge>
         </div>
       );
@@ -50,5 +63,9 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return row.getValue('is_primary') ? <Badge>Primary</Badge> : <Badge variant='secondary'>Dependent</Badge>;
     },
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <MemberActions member={row.original} />,
   },
 ];

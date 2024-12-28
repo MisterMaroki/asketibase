@@ -56,7 +56,7 @@ export function MetricCards({
         title='Pending Applications'
         value={pendingApplications}
         icon={Activity}
-        description=Memberships awaiting review'
+        description='Memberships awaiting review'
       />
       <MetricCard
         title='Recent Alerts'

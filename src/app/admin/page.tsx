@@ -35,8 +35,8 @@ export default async function AdminPage() {
 
   const totalApplications = members?.length || 0;
   const activeMembers =
-    members?.reduce((acc, member) => acc + (membermemberships?.status === 'active' ? 1 : 0), 0) || 0;
-  const pendingApplications = members?.filter((member) => membermemberships?.status === 'draft').length || 0;
+    members?.reduce((acc, member) => acc + (member.memberships?.status === 'active' ? 1 : 0), 0) || 0;
+  const pendingApplications = members?.filter((member) => member.memberships?.status === 'draft').length || 0;
   const recentAlerts = 0; // TODO: Implement alerts system
 
   return (
