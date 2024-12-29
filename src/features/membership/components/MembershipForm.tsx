@@ -37,7 +37,7 @@ export function MembershipForm() {
     <div className='container relative mx-auto max-w-3xl px-4 py-8'>
       <StepIndicator currentStep={currentStep} steps={steps} />
 
-      <div className='rounded-xl bg-card/30 p-6 shadow-lg backdrop-blur-sm'>
+      <div className='rounded-xl  shadow-lg backdrop-blur-sm'>
         {currentStep === 1 && <EligibilitySection />}
         {currentStep === 2 && <MembershipDetails />}
         {currentStep === 3 && <MemberInformation />}

@@ -81,9 +81,9 @@ export function MembershipOverview() {
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent className='grid gap-4 sm:grid-cols-2'>
-        <div className='col-span-2 w-full space-y-2 '>
-          <div className='flex items-center justify-between'>
+      <CardContent className='grid gap-6'>
+        <div className='w-full space-y-2'>
+          <div className='flex flex-wrap items-center justify-between gap-2'>
             <h3 className='text-sm font-medium'>Coverage Details</h3>
             <Button
               variant='ghost'
@@ -92,7 +92,7 @@ export function MembershipOverview() {
               onClick={() => handleEdit(2)}
             >
               <Pencil className='mr-1 h-4 w-4' />
-              Edit
+              <span className='hidden sm:inline'>Edit</span>
             </Button>
           </div>
           <CoverageDetails
@@ -105,8 +105,8 @@ export function MembershipOverview() {
           />
         </div>
 
-        <div className='pt-4 sm:col-span-2'>
-          <div className='mb-2 flex items-center justify-between'>
+        <div className='space-y-3'>
+          <div className='flex flex-wrap items-center justify-between gap-2'>
             <h3 className='text-sm font-medium'>Members</h3>
             <Button
               variant='ghost'
@@ -115,7 +115,7 @@ export function MembershipOverview() {
               onClick={() => handleEdit(3)}
             >
               <Pencil className='mr-1 h-4 w-4' />
-              Edit
+              <span className='hidden sm:inline'>Edit</span>
             </Button>
           </div>
           <Card className='divide-y'>
@@ -135,14 +135,14 @@ export function MembershipOverview() {
           )}
         </div>
 
-        <div className='border-t pt-4 sm:col-span-2'>
+        <div className='border-t pt-4'>
           <div className='space-y-4'>
             <h3 className='flex items-center gap-2 text-sm font-medium'>
               <Ticket className='h-4 w-4 text-primary' />
               Referral Details
             </h3>
-            <div className='flex items-center gap-4'>
-              <div className='relative max-w-xs'>
+            <div className='flex flex-col items-start gap-4 sm:flex-row sm:items-center'>
+              <div className='relative w-full sm:max-w-xs'>
                 <Input
                   placeholder='Enter referral code'
                   value={referralCode}
@@ -169,7 +169,7 @@ export function MembershipOverview() {
                 <span className='text-sm text-destructive'>*</span>
               </div>
               <Select value={referralSource || ''} onValueChange={setReferralSource}>
-                <SelectTrigger className='max-w-xs'>
+                <SelectTrigger className='w-full sm:max-w-xs'>
                   <SelectValue placeholder='Please select' />
                 </SelectTrigger>
                 <SelectContent>
@@ -183,7 +183,7 @@ export function MembershipOverview() {
               {referralSource === 'Other (please specify)' && (
                 <Input
                   placeholder='Please specify how you heard about us'
-                  className='mt-2 max-w-xs'
+                  className='mt-2 w-full sm:max-w-xs'
                   value={referralSource === 'Other (please specify)' ? '' : undefined}
                   onChange={(e) => setReferralSource(e.target.value)}
                   required

@@ -67,7 +67,15 @@ export function MedicalQuestionnaire({ memberId, memberName, onComplete }: Medic
 
   // when answers changes, scroll down a bit
   useEffect(() => {
-    window.scrollBy(0, 250);
+    if (answers) {
+      // Wait for next tick to ensure DOM is fully rendered
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
+      }, 100);
+    }
   }, [answers]);
 
   const handleAnswer = (answer: boolean) => {

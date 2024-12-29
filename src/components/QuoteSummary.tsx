@@ -109,13 +109,13 @@ export default function QuoteSummary({
                         <TableRow>
                           <TableCell className='text-gray-400'>Base Premium</TableCell>
                           <TableCell className='text-right'>
-                            {currency} {formatPrice(member.countryPrice)}
+                            {currency} {formatPrice(member.countryPrice + member.coverageFactor * daysDifference)}
                           </TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className='text-gray-400'>Medical Premium</TableCell>
                           <TableCell className='text-right'>
-                            {currency} {formatPrice(member.medicalFactor)}
+                            {currency} {formatPrice((member.medicalFactor + member.ageFactor) * daysDifference)}
                           </TableCell>
                         </TableRow>
                         <TableRow>
