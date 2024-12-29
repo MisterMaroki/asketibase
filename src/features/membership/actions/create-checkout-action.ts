@@ -54,6 +54,7 @@ export async function createCheckoutAction(id: string) {
     // billing_address_collection: 'required',
     customer,
     mode: 'payment',
+
     metadata: {
       quoteId: quote.id,
       userId: primaryMember.id,
@@ -68,11 +69,12 @@ export async function createCheckoutAction(id: string) {
               Coverage Type: ${quote.memberships.coverage_type} |
               Duration Type: ${getDurationDetails(quote.memberships.duration_type).title}`,
           },
-          unit_amount: quote.total_price * 100,
+          unit_amount: quote.total_price_with_tax * 100,
         },
         quantity: 1,
       },
     ],
+
     success_url: `${getURL()}/membership/success?quoteId=${quote.id}&sessionId={CHECKOUT_SESSION_ID}`,
     cancel_url: `${getURL()}/membership?step=5&error=true`,
   });

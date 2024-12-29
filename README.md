@@ -2,6 +2,11 @@
 
 ## Critical API Keys and Environment Variables
 
+1. Resend setup with correct domain
+2. Stripe setup with correct webhook listener and redirect urls
+3. Google maps api key usage
+4.
+
 Make sure to set up the following environment variables in your `.env.local` file:
 
 ### Supabase Configuration

@@ -65,6 +65,18 @@ export async function generateQuoteAction(data: ApplicationSchema) {
     .select('*')
     .in('id', Array.from(new Set(data.members.map((m) => [m.countryOfResidence, m.nationality]).flat())));
 
+  const declinedCountries = countryPrices?.filter((cp) => !cp.base_price);
+  if (declinedCountries && declinedCountries.length > 0) {
+    const areDeclinedCountriesACountryOfResidence = declinedCountries.some(
+      (cp) => cp.id === data.members.find((m) => m.countryOfResidence === cp.id)?.countryOfResidence
+    );
+    if (areDeclinedCountriesACountryOfResidence) {
+      throw new Error(
+        'Error: These countries are not supported: ' + declinedCountries.map((cp) => cp.country).join(', ')
+      );
+    }
+  }
+
   if (countryError) throw new Error('Failed to fetch country prices');
 
   // Get age factors
@@ -127,8 +139,8 @@ export async function generateQuoteAction(data: ApplicationSchema) {
       // Get medical factor if applicable
       const medicalFactor = riskLevel ? medicalFactors.find((mf) => mf.risk_level === riskLevel)?.daily_rate || 0 : 0;
 
-      const dailyTotal = countryPrice + ageFactor + coverageFactor + medicalFactor;
-      const memberTotal = dailyTotal * numberOfDays;
+      const dailyTotal = ageFactor + coverageFactor + medicalFactor;
+      const memberTotal = dailyTotal * numberOfDays + countryPrice;
 
       if (memberTotal > 0) {
         createMember({
@@ -180,7 +192,7 @@ export async function generateQuoteAction(data: ApplicationSchema) {
       membership_id: membership.id,
       currency: data.currency,
       member_prices: memberPrices,
-      base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice * numberOfDays, 0),
+      base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice, 0),
       coverage_loading_price: memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0),
       medical_loading_price: memberPrices.reduce(
         (sum, mp) => sum + (mp.medicalFactor + mp.ageFactor) * numberOfDays,
