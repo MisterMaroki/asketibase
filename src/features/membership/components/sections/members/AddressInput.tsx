@@ -11,11 +11,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { getPlaceDetails, getPlacesPredictions } from '@/features/membership/actions/get-places-predictions';
 import { getAddressError } from '@/features/membership/validations/address';
 import { useMembershipStore } from '@/store/membership-store';
+import { cn } from '@/utils/cn';
 
 interface AddressInputProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  className?: string;
 }
 
 interface Prediction {
@@ -23,7 +25,7 @@ interface Prediction {
   placeId: string;
 }
 
-export function AddressInput({ value, onChange, disabled }: AddressInputProps) {
+export function AddressInput({ value, onChange, disabled, className }: AddressInputProps) {
   const [isManual, setIsManual] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -78,7 +80,7 @@ export function AddressInput({ value, onChange, disabled }: AddressInputProps) {
                 variant='outline'
                 role='combobox'
                 aria-expanded={open}
-                className='w-full justify-between'
+                className={cn('w-full justify-between', className)}
                 disabled={disabled}
               >
                 {value ? (
@@ -139,7 +141,7 @@ export function AddressInput({ value, onChange, disabled }: AddressInputProps) {
             autoComplete='street-address'
             required
             disabled={disabled}
-            className={error ? 'border-destructive' : ''}
+            className={cn(error ? 'border-destructive' : '', className)}
           />
           {error && <p className='text-xs text-destructive'>{error}</p>}
         </div>

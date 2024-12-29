@@ -16,14 +16,13 @@ interface MemberFormProps {
 }
 
 export function MemberForm({ existingMember, onSubmit }: MemberFormProps) {
-  const { addMember, updateMember, membershipType, members } = useMembershipStore();
+  const { addMember, updateMember } = useMembershipStore();
   const { countries, isLoading: loadingCountries } = useCountries();
   const { toast } = useToast();
 
   const [currentMember, setCurrentMember] = useState<MemberSchema | null>(existingMember || null);
 
   const handleFieldChange = (field: string, value: any) => {
-    console.log('🚀 ~ handleFieldChange ~ value:', field, value);
     const memberData = { ...currentMember, [field]: value };
     setCurrentMember(memberData as any);
   };
@@ -32,7 +31,7 @@ export function MemberForm({ existingMember, onSubmit }: MemberFormProps) {
     if (!currentMember) return;
     const valid = isMemberValid(currentMember);
     if (!valid) return;
-    console.log('🚀 ~ handleSubmit ~ existingMember?.id:', existingMember?.id);
+
     if (existingMember?.id) {
       updateMember(existingMember.id, currentMember as any);
       toast({

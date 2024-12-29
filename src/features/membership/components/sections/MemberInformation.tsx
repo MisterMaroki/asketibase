@@ -68,12 +68,12 @@ export function MemberInformation() {
     <div className='space-y-6'>
       {membershipType === 'INDIVIDUAL' ? <SingleMemberForm /> : <MultiMemberManager />}
 
-      {!canContinue && (
+      {/* {!canContinue && (
         <Alert variant='destructive'>
           <AlertCircle className='h-4 w-4' />
           <AlertDescription>{getMemberRequirementMessage()}</AlertDescription>
         </Alert>
-      )}
+      )} */}
 
       <PrivacyDisclaimer />
 

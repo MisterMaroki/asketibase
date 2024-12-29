@@ -49,7 +49,6 @@ export function BlackDOBInput({ value, onChange, className }: BlackDOBInputProps
       setMonth(selectedDate.getMonth());
       setDecade(Math.floor(selectedDate.getFullYear() / 10) * 10);
     } else {
-      // onChange(undefined);
       setYear(undefined);
       setMonth(undefined);
       setDecade(undefined);
@@ -76,7 +75,7 @@ export function BlackDOBInput({ value, onChange, className }: BlackDOBInputProps
   };
 
   return (
-    <div className={className}>
+    <div>
       <Popover open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <Button
@@ -84,7 +83,8 @@ export function BlackDOBInput({ value, onChange, className }: BlackDOBInputProps
             className={cn(
               'w-full justify-start text-left font-normal',
               'transition-all duration-300 ease-in-out',
-              !date && 'text-gray-400'
+              !date && 'text-gray-400',
+              className
             )}
           >
             <CalendarIcon className='mr-2 h-4 w-4' />
