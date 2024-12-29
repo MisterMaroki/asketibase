@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { subYears } from 'date-fns';
 
 import { BlackDOBInput } from '@/components/dob-input';
@@ -30,19 +31,29 @@ export function MemberFormFields({
   countries = [],
   isLoadingCountries = false,
 }: MemberFormFieldsProps) {
-  const MAX_AGE = 85;
-  const minDate = subYears(new Date(), MAX_AGE);
-  const maxDate = new Date();
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+  const [isSubmitAttempted, setIsSubmitAttempted] = useState(false);
+
+  const handleFieldChange = (field: string, value: any) => {
+    setTouchedFields((prev) => new Set(prev).add(field));
+    onFieldChange(field, value);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitAttempted(true);
     onSubmit?.();
   };
 
   const errors = getMemberValidationErrors(member || {});
-  const getFieldError = (field: string) => errors.find((error) => error.toLowerCase().includes(field.toLowerCase()));
+  const getFieldError = (field: string) =>
+    errors.find((error) => {
+      return error.toLowerCase().includes(field.toLowerCase());
+    });
 
-  const isFieldInvalid = (field: string) => !!getFieldError(field);
+  const shouldShowError = (field: string) => {
+    return (touchedFields.has(field) || isSubmitAttempted) && !!getFieldError(field);
+  };
 
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
@@ -52,10 +63,10 @@ export function MemberFormFields({
           <Label htmlFor='salutation'>Salutation</Label>
           <Select
             value={member?.salutation || ''}
-            onValueChange={(value) => onFieldChange('salutation', value)}
+            onValueChange={(value) => handleFieldChange('salutation', value)}
             required
           >
-            <SelectTrigger id='salutation' className={cn(isFieldInvalid('salutation') && 'border-destructive')}>
+            <SelectTrigger id='salutation' className={cn(shouldShowError('salutation') && 'border-destructive')}>
               <SelectValue placeholder='Select' />
             </SelectTrigger>
             <SelectContent>
@@ -66,19 +77,19 @@ export function MemberFormFields({
               ))}
             </SelectContent>
           </Select>
-          {isFieldInvalid('salutation') && <p className='text-sm text-destructive'>{getFieldError('salutation')}</p>}
+          {shouldShowError('salutation') && <p className='text-sm text-destructive'>{getFieldError('salutation')}</p>}
         </div>
         <div className='space-y-2 sm:col-span-2'>
           <Label htmlFor='firstName'>First Name</Label>
           <Input
             id='firstName'
             value={member?.firstName || ''}
-            onChange={(e) => onFieldChange('firstName', e.target.value)}
+            onChange={(e) => handleFieldChange('firstName', e.target.value)}
             required
             autoComplete='given-name'
-            className={cn(isFieldInvalid('first name') && 'border-destructive')}
+            className={cn(shouldShowError('first name') && 'border-destructive')}
           />
-          {isFieldInvalid('first name') && <p className='text-sm text-destructive'>{getFieldError('first name')}</p>}
+          {shouldShowError('first name') && <p className='text-sm text-destructive'>{getFieldError('first name')}</p>}
         </div>
       </div>
 
@@ -88,12 +99,12 @@ export function MemberFormFields({
         <Input
           id='lastName'
           value={member?.lastName || ''}
-          onChange={(e) => onFieldChange('lastName', e.target.value)}
+          onChange={(e) => handleFieldChange('lastName', e.target.value)}
           required
           autoComplete='family-name'
-          className={cn(isFieldInvalid('last name') && 'border-destructive')}
+          className={cn(shouldShowError('last name') && 'border-destructive')}
         />
-        {isFieldInvalid('last name') && <p className='text-sm text-destructive'>{getFieldError('last name')}</p>}
+        {shouldShowError('last name') && <p className='text-sm text-destructive'>{getFieldError('last name')}</p>}
       </div>
 
       {/* Date of Birth and Gender fields */}
@@ -102,10 +113,10 @@ export function MemberFormFields({
           <Label htmlFor='dob'>Date of Birth</Label>
           <BlackDOBInput
             value={member?.dateOfBirth || null}
-            onChange={(date) => onFieldChange('dateOfBirth', date)}
-            className={cn(isFieldInvalid('date of birth') && 'border-destructive')}
+            onChange={(date) => handleFieldChange('dateOfBirth', date)}
+            className={cn(shouldShowError('date of birth') && 'border-destructive')}
           />
-          {isFieldInvalid('date of birth') && (
+          {shouldShowError('date of birth') && (
             <p className='text-sm text-destructive'>{getFieldError('date of birth')}</p>
           )}
         </div>
@@ -116,21 +127,21 @@ export function MemberFormFields({
             <Button
               type='button'
               variant={member?.gender === 'male' ? 'sexy' : 'outline'}
-              onClick={() => onFieldChange('gender', 'male')}
-              className={cn('flex items-center space-x-2', isFieldInvalid('gender') && 'border-destructive')}
+              onClick={() => handleFieldChange('gender', 'male')}
+              className={cn('flex items-center space-x-2', shouldShowError('gender') && 'border-destructive')}
             >
               Male
             </Button>
             <Button
               type='button'
               variant={member?.gender === 'female' ? 'sexy' : 'outline'}
-              onClick={() => onFieldChange('gender', 'female')}
-              className={cn('flex items-center space-x-2', isFieldInvalid('gender') && 'border-destructive')}
+              onClick={() => handleFieldChange('gender', 'female')}
+              className={cn('flex items-center space-x-2', shouldShowError('gender') && 'border-destructive')}
             >
               Female
             </Button>
           </div>
-          {isFieldInvalid('gender') && <p className='text-sm text-destructive'>{getFieldError('gender')}</p>}
+          {shouldShowError('gender') && <p className='text-sm text-destructive'>{getFieldError('gender')}</p>}
         </div>
       </div>
 
@@ -139,11 +150,11 @@ export function MemberFormFields({
         <Label htmlFor='nationality'>Nationality</Label>
         <Select
           value={member?.nationality || ''}
-          onValueChange={(value) => onFieldChange('nationality', value)}
+          onValueChange={(value) => handleFieldChange('nationality', value)}
           disabled={isLoadingCountries}
           required
         >
-          <SelectTrigger id='nationality' className={cn(isFieldInvalid('nationality') && 'border-destructive')}>
+          <SelectTrigger id='nationality' className={cn(shouldShowError('nationality') && 'border-destructive')}>
             <SelectValue placeholder={isLoadingCountries ? 'Loading...' : 'Select nationality'} />
           </SelectTrigger>
           <SelectContent>
@@ -156,7 +167,7 @@ export function MemberFormFields({
               ))}
           </SelectContent>
         </Select>
-        {isFieldInvalid('nationality') && <p className='text-sm text-destructive'>{getFieldError('nationality')}</p>}
+        {shouldShowError('nationality') && <p className='text-sm text-destructive'>{getFieldError('nationality')}</p>}
       </div>
 
       {/* Contact Information */}
@@ -165,10 +176,10 @@ export function MemberFormFields({
           <Label htmlFor='countryCode'>Country Code</Label>
           <Select
             value={member?.countryCode || ''}
-            onValueChange={(value) => onFieldChange('countryCode', value)}
+            onValueChange={(value) => handleFieldChange('countryCode', value)}
             required
           >
-            <SelectTrigger id='countryCode' className={cn(isFieldInvalid('country code') && 'border-destructive')}>
+            <SelectTrigger id='countryCode' className={cn(shouldShowError('country code') && 'border-destructive')}>
               <SelectValue placeholder='Select' />
             </SelectTrigger>
             <SelectContent>
@@ -179,7 +190,7 @@ export function MemberFormFields({
               ))}
             </SelectContent>
           </Select>
-          {isFieldInvalid('country code') && (
+          {shouldShowError('country code') && (
             <p className='text-sm text-destructive'>{getFieldError('country code')}</p>
           )}
         </div>
@@ -189,12 +200,12 @@ export function MemberFormFields({
             id='contactNumber'
             type='tel'
             value={member?.contactNumber || ''}
-            onChange={(e) => onFieldChange('contactNumber', e.target.value)}
+            onChange={(e) => handleFieldChange('contactNumber', e.target.value)}
             required
             autoComplete='tel'
-            className={cn(isFieldInvalid('contact number') && 'border-destructive')}
+            className={cn(shouldShowError('contact number') && 'border-destructive')}
           />
-          {isFieldInvalid('contact number') && (
+          {shouldShowError('contact number') && (
             <p className='text-sm text-destructive'>{getFieldError('contact number')}</p>
           )}
         </div>
@@ -207,12 +218,12 @@ export function MemberFormFields({
           id='email'
           type='email'
           value={member?.email || ''}
-          onChange={(e) => onFieldChange('email', e.target.value)}
+          onChange={(e) => handleFieldChange('email', e.target.value)}
           required
           autoComplete='email'
-          className={cn(isFieldInvalid('email') && 'border-destructive')}
+          className={cn(shouldShowError('email') && 'border-destructive')}
         />
-        {isFieldInvalid('email') && <p className='text-sm text-destructive'>{getFieldError('email')}</p>}
+        {shouldShowError('email') && <p className='text-sm text-destructive'>{getFieldError('email')}</p>}
       </div>
 
       {/* Country of Residence field */}
@@ -220,13 +231,13 @@ export function MemberFormFields({
         <Label htmlFor='countryOfResidence'>Country of Residence</Label>
         <Select
           value={member?.countryOfResidence || ''}
-          onValueChange={(value) => onFieldChange('countryOfResidence', value)}
+          onValueChange={(value) => handleFieldChange('countryOfResidence', value)}
           disabled={isLoadingCountries}
           required
         >
           <SelectTrigger
             id='countryOfResidence'
-            className={cn(isFieldInvalid('country of residence') && 'border-destructive')}
+            className={cn(shouldShowError('country of residence') && 'border-destructive')}
           >
             <SelectValue placeholder={isLoadingCountries ? 'Loading...' : 'Select country'} />
           </SelectTrigger>
@@ -238,7 +249,7 @@ export function MemberFormFields({
             ))}
           </SelectContent>
         </Select>
-        {isFieldInvalid('country of residence') && (
+        {shouldShowError('country of residence') && (
           <p className='text-sm text-destructive'>{getFieldError('country of residence')}</p>
         )}
       </div>
@@ -247,10 +258,10 @@ export function MemberFormFields({
       <div className='space-y-2'>
         <AddressInput
           value={member?.address || ''}
-          onChange={(value) => onFieldChange('address', value)}
-          className={cn(isFieldInvalid('address') && 'border-destructive')}
+          onChange={(value) => handleFieldChange('address', value)}
+          className={cn(shouldShowError('address') && 'border-destructive')}
         />
-        {isFieldInvalid('address') && <p className='text-sm text-destructive'>{getFieldError('address')}</p>}
+        {shouldShowError('address') && <p className='text-sm text-destructive'>{getFieldError('address')}</p>}
       </div>
 
       {showSubmitButton && (
