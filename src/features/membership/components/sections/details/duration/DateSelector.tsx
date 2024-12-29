@@ -136,7 +136,7 @@ export function DateSelector({
         <div className='relative'>
           <div className='flex gap-2'>
             <Input
-              placeholder='e.g. next monday, in 2 weeks'
+              placeholder='e.g. in 3 weeks'
               value={naturalDateInput}
               onChange={(e) => handleNaturalDateInput(e.target.value)}
               onFocus={handleFocus}
@@ -185,7 +185,7 @@ export function DateSelector({
           <div className='relative'>
             <div className='flex gap-2'>
               <Input
-                placeholder='e.g. in 2 weeks, next month'
+                placeholder='e.g. in 3 weeks'
                 value={endDateInput}
                 onChange={(e) => handleEndDateInput(e.target.value)}
                 className='flex-1'
