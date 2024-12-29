@@ -25,16 +25,8 @@ export function SingleMemberForm() {
 
     if (existingMember) {
       updateMember(existingMember.id, memberData);
-      toast({
-        title: 'Member updated',
-        description: 'Member updated successfully',
-      });
     } else {
       addMember(memberData as any);
-      toast({
-        title: 'Member added',
-        description: 'Member added successfully',
-      });
     }
 
     // Show validation after first attempt to continue
@@ -44,7 +36,7 @@ export function SingleMemberForm() {
   };
 
   return (
-    <Card>
+    <Card className='mt-2 bg-card/30'>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <UserCircle className='h-5 w-5 text-primary' />
