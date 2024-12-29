@@ -3,6 +3,7 @@ import { Activity, AlertTriangle, FileText, Shield, Users } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingState } from '@/features/membership/components/LoadingState';
+import { getUser } from '@/features/membership/controllers/get-user';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
 import { columns } from './components/columns';
@@ -11,10 +12,27 @@ import { MetricCards } from './components/MetricCard';
 // import { MetricCard } from './components/MetricCard';
 
 interface DashboardMetrics {
-  totalApplications: number;
+  totalMemberships: number;
   activeMembers: number;
-  pendingApplications: number;
+  pendingMemberships: number;
   recentAlerts: number;
+}
+
+export async function getGreeting() {
+  const user = await getUser();
+  const hour = new Date().getHours();
+
+  if (hour < 6) {
+    return `Early bird catches the worm, ${user?.first_name}!`;
+  } else if (hour < 12) {
+    return `Good morning, ${user?.first_name}!`;
+  } else if (hour < 18) {
+    return `Good afternoon, ${user?.first_name}!`;
+  } else if (hour < 20) {
+    return `Good evening, ${user?.first_name}!`;
+  } else {
+    return `Working late, ${user?.first_name}!`;
+  }
 }
 
 export default async function AdminPage() {
@@ -33,10 +51,10 @@ export default async function AdminPage() {
     )
     .order('created_at', { ascending: false });
 
-  const totalApplications = members?.length || 0;
+  const totalMemberships = members?.length || 0;
   const activeMembers =
     members?.reduce((acc, member) => acc + (member.memberships?.status === 'active' ? 1 : 0), 0) || 0;
-  const pendingApplications = members?.filter((member) => member.memberships?.status === 'draft').length || 0;
+  const pendingMemberships = members?.filter((member) => member.memberships?.status === 'draft').length || 0;
   const recentAlerts = 0; // TODO: Implement alerts system
 
   return (
@@ -44,48 +62,22 @@ export default async function AdminPage() {
       <div className='mb-8 flex items-center justify-between'>
         <h1 className='flex items-center gap-2 text-3xl font-bold'>
           <Shield className='h-8 w-8 text-primary' />
-          Admin Dashboard
+          {getGreeting()}
         </h1>
       </div>
 
       <Suspense fallback={<LoadingState />}>
-        {/* <div className='mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
-          <MetricCard
-            title='Total Applications'
-            value={totalApplications}
-            icon={FileText}
-            description='Total memberships submitted'
-          />
-          <MetricCard
-            title='Active Members'
-            value={activeMembers}
-            icon={Users}
-            description='Total members across all memberships'
-          />
-          <MetricCard
-            title='Pending Applications'
-            value={pendingApplications}
-            icon={Activity}
-            description=Memberships awaiting review'
-          />
-          <MetricCard
-            title='Recent Alerts'
-            value={recentAlerts}
-            icon={AlertTriangle}
-            description='Alerts in the last 24 hours'
-          />
-        </div> */}
         <MetricCards
-          totalApplications={totalApplications}
+          totalMemberships={totalMemberships}
           activeMembers={activeMembers}
-          pendingApplications={pendingApplications}
+          pendingMemberships={pendingMemberships}
           recentAlerts={recentAlerts}
         />
       </Suspense>
 
       <Card className='mt-8'>
         <CardHeader>
-          <CardTitle>Recent Applications</CardTitle>
+          <CardTitle>Recent Memberships</CardTitle>
         </CardHeader>
         <CardContent>
           <Suspense fallback={<LoadingState />}>

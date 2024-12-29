@@ -12,19 +12,13 @@ export default async function PricingPage() {
 
   return (
     <main className='container mx-auto'>
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Coins className='h-5 w-5 text-primary' />
-            Country Base Prices
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<LoadingState />}>
-            <CountryBasePricesTable data={prices} />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <CardTitle className='mb-4 flex items-center gap-2'>
+        <Coins className='h-5 w-5 text-primary' />
+        Country Base Prices
+      </CardTitle>
+      <Suspense fallback={<LoadingState />}>
+        <CountryBasePricesTable data={prices} />
+      </Suspense>
     </main>
   );
 }

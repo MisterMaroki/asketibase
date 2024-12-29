@@ -28,21 +28,21 @@ export function MetricCard({ title, value, icon: Icon, description }: MetricCard
   );
 }
 export function MetricCards({
-  totalApplications,
+  totalMemberships,
   activeMembers,
-  pendingApplications,
+  pendingMemberships,
   recentAlerts,
 }: {
-  totalApplications: number;
+  totalMemberships: number;
   activeMembers: number;
-  pendingApplications: number;
+  pendingMemberships: number;
   recentAlerts: number;
 }) {
   return (
     <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
       <MetricCard
-        title='Total Applications'
-        value={totalApplications}
+        title='Total Memberships'
+        value={totalMemberships}
         icon={FileText}
         description='Total memberships submitted'
       />
@@ -53,8 +53,8 @@ export function MetricCards({
         description='Total members across all memberships'
       />
       <MetricCard
-        title='Pending Applications'
-        value={pendingApplications}
+        title='Pending Memberships'
+        value={pendingMemberships}
         icon={Activity}
         description='Memberships awaiting review'
       />

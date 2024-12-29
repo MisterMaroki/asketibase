@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '@/app/admin/components/DataTable';
+import { DataTable } from '@/app/(admin)/admin/components/DataTable';
 import { Tables } from '@/libs/supabase/types';
 
 import { columns } from './columns';

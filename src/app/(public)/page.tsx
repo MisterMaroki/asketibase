@@ -1,64 +1,15 @@
-import { PropsWithChildren } from 'react';
-import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import Link from 'next/link';
+import { Shield } from 'lucide-react';
 
-import { Logo } from '@/components/logo';
-import { Background } from '@/components/ui/background';
-import { Toaster } from '@/components/ui/toaster';
-import { cn } from '@/utils/cn';
-import { Analytics } from '@vercel/analytics/react';
+import { Container } from '@/components/container';
+import { Button } from '@/components/ui/button';
 
-import { Navigation } from './navigation';
-
-import '@/styles/globals.css';
-
-export const dynamic = 'force-dynamic';
-
-const inter = Inter({
-  subsets: ['latin'],
-});
-
-export const viewport: Viewport = {
-  viewportFit: 'cover',
-  initialScale: 1,
-  width: 'device-width',
-
-  maximumScale: 1,
-};
-
-export const metadata: Metadata = {
-  title: 'ASKETI Global Travel Protection',
-  description: 'Global travel protection for modern global citizens',
-};
-
-export default function RootLayout({ children }: PropsWithChildren) {
+export default async function HomePage() {
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body className={cn('font-sans antialiased', inter.className)}>
-        {/* <div className='flex h-full  bg-black/60 backdrop-blur-xl'> */}
-        <Toaster />
-        <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
-          <AppBar />
-          <div className='absolute inset-0 bg-black/40 backdrop-blur-xl' />
-          <main className='relative flex-1'>
-            <div className='relative h-full '>{children}</div>
-          </main>
-          {/* <Footer /> */}
-        </div>
-        {/* </div> */}
-        <Analytics />
-        <Background />
-      </body>
-    </html>
-  );
-}
-
-async function AppBar() {
-  return (
-    <header className='z-50 flex items-center justify-between p-4 md:p-6'>
-      <Logo />
-      <Navigation />
-    </header>
+    <div className='flex flex-col gap-8 lg:gap-32'>
+      <HeroSection />
+      <Footer />
+    </div>
   );
 }
 
@@ -66,9 +17,6 @@ function Footer() {
   return (
     <footer className='mt-8 flex flex-col gap-8 text-neutral-400 lg:mt-32'>
       <div className='flex flex-col justify-between gap-8 lg:flex-row'>
-        <div>
-          <Logo />
-        </div>
         {/* <div className='grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-4 lg:gap-16'>
           <div className='flex flex-col gap-2 lg:gap-6'>
             <div className='font-semibold text-neutral-100'>Product</div>
@@ -115,5 +63,40 @@ function Footer() {
         <span className='text-neutral4 text-xs'>Copyright {new Date().getFullYear()} © ASKETI</span>
       </div>
     </footer>
+  );
+}
+
+function HeroSection() {
+  return (
+    <section className='relative overflow-hidden lg:overflow-visible'>
+      <Container className='relative rounded py-20 lg:py-[140px]'>
+        <div className='relative z-10 items-center space-y-8 text-center'>
+          <div className='mb flex w-full items-center justify-center gap-4'>
+            {/* <Shield className='h-12 w-12 text-primary' /> */}
+            <h1 className='text-5xl font-bold tracking-wider'>ASKETI</h1>
+          </div>
+          {/* <h2 className='bg-gradient-to-r from-primary/80 to-secondary bg-clip-text text-4xl font-bold  sm:text-5xl lg:text-6xl'>
+            Global Travel Protection
+          </h2> */}
+          {/* <p className='mx-auto max-w-2xl text-xl leading-relaxed text-muted-foreground'>
+            Premium international health coverage designed for modern global citizens. Experience world-class protection
+            with ASKETI, anywhere you go.
+          </p> */}
+
+          <div className='mt-8'>
+            <Link href='/membership'>
+              <Button
+                size='lg'
+                variant='sexy'
+                className='mx-auto shrink-0 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-primary/100 hover:shadow-primary/25 '
+                // className='shrink-0 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-primary/100 hover:shadow-primary/25'
+              >
+                Get Protected Now
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </Container>
+    </section>
   );
 }

@@ -10,9 +10,9 @@ import { getURL } from '@/utils/get-url';
 import { checkReferralCode } from '../controllers/check-referral-code';
 import { createMember } from '../controllers/members';
 import { validateApplication } from '../validations/membership';
-import { ApplicationSchema } from '../validations/schemas';
+import { Membershipschema } from '../validations/schemas';
 
-export async function generateQuoteAction(data: ApplicationSchema) {
+export async function generateQuoteAction(data: Membershipschema) {
   const valid = validateApplication(data);
   if (!valid.success) {
     throw new Error(JSON.stringify(valid.errors));

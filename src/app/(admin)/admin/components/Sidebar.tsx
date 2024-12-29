@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  ArrowLeft,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
@@ -18,6 +19,7 @@ import {
   Users,
 } from 'lucide-react';
 
+import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ActionResponse } from '@/types/action-response';
@@ -37,10 +39,9 @@ const navigation = [
 function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> }) {
   const pathname = usePathname();
   return (
-    <div className='flex h-[calc(100vh-120px)] flex-col '>
-      <div className='flex items-center gap-2 p-6 pl-4 md:hidden'>
-        {/* <Shield className='h-6 w-6 text-primary' /> */}
-        <span className='font-semibold'>ASKETI Admin</span>
+    <div className='flex h-[100vh] flex-col '>
+      <div className='flex items-center gap-2 p-6 pl-4'>
+        <Logo />
       </div>
 
       <nav className='flex-1 pb-4 pl-1 pr-4'>
@@ -63,6 +64,13 @@ function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> })
       </nav>
 
       <div className='border-t p-4'>
+        <Link href='/membership'>
+          <Button variant='ghost' className='w-full justify-start text-muted-foreground hover:text-destructive'>
+            <ArrowLeft className='mr-2 h-4 w-4' />
+            Back to form
+          </Button>
+        </Link>
+
         <Button
           variant='ghost'
           className='w-full justify-start text-muted-foreground hover:text-destructive'
@@ -80,7 +88,7 @@ export function Sidebar({ signOut }: { signOut: () => Promise<ActionResponse> })
   return (
     <>
       {/* Desktop sidebar */}
-      <div className='hidden flex-col border-r md:flex md:w-64'>
+      <div className='fixed hidden flex-col border-r md:flex md:h-full md:w-64'>
         <SidebarContent signOut={signOut} />
       </div>
 

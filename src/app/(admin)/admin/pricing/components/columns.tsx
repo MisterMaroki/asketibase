@@ -11,7 +11,9 @@ export const columns: ColumnDef<CountryBasePrice>[] = [
   {
     accessorKey: 'country',
     header: 'Country',
-    cell: ({ row }) => <EditableCell id={row.original.id} value={row.getValue('country')} field='country' />,
+    cell: ({ row }) => {
+      return <div>{row.getValue('country')}</div>;
+    },
   },
   {
     accessorKey: 'country_code',

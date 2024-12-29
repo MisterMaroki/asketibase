@@ -49,9 +49,6 @@ export function AccountMenu({ signOut }: { signOut: () => Promise<ActionResponse
           <Link href='/membership'>Membership Form</Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
-          <Link href='/admin/settings'>Settings</Link>
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogoutClick}>Sign Out</DropdownMenuItem>
         <DropdownMenuArrow className='me-4 fill-white' />
       </DropdownMenuContent>

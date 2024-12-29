@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import type { Member } from '@/store/membership-store';
+import { useMembershipStore } from '@/store/membership-store';
 
 interface MemberSummaryProps {
   member: Member;
@@ -15,6 +16,25 @@ interface MemberSummaryProps {
 }
 
 export function MemberSummary({ member, isPrimary, isComplete }: MemberSummaryProps) {
+  const { medicalState } = useMembershipStore();
+  const riskLevel = medicalState.completedMembers[member.id];
+
+  const getRiskLevelBadge = () => {
+    if (riskLevel === undefined) return null;
+
+    const variants = {
+      1: { variant: 'default' as const, label: '' },
+      0: { variant: 'secondary' as const, label: '' },
+    };
+
+    const { variant, label } = variants[riskLevel as keyof typeof variants];
+    return (
+      <Badge variant={variant} className='font-normal'>
+        {label}
+      </Badge>
+    );
+  };
+
   return (
     <Collapsible className='w-full' defaultOpen={isPrimary}>
       <CollapsibleTrigger asChild>
@@ -24,15 +44,11 @@ export function MemberSummary({ member, isPrimary, isComplete }: MemberSummaryPr
               {member.salutation} {member.firstName} {member.lastName}
             </span>
             {isPrimary && (
-              <Badge variant='secondary' className='font-normal '>
+              <Badge variant='secondary' className='font-normal'>
                 Primary Member
               </Badge>
             )}
-            {isComplete && (
-              <Badge variant='outline' className='font-normal'>
-                Medical Complete
-              </Badge>
-            )}
+            {getRiskLevelBadge()}
           </div>
           <ChevronDown className='h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180' />
         </Button>

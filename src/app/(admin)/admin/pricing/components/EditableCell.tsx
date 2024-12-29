@@ -57,7 +57,7 @@ export function EditableCell({ id, value: initialValue, field, type = 'text' }: 
           className='h-8'
         />
         <Button size='sm' variant='ghost' onClick={handleSave} disabled={isLoading}>
-          {isLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : <Check className='h-4 w-4' />}
+          {isLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : <Check className='h-4 w-4 shrink-0' />}
         </Button>
         <Button
           size='sm'
@@ -68,7 +68,7 @@ export function EditableCell({ id, value: initialValue, field, type = 'text' }: 
           }}
           disabled={isLoading}
         >
-          <X className='h-4 w-4' />
+          <X className='h-4 w-4 shrink-0' />
         </Button>
       </div>
     );

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTrigger } from '@/components/ui/sheet';
 import { getUser } from '@/features/membership/controllers/get-user';
 
-import { signOut } from './(auth)/auth-actions';
+import { signOut } from '../(auth)/auth-actions';
 
 export async function Navigation() {
   const session = await getUser();

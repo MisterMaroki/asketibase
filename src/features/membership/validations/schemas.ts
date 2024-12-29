@@ -53,4 +53,4 @@ export const membershipSchema = z.object({
   }),
 });
 
-export type ApplicationSchema = z.infer<typeof membershipSchema>;
+export type Membershipschema = z.infer<typeof membershipSchema>;

@@ -29,19 +29,13 @@ export default async function MembershipsPage() {
 
   return (
     <main className='container mx-auto '>
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <FileText className='h-5 w-5 text-primary' />
-            Memberships
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<LoadingState />}>
-            <DataTable columns={columns} data={memberships.data || []} />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <CardTitle className='mb-4 flex items-center gap-2'>
+        <FileText className='h-5 w-5 text-primary' />
+        Memberships
+      </CardTitle>
+      <Suspense fallback={<LoadingState />}>
+        <DataTable columns={columns} data={memberships.data || []} />
+      </Suspense>
     </main>
   );
 }

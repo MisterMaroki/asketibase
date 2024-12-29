@@ -20,19 +20,13 @@ export default async function QuotesPage() {
     .order('created_at', { ascending: false });
   return (
     <main className='container mx-auto '>
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Receipt className='h-5 w-5 text-primary' />
-            Quotes
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<LoadingState />}>
-            <DataTable columns={columns} data={data || []} />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <CardTitle className='mb-4 flex items-center gap-2'>
+        <Receipt className='h-5 w-5 text-primary' />
+        Quotes
+      </CardTitle>
+      <Suspense fallback={<LoadingState />}>
+        <DataTable columns={columns} data={data || []} />
+      </Suspense>
     </main>
   );
 }
