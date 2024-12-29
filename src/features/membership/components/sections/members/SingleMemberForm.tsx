@@ -36,7 +36,7 @@ export function SingleMemberForm() {
   };
 
   return (
-    <Card className='mt-2 bg-card/30'>
+    <Card className='mt-2 '>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <UserCircle className='h-5 w-5 text-primary' />
