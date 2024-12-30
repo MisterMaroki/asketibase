@@ -6,9 +6,10 @@ import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { MEMBER_LIMITS } from '@/constants/membership';
-import { getMemberValidationErrors, isMemberValid } from '@/features/membership/validations/member-fields';
+import { getMemberValidationErrors, isMemberValid } from '@/features/membership/validations/member';
 import { useMembershipStore } from '@/store/membership-store';
 
+import { MemberList } from './members/MemberList';
 import { MultiMemberManager } from './members/MultiMemberManager';
 import { PrivacyDisclaimer } from './members/PrivacyDisclaimer';
 import { SingleMemberForm } from './members/SingleMemberForm';
@@ -22,15 +23,22 @@ export function MemberInformation() {
 
   const maxMembers = membershipType ? MEMBER_LIMITS[membershipType] : 1;
   const hasValidMemberCount =
-    membershipType === 'INDIVIDUAL' ? members.length === 1 : members.length >= 1 && members.length <= maxMembers;
+    membershipType === 'INDIVIDUAL'
+      ? members.length === 1
+      : membershipType === 'COUPLE'
+        ? members.length === 2
+        : members.length >= 1 && members.length <= maxMembers;
   const allMembersComplete = members.every(isMemberValid);
-  console.log('🚀 ~ MemberInformation ~ allMembersComplete:', allMembersComplete);
   const canContinue = hasValidMemberCount && allMembersComplete;
   const allMembersScreeningComplete = members.every((member) => medicalState.completedMembers[member.id] !== undefined);
+
   const getMemberRequirementMessage = () => {
     if (!hasValidMemberCount) {
       if (membershipType === 'INDIVIDUAL' && members.length > 1) {
         return 'Individual plans can only have one member';
+      }
+      if (membershipType === 'COUPLE' && members.length !== 2) {
+        return 'Couples plans must have exactly two members';
       }
       if (members.length > maxMembers) {
         return `Maximum ${maxMembers} members allowed for this plan`;
@@ -41,7 +49,6 @@ export function MemberInformation() {
     }
     if (!allMembersComplete) {
       const errors = members.map((member) => getMemberValidationErrors(member)).flat();
-      console.log('🚀 ~ getMemberRequirementMessage ~ errors:', errors);
       return errors.join('\n');
     }
     return null;
@@ -50,11 +57,9 @@ export function MemberInformation() {
   const handleNext = () => {
     if ((originalState && !hasStateChanged()) || allMembersScreeningComplete) {
       clearOriginalState();
-      // setStep(RETURN_TO_SUMMARY_STEP);
       router.push(`/membership?step=${RETURN_TO_SUMMARY_STEP}`);
     } else {
       clearOriginalState();
-      // setStep(4);
       router.replace('/membership?step=4');
     }
   };
@@ -66,7 +71,7 @@ export function MemberInformation() {
 
   return (
     <div className='space-y-6'>
-      {membershipType === 'INDIVIDUAL' ? <SingleMemberForm /> : <MultiMemberManager />}
+      {membershipType === 'INDIVIDUAL' ? <SingleMemberForm /> : <MemberList />}
 
       {/* {!canContinue && (
         <Alert variant='destructive'>

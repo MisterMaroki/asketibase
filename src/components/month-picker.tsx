@@ -27,7 +27,7 @@ export function MonthPicker({ onMonthSelect, selectedMonth, year }: MonthPickerP
   ];
 
   return (
-    <div className='bg-black p-3 text-white'>
+    <div className='p-3 text-white'>
       <div className='mb-2 text-center'>
         <span className='text-lg font-semibold'>{year}</span>
       </div>
@@ -36,10 +36,10 @@ export function MonthPicker({ onMonthSelect, selectedMonth, year }: MonthPickerP
           <Button
             key={month}
             onClick={() => onMonthSelect(index)}
-            variant='ghost'
+            variant='outline'
             className={cn(
               'text-white hover:bg-gray-700',
-              index === selectedMonth && 'bg-white text-black hover:bg-gray-200 hover:text-black'
+              index === selectedMonth && 'bg-white text-black hover:bg-gray-200 hover:text-black',
             )}
           >
             {month}

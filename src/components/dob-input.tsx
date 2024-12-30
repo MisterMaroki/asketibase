@@ -84,14 +84,14 @@ export function BlackDOBInput({ value, onChange, className }: BlackDOBInputProps
               'w-full justify-start text-left font-normal',
               'transition-all duration-300 ease-in-out',
               !date && 'text-gray-400',
-              className
+              className,
             )}
           >
             <CalendarIcon className='mr-2 h-4 w-4' />
             {date ? format(date, 'PPP') : <span>Date of Birth</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='border-gray-700 bg-black p-0'>
+        <PopoverContent className='h-96 scale-95 border-gray-700 bg-black/80 p-0 backdrop-blur-xl sm:scale-100'>
           {step === 'decade' && <DecadePicker onDecadeSelect={handleDecadeSelect} />}
           {step === 'year' && decade && <YearPicker onYearSelect={handleYearSelect} decade={decade} />}
           {step === 'month' && year ? <MonthPicker onMonthSelect={handleMonthSelect} year={year} /> : null}

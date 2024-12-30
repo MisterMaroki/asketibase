@@ -78,6 +78,7 @@ export function MedicalDeclaration() {
 
   const handleContinueToQuestions = () => {
     setShowQuestions(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNext = () => {
@@ -90,7 +91,11 @@ export function MedicalDeclaration() {
       {!showQuestions ? (
         <div className='animate-fade-in space-y-6'>
           <MedicalDisclaimer />
-          <div className='flex items-start space-x-2'>
+          <div
+            className={`flex items-start space-x-2 rounded-lg border bg-card/50 p-6 transition-all duration-200 ${
+              acceptedDisclaimer ? 'border-secondary bg-secondary/5' : 'border-destructive/10'
+            }`}
+          >
             <Checkbox
               id='accept-disclaimer'
               checked={acceptedDisclaimer}

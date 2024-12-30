@@ -1,18 +1,32 @@
 'use client';
 
+import { ZodError } from 'zod';
+
 import type { Member } from '@/store/membership-store';
 
 import { type MemberSchema, memberSchema } from './schemas';
 
-export function validateMember(member: Partial<Member>) {
+interface ValidationSuccess {
+  success: true;
+  errors: null;
+}
+
+interface ValidationError {
+  success: false;
+  errors: string[];
+}
+
+type ValidationResult = ValidationSuccess | ValidationError;
+
+export function validateMember(member: Partial<Member>): ValidationResult {
   try {
     memberSchema.parse(member);
     return { success: true, errors: null };
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof ZodError) {
       return {
         success: false,
-        errors: JSON.parse(error.message),
+        errors: error.errors.map((err) => err.message),
       };
     }
     return {
@@ -24,13 +38,12 @@ export function validateMember(member: Partial<Member>) {
 
 export function isMemberValid(member: Partial<Member>): boolean {
   const result = validateMember(member);
+  console.log('🚀 ~ isMemberValid ~ result:', result);
   return result.success;
 }
 
 export function getMemberValidationErrors(member: Partial<Member>): string[] {
   const result = validateMember(member);
-  console.log('🚀 ~ getMemberValidationErrors ~ result:', result);
   if (result.success) return [];
-
-  return Array.isArray(result.errors) ? result.errors : Object.values(result.errors).flat();
+  return result.errors;
 }

@@ -1,16 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useMembershipStore } from '@/store/membership-store';
 
 import { MembershipOverview } from './summary/MembershipOverview';
-import { QuoteGenerator } from './summary/QuoteGenerator';
+import { QuoteGenerator, QuoteType } from './summary/QuoteGenerator';
 
 export function Summary() {
   const { members, setStep } = useMembershipStore();
   const router = useRouter();
+  const [quote, setQuote] = useState<QuoteType | null>(null);
+
+  const handleQuoteGenerated = (quote: QuoteType | null) => {
+    setQuote(quote);
+  };
 
   useEffect(() => {
     if (members.length === 0) {
@@ -21,8 +26,8 @@ export function Summary() {
 
   return (
     <div className='space-y-6'>
-      <MembershipOverview />
-      <QuoteGenerator />
+      <MembershipOverview quote={quote} />
+      <QuoteGenerator onQuoteGenerated={handleQuoteGenerated} quote={quote} />
     </div>
   );
 }

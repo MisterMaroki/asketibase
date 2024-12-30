@@ -9,15 +9,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MEMBER_LIMITS } from '@/constants/membership';
-import { REFERRAL_SOURCES } from '@/constants/options';
+import { REFERRAL_SOURCES, type ReferralSource } from '@/constants/options';
 import { checkReferralCode } from '@/features/membership/controllers/check-referral-code';
 import { useCountries } from '@/hooks/use-countries';
 import { useMembershipStore } from '@/store/membership-store';
 
 import { CoverageDetails } from './CoverageDetails';
 import { MemberSummary } from './MemberSummary';
+import { QuoteType } from './QuoteGenerator';
 
-export function MembershipOverview() {
+export function MembershipOverview({ quote }: { quote: QuoteType | null }) {
   const router = useRouter();
   const [isValidatingCode, setIsValidatingCode] = useState(false);
   const [validDiscount, setValidDiscount] = useState<number | null>(null);
@@ -37,6 +38,13 @@ export function MembershipOverview() {
     setStep,
     saveOriginalState,
   } = useMembershipStore();
+  const [otherSpecification, setOtherSpecification] = useState(() => {
+    // Initialize with current referral source if it's a custom value
+    if (referralSource && !REFERRAL_SOURCES.includes(referralSource as ReferralSource)) {
+      return referralSource;
+    }
+    return '';
+  });
 
   useEffect(() => {
     const validateCode = async () => {
@@ -59,6 +67,15 @@ export function MembershipOverview() {
     const debounceTimeout = setTimeout(validateCode, 600);
     return () => clearTimeout(debounceTimeout);
   }, [referralCode]);
+
+  useEffect(() => {
+    if (referralSource === 'Other (please specify)' && otherSpecification) {
+      const debounceTimeout = setTimeout(() => {
+        setReferralSource(otherSpecification);
+      }, 600);
+      return () => clearTimeout(debounceTimeout);
+    }
+  }, [otherSpecification, setReferralSource, referralSource]);
 
   const isMultiMemberPlan = membershipType && membershipType !== 'INDIVIDUAL';
   const memberLimit = membershipType ? MEMBER_LIMITS[membershipType] : 0;
@@ -168,25 +185,41 @@ export function MembershipOverview() {
                 <h3 className='text-sm font-medium'>How did you hear about us?</h3>
                 <span className='text-sm text-destructive'>*</span>
               </div>
-              <Select value={referralSource || ''} onValueChange={setReferralSource}>
+              <Select
+                value={referralSource || ''}
+                disabled={!!quote}
+                onValueChange={(value) => {
+                  setReferralSource(value);
+                  if (value === 'Other (please specify)') {
+                    setOtherSpecification('');
+                  }
+                }}
+              >
                 <SelectTrigger className='w-full sm:max-w-xs'>
                   <SelectValue placeholder='Please select' />
                 </SelectTrigger>
                 <SelectContent>
-                  {REFERRAL_SOURCES.map((source) => (
+                  {[
+                    ...REFERRAL_SOURCES,
+                    ...(referralSource && !REFERRAL_SOURCES.includes(referralSource as ReferralSource)
+                      ? [referralSource]
+                      : []),
+                  ].map((source) => (
                     <SelectItem key={source} value={source}>
                       {source}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {referralSource === 'Other (please specify)' && (
+              {(referralSource === 'Other (please specify)' ||
+                (referralSource && !REFERRAL_SOURCES.includes(referralSource as ReferralSource))) && (
                 <Input
                   placeholder='Please specify how you heard about us'
                   className='mt-2 w-full sm:max-w-xs'
-                  value={referralSource === 'Other (please specify)' ? '' : undefined}
-                  onChange={(e) => setReferralSource(e.target.value)}
+                  value={otherSpecification}
+                  onChange={(e) => setOtherSpecification(e.target.value)}
                   required
+                  disabled={!!quote}
                 />
               )}
               <p className='text-sm text-muted-foreground'>This information helps us improve our services</p>

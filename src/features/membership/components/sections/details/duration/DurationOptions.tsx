@@ -16,7 +16,6 @@ const durationIcons = {
 
 export function DurationOptions() {
   const { durationType, startDate, endDate, setDurationType } = useMembershipStore();
-  const defaultDurationType = DURATION_TYPES.expat_year;
 
   const getDurationText = () => {
     if (!startDate || !endDate) return null;
@@ -38,7 +37,7 @@ export function DurationOptions() {
   return (
     <div className='space-y-4 px-1 sm:px-0'>
       <RadioGroup
-        value={durationType || defaultDurationType}
+        value={durationType || ''}
         onValueChange={(value) => setDurationType(value as keyof typeof DURATION_TYPES)}
         className='grid gap-3 sm:gap-4'
       >
@@ -47,11 +46,11 @@ export function DurationOptions() {
           return (
             <Label
               key={key}
-              className='group flex hover:bg-accent/5 hover:text-accent-foreground [&:has([data-state=checked])]:border-primary cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-colors active:bg-accent/10 sm:space-x-4 sm:p-4'
+              className='group flex cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-accent/5 hover:text-accent-foreground active:bg-accent/10 sm:space-x-4 sm:p-4 [&:has([data-state=checked])]:border-primary'
             >
-              <RadioGroupItem value={key} id={key} className='mt-1 sr-only' />
+              <RadioGroupItem value={key} id={key} className='sr-only mt-1' />
               {Icon && (
-                <Icon className='mt-0.5 h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary' />
+                <Icon className='mt-0.5 h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />
               )}
               <div className='min-w-0 flex-1 space-y-1.5'>
                 <p className='font-medium leading-tight'>{title}</p>

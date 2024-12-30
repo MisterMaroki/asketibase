@@ -31,7 +31,7 @@ export function EligibilitySection() {
       </CardHeader>
       <CardContent className='mt-2 grid gap-8 md:grid-cols-2'>
         <EligibilityList />
-        <EligibilityConfirmation />
+        <EligibilityConfirmation hideOn='md' />
       </CardContent>
     </Card>
   );
