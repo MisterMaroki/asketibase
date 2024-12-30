@@ -28,7 +28,7 @@ export const memberSchema = z.object({
   gender: z.enum(['male', 'female']),
   nationality: uuidSchema.describe('Nationality'),
   countryCode: z.enum(COUNTRY_CODES.map((c) => c.code) as [string, ...string[]]),
-  contactNumber: z.string().regex(/^\d{10}$/, 'Contact number must be 10 digits'),
+  contactNumber: z.string().min(5, 'Contact number is required'),
   email: z.string().email('Invalid email address'),
   countryOfResidence: uuidSchema.describe('Country of residence'),
   address: addressSchema,
@@ -46,7 +46,7 @@ export const membershipSchema = z.object({
   endDate: z.string().datetime().optional().nullable(),
   members: z.array(memberSchema).min(1, 'At least one member is required'),
   referralCode: z.string().optional(),
-  referralSource: z.string(),
+  referralSource: z.string().optional().nullable(),
   medicalState: z.object({
     memberConditions: z.record(z.string(), z.boolean()),
     completedMembers: z.record(z.string(), z.number()),

@@ -11,21 +11,18 @@ interface YearPickerProps {
 
 export function YearPicker({ onYearSelect, selectedYear, decade }: YearPickerProps) {
   const years = Array.from({ length: 10 }, (_, i) => decade + i);
-  const currentYear = new Date().getFullYear();
-
-  const filteredYears = years.filter((year) => year <= currentYear);
 
   return (
-    <div className='p-3 text-white'>
+    <div className='bg-black p-3 text-white'>
       <div className='mb-2 flex items-center justify-center'>
         <span>{decade}s</span>
       </div>
       <div className='grid grid-cols-2 gap-2'>
-        {filteredYears.map((year) => (
+        {years.map((year) => (
           <Button
             key={year}
             onClick={() => onYearSelect(year)}
-            variant='outline'
+            variant='ghost'
             className={`text-white hover:bg-gray-700 ${
               year === selectedYear ? 'bg-white text-black hover:bg-gray-200 hover:text-black' : ''
             }`}

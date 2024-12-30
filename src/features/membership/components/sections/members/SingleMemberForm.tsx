@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { UserCircle } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +17,6 @@ export function SingleMemberForm() {
   const { toast } = useToast();
 
   const handleFieldChange = (field: string, value: any) => {
-    console.log('🚀 ~ handleFieldChange ~ field:', field, value);
     const memberData = existingMember
       ? { ...existingMember, [field]: value }
       : { id: crypto.randomUUID(), [field]: value };
@@ -29,7 +29,7 @@ export function SingleMemberForm() {
   };
 
   return (
-    <Card className='mt-2'>
+    <Card className='mt-2 '>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <UserCircle className='h-5 w-5 text-primary' />
@@ -38,7 +38,7 @@ export function SingleMemberForm() {
       </CardHeader>
       <CardContent>
         <MemberFormFields
-          member={existingMember as any}
+          member={existingMember}
           onFieldChange={handleFieldChange}
           countries={countries}
           isLoadingCountries={loadingCountries}

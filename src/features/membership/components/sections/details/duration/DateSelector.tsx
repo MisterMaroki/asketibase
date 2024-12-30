@@ -39,7 +39,16 @@ export function DateSelector({
       setEndDate(null);
       setEndDateInput('');
     }
-  }, [durationType, setEndDate, startDate]);
+  }, [durationType, setEndDate]);
+
+  // Set end date for expat duration type
+  useEffect(() => {
+    if (durationType === DURATION_TYPES.expat_year && startDate) {
+      const expatEndDate = new Date(startDate);
+      expatEndDate.setFullYear(expatEndDate.getFullYear() + 1);
+      setEndDate(expatEndDate.toISOString());
+    }
+  }, [durationType, startDate, setEndDate]);
 
   // Calculate date constraints
   const dateConstraints = useMemo(() => {
@@ -55,6 +64,14 @@ export function DateSelector({
       max: maxDate,
     };
   }, [startDate, durationType]);
+
+  // Reset end date if duration type changes from single trip
+  useEffect(() => {
+    if (durationType !== DURATION_TYPES.single_trip) {
+      setEndDate(null);
+      setEndDateInput('');
+    }
+  }, [durationType, setEndDate]);
 
   useEffect(() => {
     return () => {
@@ -85,6 +102,13 @@ export function DateSelector({
     const parsedDate = parseNaturalDate(input);
     if (parsedDate && parsedDate >= new Date() && parsedDate <= maxDate) {
       setStartDate(parsedDate.toISOString());
+
+      // Auto-set end date for expat duration
+      if (durationType === DURATION_TYPES.expat_year) {
+        const expatEndDate = new Date(parsedDate);
+        expatEndDate.setFullYear(expatEndDate.getFullYear() + 1);
+        setEndDate(expatEndDate.toISOString());
+      }
     }
   };
 

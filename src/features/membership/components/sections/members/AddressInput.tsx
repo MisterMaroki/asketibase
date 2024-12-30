@@ -73,7 +73,7 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
     <div className='space-y-2'>
       <Label htmlFor='address'>Home Address</Label>
       {!isManual ? (
-        <div className='space-y-2 overflow-hidden'>
+        <div className='space-y-2'>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button

@@ -13,7 +13,7 @@ const RETURN_TO_SUMMARY_STEP = 5;
 
 export function MembershipDetails() {
   const router = useRouter();
-  const { setStep, durationType, startDate,removeUnnecessaryMembers, endDate, hasStateChanged, clearOriginalState, originalState } =
+  const { setStep, durationType, startDate, endDate, hasStateChanged, clearOriginalState, originalState } =
     useMembershipStore();
 
   const canContinue = () => {
@@ -29,13 +29,11 @@ export function MembershipDetails() {
     if (originalState && !hasStateChanged()) {
       // No changes made, return to summary
       clearOriginalState();
-      removeUnnecessaryMembers();
       // setStep(RETURN_TO_SUMMARY_STEP);
       router.push(`/membership?step=${RETURN_TO_SUMMARY_STEP}`);
     } else {
       // Changes made or new flow, continue to members
       clearOriginalState();
-      removeUnnecessaryMembers();
       // setStep(3);
       router.push('/membership?step=3');
     }

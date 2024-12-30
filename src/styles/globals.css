@@ -41,9 +41,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings:
-      'rlig' 1,
-      'calt' 1;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
   html {
     @apply h-full;
@@ -62,18 +60,6 @@
     @apply lg:bg-gradient-to-br;
     @apply from-white;
     @apply to-neutral-400;
-  }
-}
-
-@layer utilities {
-  .mobile-scale {
-    @apply scale-95 sm:scale-100;
-    transform-origin: top left;
-  }
-
-  .mobile-scale-center {
-    @apply scale-95 sm:scale-100;
-    transform-origin: center;
   }
 }
 

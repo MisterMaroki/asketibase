@@ -39,32 +39,22 @@ export function MemberSummary({ member, isPrimary, isComplete }: MemberSummaryPr
     <Collapsible className='w-full' defaultOpen={isPrimary}>
       <CollapsibleTrigger asChild>
         <Button variant='ghost' className='flex w-full items-center justify-between p-4 hover:bg-muted/50'>
-          <div className='flex flex-1 items-center gap-2 overflow-hidden'>
-            <div className='flex min-w-0 flex-1 items-center gap-2'>
-              {getRiskLevelBadge()}
-              <span className='truncate font-medium'>
-                {member.salutation} {member.firstName} {member.lastName}
-              </span>
-            </div>
-            <div className='flex shrink-0 gap-2'>
-              {isPrimary && (
-                <Badge variant='secondary' className='font-normal'>
-                  Primary
-                </Badge>
-              )}
-            </div>
+          <div className='flex items-center gap-2'>
+            <span className='font-medium'>
+              {member.salutation} {member.firstName} {member.lastName}
+            </span>
+            {isPrimary && (
+              <Badge variant='secondary' className='font-normal'>
+                Primary Member
+              </Badge>
+            )}
+            {getRiskLevelBadge()}
           </div>
-          <ChevronDown className='ml-2 h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180' />
+          <ChevronDown className='h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180' />
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className='space-y-3 p-4 pt-2 text-sm'>
         <div className='grid gap-2 text-muted-foreground'>
-          <div className='grid grid-cols-2 gap-1'>
-            <span className='font-medium'>Full Name:</span>
-            <span>
-              {member.salutation} {member.firstName} {member.lastName}
-            </span>
-          </div>
           <div className='grid grid-cols-2 gap-1'>
             <span className='font-medium'>Date of Birth:</span>
             <span>{format(member.dateOfBirth!, 'PPP')}</span>

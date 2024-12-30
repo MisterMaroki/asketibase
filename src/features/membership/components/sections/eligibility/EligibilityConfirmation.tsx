@@ -1,18 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { logOperation } from '@/features/membership/actions/log-action';
 import { MEDICAL_DISCLAIMER } from '@/libs/membership/eligibility';
 import { useMembershipStore } from '@/store/membership-store';
 
-export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
+export function EligibilityConfirmation() {
   const router = useRouter();
-  const { eligibilityAccepted, setEligibility, setStep } = useMembershipStore();
+  const { setEligibility, setStep } = useMembershipStore();
+  const [accepted, setAccepted] = useState(false);
 
   const handleContinue = async () => {
     try {
@@ -40,8 +41,8 @@ export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
   };
 
   const handleCheckboxChange = async (checked: boolean) => {
-    setEligibility(checked);
     try {
+      setAccepted(checked);
       if (checked) {
         await logOperation({
           level: 'info',
@@ -55,11 +56,15 @@ export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
       }
     } catch (error) {
       console.error('Failed to log checkbox change:', error);
+      // Continue with state update even if logging fails
+      setAccepted(checked);
     }
   };
 
   return (
-    <div className={`space-y-6 ${hideOn === 'md' ? 'block md:hidden' : hideOn === 'sm' ? 'hidden sm:block' : ''}`}>
+    <div className='space-y-6'>
+     
+
       <div className='overflow-hidden rounded-lg'>
         <div className='border-b border-destructive/20 bg-destructive/10 px-6 py-3'>
           <h3 className='flex items-center gap-2 font-medium text-destructive'>
@@ -73,19 +78,14 @@ export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
       </div>
 
       <div className='flex items-start space-x-3 rounded-lg bg-secondary/5 p-6'>
-        <Checkbox
-          id='eligibility'
-          checked={eligibilityAccepted}
-          onCheckedChange={handleCheckboxChange}
-          className='mt-1'
-        />
-        <Label htmlFor='eligibility' className='cursor-pointer text-sm leading-relaxed'>
+        <Checkbox id='eligibility' checked={accepted} onCheckedChange={handleCheckboxChange} className='mt-1' />
+        <label htmlFor='eligibility' className='cursor-pointer text-sm leading-relaxed'>
           I confirm that I have read, understood, and agree to the eligibility requirements and medical disclaimers
           stated above.
-        </Label>
+        </label>
       </div>
 
-      <Button onClick={handleContinue} disabled={!eligibilityAccepted} className='w-full py-5'>
+      <Button onClick={handleContinue} disabled={!accepted} className='w-full py-5'>
         Continue to Membership Details
       </Button>
     </div>
