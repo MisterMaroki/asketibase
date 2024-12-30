@@ -1,15 +1,15 @@
 'use client';
-import { scan } from 'react-scan'; // import this BEFORE react
+// import { scan } from 'react-scan'; // import this BEFORE react
 
-import { getURL } from '@/utils/get-url';
+// import { getURL } from '@/utils/get-url';
 
-// import React from 'react';
-if (typeof window !== 'undefined') {
-  scan({
-    enabled: getURL().includes('localhost'),
-    // log: true, // logs render info to console (default: false)
-  });
-}
+// // import React from 'react';
+// if (typeof window !== 'undefined') {
+//   scan({
+//     enabled: getURL().includes('localhost'),
+//     // log: true, // logs render info to console (default: false)
+//   });
+// }
 export function Background() {
   return (
     <div className='fixed inset-0 -z-10 overflow-hidden'>

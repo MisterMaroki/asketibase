@@ -15,7 +15,12 @@ export const CURRENCIES = [
   { code: 'EUR', symbol: '€' },
   { code: 'GBP', symbol: '£' },
   { code: 'JPY', symbol: '¥' },
-  // Add more as needed
+  { code: 'SGD', symbol: 'S$' },
+  { code: 'AUD', symbol: 'A$' },
+  { code: 'NZD', symbol: 'NZ$' },
+  { code: 'CAD', symbol: 'C$' },
+  { code: 'ZAR', symbol: 'R' },
+
 ] as const;
 
 export const SALUTATIONS = ['Dr', 'Mr', 'Mrs', 'Miss', 'Ms', 'Mx', 'Master'] as const;

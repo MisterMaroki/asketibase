@@ -5,7 +5,7 @@
 1. Resend setup with correct domain
 2. Stripe setup with correct webhook listener and redirect urls
 3. Google maps api key usage
-4.
+4. google console setup, oauth client, redirect url
 
 Make sure to set up the following environment variables in your `.env.local` file:
 
@@ -28,54 +28,7 @@ Make sure to set up the following environment variables in your `.env.local` fil
 
 - `MAPS_API_KEY` - Google Maps API key for address autocomplete
 
-## Important Project Notes
+## TODO
 
-### Authentication
-
-- Anonymous authentication is enabled
-- Row Level Security (RLS) policies are in place for data protection
-- User sessions are managed via middleware
-
-### Database
-
-- Products are managed in Stripe and synced to Supabase via webhooks
-- Database migrations are located in `supabase/migrations/`
-- Generate types: `npm run generate-types`
-- Run migrations: `npm run migration:up`
-
-### Email Development
-
-- Email templates are in `src/features/emails/`
-- Development server: `npm run email:dev`
-- Build emails: `npm run email:build`
-
-### Stripe Integration
-
-- Webhook listener: `npm run stripe:listen`
-- Products and prices are managed in Stripe
-- Sync happens automatically via webhooks
-
-### Development Commands
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run linter
-```
-
-## Project Structure
-
-- `/src/features/membership/` - Core membership functionality
-- `/src/features/emails/` - Email templates and handlers
-- `/src/libs/` - Service clients (Stripe, Supabase, Resend)
-- `/src/components/` - Reusable UI components
-
-## Important Constants
-
-- Membership types and pricing in `src/constants/membership.ts`
-- Supported countries and currencies in `src/constants/options.ts`
-
-## License
-
-MIT License - See LICENSE file for details
+- [google auth] https://supabase.com/docs/guides/auth/social-login/auth-google?queryGroups=environment&environment=client
+- [supabase custom domains] https://supabase.com/docs/guides/platform/custom-domains

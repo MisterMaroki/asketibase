@@ -24,16 +24,9 @@ export default async function DiscountCodesPage() {
         <CreateDiscountCode />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>All Discount Codes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<LoadingState />}>
-            <DiscountCodesTable data={discountCodes || []} />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <Suspense fallback={<LoadingState />}>
+        <DiscountCodesTable data={discountCodes || []} />
+      </Suspense>
     </main>
   );
 }

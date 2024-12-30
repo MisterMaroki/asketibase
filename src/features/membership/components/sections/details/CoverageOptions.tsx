@@ -38,18 +38,18 @@ export function CoverageOptions() {
           <RadioGroup
             value={membershipType || ''}
             onValueChange={(value) => setMembershipType(value as keyof typeof MEMBERSHIP_TYPES)}
-            className='grid gap-4 sm:grid-cols-3'
+            className='grid gap-3 sm:grid-cols-3'
           >
             {Object.entries(MEMBERSHIP_TYPES).map(([key, value]) => {
               const Icon = membershipIcons[key as keyof typeof membershipIcons];
               return (
                 <Label
                   key={key}
-                  className='flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary'
+                  className='group flex flex-col items-center justify-center rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent/5 active:bg-accent/10 hover:text-accent-foreground transition-colors [&:has([data-state=checked])]:border-primary'
                 >
                   <RadioGroupItem value={key} className='sr-only' />
-                  <Icon className='mb-3 h-8 w-8 text-muted-foreground [&:has([data-state=checked])]:text-primary' />
-                  <span className='text-sm font-medium'>{value}</span>
+                    <Icon className='mb-3 h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />
+                  <span className='text-sm font-medium text-center'>{value}</span>
                 </Label>
               );
             })}
@@ -68,23 +68,23 @@ export function CoverageOptions() {
               return (
                 <Label
                   key={key}
-                  className='flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary'
+                  className='group flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent/5 active:bg-accent/10 hover:text-accent-foreground [&:has([data-state=checked])]:border-primary'
                 >
                   <RadioGroupItem value={key} className='sr-only' />
-                  <Icon className='mb-3 h-8 w-8 text-muted-foreground [&:has([data-state=checked])]:text-primary' />
+                  <Icon className='mb-3 h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />
                   <div className='space-y-1.5 text-center'>
                     <span className='text-sm font-medium'>{value}</span>
                     <p className='text-xs text-muted-foreground'>
                       {COVERAGE_DESCRIPTIONS[key as keyof typeof COVERAGE_TYPES]}
                     </p>
-                    {membershipType &&
+                    {/* {membershipType &&
                       BASE_PRICES[key as keyof typeof COVERAGE_TYPES] &&
                       BASE_PRICES[key as keyof typeof COVERAGE_TYPES][membershipType] && (
                         <p className='text-sm font-medium text-primary'>
                           From {currencySymbol}
                           {BASE_PRICES[key as keyof typeof COVERAGE_TYPES][membershipType]}
                         </p>
-                      )}
+                      )} */}
                   </div>
                 </Label>
               );

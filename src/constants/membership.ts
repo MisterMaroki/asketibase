@@ -1,18 +1,19 @@
 export const MEMBERSHIP_TYPES = {
-  INDIVIDUAL: 'Individual membership',
-  COUPLE: 'Couples membership',
-  FAMILY: 'Family & group membership',
+  INDIVIDUAL: 'Individual Membership',
+  COUPLE: 'Couples Membership',
+  FAMILY: 'Family & Group Membership',
 } as const;
 
 export const COVERAGE_TYPES = {
-  WORLDWIDE: 'Worldwide comprehensive',
-  PLATINUM: 'Worldwide platinum',
+  WORLDWIDE: 'Worldwide Comprehensive',
+  PLATINUM: 'Worldwide Platinum',
 } as const;
 
 export const COVERAGE_DESCRIPTIONS = {
-  WORLDWIDE: 'Excluding high risk countries',
-  PLATINUM: 'Including all high risk countries',
+  WORLDWIDE: 'Excluding High Risk Countries',
+  PLATINUM: 'Including High Risk Countries',
 } as const;
+
 
 export const BASE_PRICES = {
   WORLDWIDE: {

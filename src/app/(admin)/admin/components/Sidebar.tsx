@@ -21,7 +21,7 @@ import {
 
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ActionResponse } from '@/types/action-response';
 import { cn } from '@/utils/cn';
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
@@ -39,7 +39,7 @@ const navigation = [
 function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> }) {
   const pathname = usePathname();
   return (
-    <div className='flex h-[100vh] flex-col '>
+    <div className='flex h-[100dvh] flex-col '>
       <div className='flex items-center gap-2 p-6 pl-4'>
         <Logo />
       </div>
@@ -100,7 +100,8 @@ export function Sidebar({ signOut }: { signOut: () => Promise<ActionResponse> })
             {/* <p className=' '>Hi</p> */}
           </div>
         </SheetTrigger>
-        <SheetContent side='left' className='w-64 p-0'>
+        <SheetContent side='left' className='w-64 p-0' aria-describedby='Admin Sidebar'>
+          <SheetTitle />
           <SidebarContent signOut={signOut} />
         </SheetContent>
       </Sheet>

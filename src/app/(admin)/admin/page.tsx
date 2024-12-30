@@ -18,24 +18,23 @@ interface DashboardMetrics {
   recentAlerts: number;
 }
 
-export async function getGreeting() {
-  const user = await getUser();
-  const hour = new Date().getHours();
-
-  if (hour < 6) {
-    return `Early bird catches the worm, ${user?.first_name}!`;
-  } else if (hour < 12) {
-    return `Good morning, ${user?.first_name}!`;
-  } else if (hour < 18) {
-    return `Good afternoon, ${user?.first_name}!`;
-  } else if (hour < 20) {
-    return `Good evening, ${user?.first_name}!`;
-  } else {
-    return `Working late, ${user?.first_name}!`;
-  }
-}
-
 export default async function AdminPage() {
+  async function getGreeting() {
+    const user = await getUser();
+    const hour = new Date().getHours();
+
+    if (hour < 6) {
+      return `Early bird catches the worm, ${user?.first_name}!`;
+    } else if (hour < 12) {
+      return `Good morning, ${user?.first_name}!`;
+    } else if (hour < 18) {
+      return `Good afternoon, ${user?.first_name}!`;
+    } else if (hour < 20) {
+      return `Good evening, ${user?.first_name}!`;
+    } else {
+      return `Working late, ${user?.first_name}!`;
+    }
+  }
   const { data: members } = await supabaseAdminClient
     .from('members')
     .select(

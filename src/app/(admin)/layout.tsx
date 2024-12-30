@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/utils/cn';
 
-import { signOut } from '../(auth)/auth-actions';
+import { signOut } from '../(public)/(auth)/auth-actions';
 
 import { Sidebar } from './admin/components/Sidebar';
 
@@ -34,10 +34,10 @@ export default function AdminRootLayout({ children }: PropsWithChildren) {
     <html lang='en' suppressHydrationWarning>
       <body className={cn('font-sans antialiased', inter.className)}>
         <Toaster />
-        <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
+        <div className='flex flex-col px-2 md:px-4'>
           <main className='relative flex-1'>
             <Sidebar signOut={signOut} />
-            <div className='relative h-full pt-16 md:ml-64 md:pt-10'>{children}</div>
+            <div className='relative h-full max-w-[1880px] pt-10 md:ml-64 '>{children}</div>
           </main>
         </div>
       </body>

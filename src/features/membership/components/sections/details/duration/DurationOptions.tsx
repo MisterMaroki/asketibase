@@ -3,6 +3,7 @@
 import { differenceInDays, differenceInMonths, differenceInYears } from 'date-fns';
 import { Calendar, CalendarClock, Plane } from 'lucide-react';
 
+import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { DURATION_DETAILS, DURATION_TYPES } from '@/constants/membership';
 import { useMembershipStore } from '@/store/membership-store';
@@ -44,19 +45,19 @@ export function DurationOptions() {
         {Object.entries(DURATION_DETAILS).map(([key, { title, description }]) => {
           const Icon = durationIcons[key as keyof typeof DURATION_TYPES];
           return (
-            <label
+            <Label
               key={key}
-              className='group flex cursor-pointer items-start space-x-3 rounded-lg border p-3 transition-colors hover:bg-accent/5 active:bg-accent/10 sm:space-x-4 sm:p-4'
+              className='group flex hover:bg-accent/5 hover:text-accent-foreground [&:has([data-state=checked])]:border-primary cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-colors active:bg-accent/10 sm:space-x-4 sm:p-4'
             >
-              <RadioGroupItem value={key} id={key} className='mt-1' />
+              <RadioGroupItem value={key} id={key} className='mt-1 sr-only' />
               {Icon && (
                 <Icon className='mt-0.5 h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary' />
               )}
-              <div className='min-w-0 flex-1 space-y-1'>
+              <div className='min-w-0 flex-1 space-y-1.5'>
                 <p className='font-medium leading-tight'>{title}</p>
                 <p className='break-words text-sm text-muted-foreground'>{description}</p>
               </div>
-            </label>
+            </Label>
           );
         })}
       </RadioGroup>

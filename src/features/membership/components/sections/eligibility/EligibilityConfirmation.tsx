@@ -7,7 +7,7 @@ import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { logOperation } from '@/features/membership/actions/log-action';
-import { ELIGIBILITY_STATEMENT, MEDICAL_DISCLAIMER } from '@/libs/membership/eligibility';
+import { MEDICAL_DISCLAIMER } from '@/libs/membership/eligibility';
 import { useMembershipStore } from '@/store/membership-store';
 
 export function EligibilityConfirmation() {
@@ -63,14 +63,7 @@ export function EligibilityConfirmation() {
 
   return (
     <div className='space-y-6'>
-      <div className='overflow-hidden rounded-lg'>
-        <div className='border-b border-border/50 bg-secondary/10 px-6 py-3'>
-          <h3 className='font-medium'>Statement</h3>
-        </div>
-        <div className='bg-secondary/5 p-6'>
-          <p className='text-sm leading-relaxed text-secondary-foreground'>{ELIGIBILITY_STATEMENT}</p>
-        </div>
-      </div>
+     
 
       <div className='overflow-hidden rounded-lg'>
         <div className='border-b border-destructive/20 bg-destructive/10 px-6 py-3'>

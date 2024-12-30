@@ -26,7 +26,7 @@ export function EligibilitySection() {
       <CardHeader className='pb-2'>
         <CardTitle className='flex items-center gap-2 text-xl'>
           <AlertCircle className='h-5 w-5 text-primary' />
-          Membership Eligibility Statement
+          Membership Eligibility
         </CardTitle>
       </CardHeader>
       <CardContent className='mt-2 grid gap-8 md:grid-cols-2'>
