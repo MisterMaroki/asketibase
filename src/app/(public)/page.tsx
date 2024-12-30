@@ -8,7 +8,7 @@ export default async function HomePage() {
   return (
     <div className='flex flex-col gap-8 lg:gap-32'>
       <HeroSection />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
@@ -88,7 +88,7 @@ function HeroSection() {
               <Button
                 size='lg'
                 variant='sexy'
-                className='mx-auto shrink-0 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-primary/100 hover:shadow-primary/25 '
+                className='mx-auto shrink-0 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-primary/100 hover:shadow-primary/25'
                 // className='shrink-0 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-primary/100 hover:shadow-primary/25'
               >
                 Get Protected Now
