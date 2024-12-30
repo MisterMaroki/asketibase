@@ -6,6 +6,8 @@
 2. Stripe setup with correct webhook listener and redirect urls
 3. Google maps api key usage
 4. google console setup, oauth client, redirect url
+5. ALL PRIVACTY AND TERMS LINKS
+ 
 
 Make sure to set up the following environment variables in your `.env.local` file:
 

@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { subYears } from 'date-fns';
+import { useForm } from 'react-hook-form';
 
 import { BlackDOBInput } from '@/components/dob-input';
 import { Button } from '@/components/ui/button';
@@ -7,23 +6,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { COUNTRY_CODES, SALUTATIONS } from '@/constants/options';
-import { getAddressError } from '@/features/membership/validations/address';
-import { getMemberValidationErrors, isValidCountryId } from '@/features/membership/validations/member-fields';
+import { isMemberValid } from '@/features/membership/validations/member';
+import { type MemberSchema, memberSchema } from '@/features/membership/validations/schemas';
 import { Country } from '@/hooks/use-countries';
 import { cn } from '@/utils/cn';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { AddressInput } from './AddressInput';
 
 interface MemberFormFieldsProps {
-  member?: any;
+  id?: string;
+  member?: MemberSchema;
   onFieldChange?: (field: string, value: any) => void;
   showSubmitButton?: boolean;
-  onSubmit?: () => void;
+  onSubmit?: (data: MemberSchema) => void;
   countries?: Country[];
   isLoadingCountries?: boolean;
 }
 
 export function MemberFormFields({
+  id,
   member,
   onFieldChange = () => {},
   showSubmitButton = false,
@@ -31,42 +33,64 @@ export function MemberFormFields({
   countries = [],
   isLoadingCountries = false,
 }: MemberFormFieldsProps) {
-  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
-  const [isSubmitAttempted, setIsSubmitAttempted] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, touchedFields },
+    setValue,
+    getValues,
+    watch,
+  } = useForm<MemberSchema>({
+    resolver: zodResolver(memberSchema),
+    defaultValues: member || {},
+    mode: 'onTouched',
+  });
 
-  const handleFieldChange = (field: string, value: any) => {
-    setTouchedFields((prev) => new Set(prev).add(field));
+  const handleFormSubmit = (data: MemberSchema) => {
+    onSubmit?.(data);
+  };
+
+  const handleFieldUpdate = (field: keyof MemberSchema, value: any) => {
     onFieldChange(field, value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitAttempted(true);
-    onSubmit?.();
-  };
-
-  const errors = getMemberValidationErrors(member || {});
-  const getFieldError = (field: string) =>
-    errors.find((error) => {
-      return error.toLowerCase().includes(field.toLowerCase());
+    setValue(field, value, {
+      shouldTouch: true,
     });
+  };
 
-  const shouldShowError = (field: string) => {
-    return (touchedFields.has(field) || isSubmitAttempted) && !!getFieldError(field);
+  const handleDateChange = (date: Date | null) => {
+    const isoString = date?.toISOString() || null;
+    handleFieldUpdate('dateOfBirth', isoString);
+  };
+
+  const dateOfBirth = watch('dateOfBirth');
+  const dateValue = dateOfBirth ? new Date(dateOfBirth) : null;
+
+  const registerWithOnChange = (name: keyof MemberSchema) => {
+    const registration = register(name);
+    return {
+      ...registration,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        registration.onChange(e);
+        onFieldChange(name, e.target.value);
+      },
+    };
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6'>
+    <form id={id} onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
       {/* Salutation field */}
       <div className='grid gap-4 sm:grid-cols-3'>
         <div className='space-y-2'>
           <Label htmlFor='salutation'>Salutation</Label>
           <Select
-            value={member?.salutation || ''}
-            onValueChange={(value) => handleFieldChange('salutation', value)}
+            value={watch('salutation')}
+            onValueChange={(value) => handleFieldUpdate('salutation', value)}
             required
           >
-            <SelectTrigger id='salutation' className={cn(shouldShowError('salutation') && 'border-destructive')}>
+            <SelectTrigger
+              id='salutation'
+              className={cn(touchedFields.salutation && errors.salutation && 'border-destructive')}
+            >
               <SelectValue placeholder='Select' />
             </SelectTrigger>
             <SelectContent>
@@ -77,19 +101,20 @@ export function MemberFormFields({
               ))}
             </SelectContent>
           </Select>
-          {shouldShowError('salutation') && <p className='text-sm text-destructive'>{getFieldError('salutation')}</p>}
+          {touchedFields.salutation && errors.salutation && (
+            <p className='text-sm text-destructive'>{errors.salutation.message}</p>
+          )}
         </div>
         <div className='space-y-2 sm:col-span-2'>
           <Label htmlFor='firstName'>First Name</Label>
           <Input
-            id='firstName'
-            value={member?.firstName || ''}
-            onChange={(e) => handleFieldChange('firstName', e.target.value)}
-            required
+            {...registerWithOnChange('firstName')}
             autoComplete='given-name'
-            className={cn(shouldShowError('first name') && 'border-destructive')}
+            className={cn(touchedFields.firstName && errors.firstName && 'border-destructive')}
           />
-          {shouldShowError('first name') && <p className='text-sm text-destructive'>{getFieldError('first name')}</p>}
+          {touchedFields.firstName && errors.firstName && (
+            <p className='text-sm text-destructive'>{errors.firstName.message}</p>
+          )}
         </div>
       </div>
 
@@ -97,14 +122,13 @@ export function MemberFormFields({
       <div className='space-y-2'>
         <Label htmlFor='lastName'>Surname</Label>
         <Input
-          id='lastName'
-          value={member?.lastName || ''}
-          onChange={(e) => handleFieldChange('lastName', e.target.value)}
-          required
+          {...registerWithOnChange('lastName')}
           autoComplete='family-name'
-          className={cn(shouldShowError('last name') && 'border-destructive')}
+          className={cn(touchedFields.lastName && errors.lastName && 'border-destructive')}
         />
-        {shouldShowError('last name') && <p className='text-sm text-destructive'>{getFieldError('last name')}</p>}
+        {touchedFields.lastName && errors.lastName && (
+          <p className='text-sm text-destructive'>{errors.lastName.message}</p>
+        )}
       </div>
 
       {/* Date of Birth and Gender fields */}
@@ -112,12 +136,12 @@ export function MemberFormFields({
         <div className='space-y-2'>
           <Label htmlFor='dob'>Date of Birth</Label>
           <BlackDOBInput
-            value={member?.dateOfBirth || null}
-            onChange={(date) => handleFieldChange('dateOfBirth', date)}
-            className={cn(shouldShowError('date of birth') && 'border-destructive')}
+            value={dateValue}
+            onChange={handleDateChange}
+            className={cn(touchedFields.dateOfBirth && errors.dateOfBirth && 'border-destructive')}
           />
-          {shouldShowError('date of birth') && (
-            <p className='text-sm text-destructive'>{getFieldError('date of birth')}</p>
+          {touchedFields.dateOfBirth && errors.dateOfBirth && (
+            <p className='text-sm text-destructive'>{errors.dateOfBirth.message}</p>
           )}
         </div>
 
@@ -126,22 +150,28 @@ export function MemberFormFields({
           <div className='flex space-x-4'>
             <Button
               type='button'
-              variant={member?.gender === 'male' ? 'sexy' : 'outline'}
-              onClick={() => handleFieldChange('gender', 'male')}
-              className={cn('flex items-center space-x-2', shouldShowError('gender') && 'border-destructive')}
+              variant={watch('gender') === 'male' ? 'sexy' : 'outline'}
+              onClick={() => handleFieldUpdate('gender', 'male')}
+              className={cn(
+                'flex items-center space-x-2',
+                touchedFields.gender && errors.gender && 'border-destructive',
+              )}
             >
               Male
             </Button>
             <Button
               type='button'
-              variant={member?.gender === 'female' ? 'sexy' : 'outline'}
-              onClick={() => handleFieldChange('gender', 'female')}
-              className={cn('flex items-center space-x-2', shouldShowError('gender') && 'border-destructive')}
+              variant={watch('gender') === 'female' ? 'sexy' : 'outline'}
+              onClick={() => handleFieldUpdate('gender', 'female')}
+              className={cn(
+                'flex items-center space-x-2',
+                touchedFields.gender && errors.gender && 'border-destructive',
+              )}
             >
               Female
             </Button>
           </div>
-          {shouldShowError('gender') && <p className='text-sm text-destructive'>{getFieldError('gender')}</p>}
+          {touchedFields.gender && errors.gender && <p className='text-sm text-destructive'>{errors.gender.message}</p>}
         </div>
       </div>
 
@@ -149,12 +179,15 @@ export function MemberFormFields({
       <div className='space-y-2'>
         <Label htmlFor='nationality'>Nationality</Label>
         <Select
-          value={member?.nationality || ''}
-          onValueChange={(value) => handleFieldChange('nationality', value)}
+          value={watch('nationality')}
+          onValueChange={(value) => handleFieldUpdate('nationality', value)}
           disabled={isLoadingCountries}
           required
         >
-          <SelectTrigger id='nationality' className={cn(shouldShowError('nationality') && 'border-destructive')}>
+          <SelectTrigger
+            id='nationality'
+            className={cn(touchedFields.nationality && errors.nationality && 'border-destructive')}
+          >
             <SelectValue placeholder={isLoadingCountries ? 'Loading...' : 'Select nationality'} />
           </SelectTrigger>
           <SelectContent>
@@ -167,7 +200,9 @@ export function MemberFormFields({
               ))}
           </SelectContent>
         </Select>
-        {shouldShowError('nationality') && <p className='text-sm text-destructive'>{getFieldError('nationality')}</p>}
+        {touchedFields.nationality && errors.nationality && (
+          <p className='text-sm text-destructive'>{errors.nationality.message}</p>
+        )}
       </div>
 
       {/* Contact Information */}
@@ -175,11 +210,14 @@ export function MemberFormFields({
         <div className='space-y-2'>
           <Label htmlFor='countryCode'>Country Code</Label>
           <Select
-            value={member?.countryCode || ''}
-            onValueChange={(value) => handleFieldChange('countryCode', value)}
+            value={watch('countryCode')}
+            onValueChange={(value) => handleFieldUpdate('countryCode', value)}
             required
           >
-            <SelectTrigger id='countryCode' className={cn(shouldShowError('country code') && 'border-destructive')}>
+            <SelectTrigger
+              id='countryCode'
+              className={cn(touchedFields.countryCode && errors.countryCode && 'border-destructive')}
+            >
               <SelectValue placeholder='Select' />
             </SelectTrigger>
             <SelectContent>
@@ -190,23 +228,20 @@ export function MemberFormFields({
               ))}
             </SelectContent>
           </Select>
-          {shouldShowError('country code') && (
-            <p className='text-sm text-destructive'>{getFieldError('country code')}</p>
+          {touchedFields.countryCode && errors.countryCode && (
+            <p className='text-sm text-destructive'>{errors.countryCode.message}</p>
           )}
         </div>
         <div className='space-y-2 sm:col-span-2'>
           <Label htmlFor='contactNumber'>Contact Number</Label>
           <Input
-            id='contactNumber'
+            {...registerWithOnChange('contactNumber')}
             type='tel'
-            value={member?.contactNumber || ''}
-            onChange={(e) => handleFieldChange('contactNumber', e.target.value)}
-            required
             autoComplete='tel'
-            className={cn(shouldShowError('contact number') && 'border-destructive')}
+            className={cn(touchedFields.contactNumber && errors.contactNumber && 'border-destructive')}
           />
-          {shouldShowError('contact number') && (
-            <p className='text-sm text-destructive'>{getFieldError('contact number')}</p>
+          {touchedFields.contactNumber && errors.contactNumber && (
+            <p className='text-sm text-destructive'>{errors.contactNumber.message}</p>
           )}
         </div>
       </div>
@@ -215,29 +250,26 @@ export function MemberFormFields({
       <div className='space-y-2'>
         <Label htmlFor='email'>Email Address</Label>
         <Input
-          id='email'
+          {...registerWithOnChange('email')}
           type='email'
-          value={member?.email || ''}
-          onChange={(e) => handleFieldChange('email', e.target.value)}
-          required
           autoComplete='email'
-          className={cn(shouldShowError('email') && 'border-destructive')}
+          className={cn(touchedFields.email && errors.email && 'border-destructive')}
         />
-        {shouldShowError('email') && <p className='text-sm text-destructive'>{getFieldError('email')}</p>}
+        {touchedFields.email && errors.email && <p className='text-sm text-destructive'>{errors.email.message}</p>}
       </div>
 
       {/* Country of Residence field */}
       <div className='space-y-2'>
         <Label htmlFor='countryOfResidence'>Country of Residence</Label>
         <Select
-          value={member?.countryOfResidence || ''}
-          onValueChange={(value) => handleFieldChange('countryOfResidence', value)}
+          value={watch('countryOfResidence')}
+          onValueChange={(value) => handleFieldUpdate('countryOfResidence', value)}
           disabled={isLoadingCountries}
           required
         >
           <SelectTrigger
             id='countryOfResidence'
-            className={cn(shouldShowError('country of residence') && 'border-destructive')}
+            className={cn(touchedFields.countryOfResidence && errors.countryOfResidence && 'border-destructive')}
           >
             <SelectValue placeholder={isLoadingCountries ? 'Loading...' : 'Select country'} />
           </SelectTrigger>
@@ -249,24 +281,30 @@ export function MemberFormFields({
             ))}
           </SelectContent>
         </Select>
-        {shouldShowError('country of residence') && (
-          <p className='text-sm text-destructive'>{getFieldError('country of residence')}</p>
+        {touchedFields.countryOfResidence && errors.countryOfResidence && (
+          <p className='text-sm text-destructive'>{errors.countryOfResidence.message}</p>
         )}
       </div>
 
       {/* Address field */}
       <div className='space-y-2'>
         <AddressInput
-          value={member?.address || ''}
-          onChange={(value) => handleFieldChange('address', value)}
-          className={cn(shouldShowError('address') && 'border-destructive')}
+          value={watch('address')}
+          onChange={(value) => handleFieldUpdate('address', value)}
+          className={cn(touchedFields.address && errors.address && 'border-destructive')}
         />
-        {shouldShowError('address') && <p className='text-sm text-destructive'>{getFieldError('address')}</p>}
+        {touchedFields.address && errors.address && (
+          <p className='text-sm text-destructive'>{errors.address.message}</p>
+        )}
       </div>
 
       {showSubmitButton && (
-        <Button type='submit' className='w-full' disabled={isLoadingCountries || errors.length > 0}>
-          {member?.id ? 'Update Details' : 'Add Member'}
+        <Button
+          type='submit'
+          className='w-full'
+          disabled={isLoadingCountries || Object.keys(errors).length > 0 || !isMemberValid(member || getValues())}
+        >
+          {member?.id ? 'Update Details' : 'Confirm Add Member'}
         </Button>
       )}
     </form>

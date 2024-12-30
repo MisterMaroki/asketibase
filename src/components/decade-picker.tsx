@@ -13,13 +13,13 @@ export function DecadePicker({ onDecadeSelect, selectedDecade }: DecadePickerPro
   const currentYear = new Date().getFullYear();
   const startDecade = Math.floor((currentYear - 80) / 10) * 10;
 
-  const decades = Array.from({ length: 11 }, (_, i) => startDecade + i * 10);
+  const decades = Array.from({ length: 8 }, (_, i) => startDecade + i * 10);
 
   return (
-    <div className='bg-black p-3 text-white'>
-      <div className='mb-2 flex items-center justify-between'>
+    <div className='p-3 text-white'>
+      <div className='mb-2 flex items-center justify-center'>
         <span>
-          {startDecade} - {startDecade + 99}
+          {startDecade} - {startDecade + 79}
         </span>
       </div>
       <div className='grid grid-cols-3 gap-2'>
@@ -27,10 +27,10 @@ export function DecadePicker({ onDecadeSelect, selectedDecade }: DecadePickerPro
           <Button
             key={decade}
             onClick={() => onDecadeSelect(decade)}
-            variant='ghost'
+            variant='outline'
             className={cn(
               'text-white hover:bg-gray-700',
-              decade === selectedDecade && 'bg-white text-black hover:bg-gray-200 hover:text-black'
+              decade === selectedDecade && 'bg-white text-black hover:bg-gray-200 hover:text-black',
             )}
           >
             {decade}s

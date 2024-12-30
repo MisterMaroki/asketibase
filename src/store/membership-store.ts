@@ -35,7 +35,7 @@ export type MembershipState = {
   endDate: string | null;
   members: Member[];
   referralCode: string;
-  referralSource: string | null;
+  referralSource: string;
   originalState: {
     membershipType: keyof typeof MEMBERSHIP_TYPES | null;
     coverageType: keyof typeof COVERAGE_TYPES | null;
@@ -61,6 +61,7 @@ export type MembershipState = {
   addMember: (member: Omit<Member, 'id'>) => void;
   updateMember: (id: string, member: Partial<Member>) => void;
   saveOriginalState: () => void;
+  removeUnnecessaryMembers: () => void;
   clearOriginalState: () => void;
   hasStateChanged: () => boolean;
   removeMember: (id: string) => void;
@@ -91,7 +92,7 @@ export type MembershipState = {
 // Default state
 const defaultState = {
   currentStep: 1,
-  eligibilityAccepted: true,
+  eligibilityAccepted: false,
   membershipType: '' as keyof typeof MEMBERSHIP_TYPES,
   coverageType: '' as keyof typeof COVERAGE_TYPES,
   durationType: '' as keyof typeof DURATION_TYPES,
@@ -102,7 +103,7 @@ const defaultState = {
   members: [],
   // referralCode: 'WELCOME10',
   referralCode: '',
-  referralSource: null,
+  referralSource: '',
   originalState: null,
   medicalState: {
     memberConditions: {},
@@ -175,10 +176,10 @@ export const useMembershipStore = create<MembershipState>()(
           const updatedMedicalState: MembershipState['medicalState'] = hasKeyDetailsChanged
             ? {
                 memberConditions: Object.fromEntries(
-                  Object.entries(state.medicalState.memberConditions).filter(([k]) => k !== id)
+                  Object.entries(state.medicalState.memberConditions).filter(([k]) => k !== id),
                 ),
                 completedMembers: Object.fromEntries(
-                  Object.entries(state.medicalState.completedMembers).filter(([k]) => k !== id)
+                  Object.entries(state.medicalState.completedMembers).filter(([k]) => k !== id),
                 ),
               }
             : state.medicalState;
@@ -216,8 +217,18 @@ export const useMembershipStore = create<MembershipState>()(
           originalState: {
             membershipType: state.membershipType,
             coverageType: state.coverageType,
+            durationType: state.durationType,
             members: state.members,
           },
+        })),
+      removeUnnecessaryMembers: () =>
+        set((state) => ({
+          members:
+            state.membershipType === 'INDIVIDUAL'
+              ? state.members.slice(0, 1)
+              : state.membershipType === 'COUPLE'
+                ? state.members.slice(0, 2)
+                : state.members.slice(0, 15),
         })),
       clearOriginalState: () => set({ originalState: null }),
       hasStateChanged: () => {
@@ -231,6 +242,6 @@ export const useMembershipStore = create<MembershipState>()(
         );
       },
     }),
-    persistConfig
-  )
+    persistConfig,
+  ),
 );

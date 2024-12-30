@@ -108,6 +108,7 @@ export async function generateQuoteAction(data: Membershipschema) {
       coverage_type: data.coverageType,
       duration_type: data.durationType as 'expat_year' | 'multi_trip' | 'single_trip',
       currency: data.currency,
+      referral_source: data.referralSource,
       start_date: data.startDate,
       end_date: calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
     })

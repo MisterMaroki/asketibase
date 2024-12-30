@@ -1,9 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
 import { useToast } from '@/components/ui/use-toast';
-import { isMemberValid } from '@/features/membership/validations/member-fields';
 import type { MemberSchema } from '@/features/membership/validations/schemas';
 import { useCountries } from '@/hooks/use-countries';
 import { useMembershipStore } from '@/store/membership-store';
@@ -11,54 +8,46 @@ import { useMembershipStore } from '@/store/membership-store';
 import { MemberFormFields } from './MemberFormFields';
 
 interface MemberFormProps {
+  id?: string;
   existingMember?: MemberSchema;
-  onSubmit?: () => void;
+  onSubmit?: (data: MemberSchema) => void;
+  onFieldChange?: (field: string, value: any) => void;
+  showSubmitButton?: boolean;
 }
 
-export function MemberForm({ existingMember, onSubmit }: MemberFormProps) {
+export function MemberForm({ id, existingMember, onSubmit, onFieldChange, showSubmitButton = true }: MemberFormProps) {
   const { addMember, updateMember } = useMembershipStore();
   const { countries, isLoading: loadingCountries } = useCountries();
   const { toast } = useToast();
 
-  const [currentMember, setCurrentMember] = useState<MemberSchema | null>(existingMember || null);
-
-  const handleFieldChange = (field: string, value: any) => {
-    const memberData = { ...currentMember, [field]: value };
-    setCurrentMember(memberData as any);
-  };
-
-  const handleSubmit = () => {
-    if (!currentMember) return;
-    const valid = isMemberValid(currentMember);
-    if (!valid) return;
-
+  const handleSubmit = (data: MemberSchema) => {
     if (existingMember?.id) {
-      updateMember(existingMember.id, currentMember as any);
+      updateMember(existingMember.id, data);
       toast({
         title: 'Member updated',
         description: 'Member updated successfully',
       });
     } else {
-      addMember(currentMember as any);
+      addMember(data);
       toast({
         title: 'Member added',
         description: 'Member added successfully',
       });
-      setCurrentMember(null);
     }
 
-    onSubmit?.();
+    onSubmit?.(data);
   };
 
   return (
     <div>
       <MemberFormFields
-        member={currentMember}
-        onFieldChange={handleFieldChange}
+        id={id}
+        member={existingMember}
         onSubmit={handleSubmit}
+        onFieldChange={onFieldChange}
         countries={countries}
         isLoadingCountries={loadingCountries}
-        showSubmitButton
+        showSubmitButton={showSubmitButton}
       />
     </div>
   );

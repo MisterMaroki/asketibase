@@ -20,7 +20,7 @@ interface QuoteType {
   coverageType: string;
   duration: string;
   startDate: string;
-  endDate: string;
+  endDate: string ;
   members: Array<{
     memberId: string;
     countryPrice: number;
@@ -39,8 +39,9 @@ interface QuoteType {
   finalPremium: number;
 }
 
-export function QuoteGenerator() {
-  const [quote, setQuote] = useState<QuoteType | null>(null);
+export type { QuoteType };
+
+export function QuoteGenerator({ onQuoteGenerated, quote }: { onQuoteGenerated: (quote: QuoteType | null) => void, quote: QuoteType | null }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,6 +60,7 @@ export function QuoteGenerator() {
     medicalState,
     setStep,
   } = useMembershipStore();
+    console.log("🚀 ~ QuoteGenerator ~ referralSource:", referralSource)
   const router = useRouter();
   // Prepare membership data for validation
   const membershipData = {
@@ -104,7 +106,7 @@ export function QuoteGenerator() {
     try {
       setIsLoading(true);
       setError(null);
-      setQuote(null);
+      onQuoteGenerated(null);
 
       // Clear error param from URL without refresh
       if (errorParam) {
@@ -130,7 +132,7 @@ export function QuoteGenerator() {
       if (quote) {
         console.log('🚀 ~ handleGenerateQuote ~ quote:', quote);
 
-        setQuote(quote);
+        onQuoteGenerated(quote);
 
         setTimeout(() => {
           window.scrollTo({

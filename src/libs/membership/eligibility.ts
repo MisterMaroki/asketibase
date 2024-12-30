@@ -11,6 +11,6 @@ export const ELIGIBILITY_REQUIREMENTS = [
   'Have not been diagnosed with a terminal illness',
 ];
 
-export const ELIGIBILITY_STATEMENT = `By proceeding you agree that you and all members are eligible for coverage based on the requirements listed below. Any false declarations may result in claim denials and policy cancellation.`;
+export const ELIGIBILITY_STATEMENT = `By proceeding you agree that you and all members are eligible for coverage based on the requirements listed. Any false declarations may result in claim denials and policy cancellation.`;
 
 export const MEDICAL_DISCLAIMER = `Important: Please review all eligibility requirements carefully. Providing false information or omitting relevant medical history may affect your coverage and future claims.`;
