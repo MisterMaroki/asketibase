@@ -14,7 +14,6 @@ export const COVERAGE_DESCRIPTIONS = {
   PLATINUM: 'Including High Risk Countries',
 } as const;
 
-
 export const BASE_PRICES = {
   WORLDWIDE: {
     INDIVIDUAL: 1000,
@@ -70,3 +69,38 @@ export const MEMBER_LIMITS = {
 } as const;
 
 export const HIGH_RISK_COUNTRIES = ['Russia', 'China', 'Iran', 'North Korea', 'Cuba', 'Belarus'] as const;
+
+export const CURRENCIES = [
+  { code: 'USD', symbol: '$' },
+  { code: 'EUR', symbol: '€' },
+  { code: 'GBP', symbol: '£' },
+  { code: 'JPY', symbol: '¥' },
+  { code: 'SGD', symbol: 'S$' },
+  { code: 'AUD', symbol: 'A$' },
+  { code: 'NZD', symbol: 'NZ$' },
+  { code: 'CAD', symbol: 'C$' },
+  { code: 'ZAR', symbol: 'R' },
+] as const;
+
+export const SALUTATIONS = ['Dr', 'Mr', 'Mrs', 'Miss', 'Ms', 'Mx', 'Master'] as const;
+
+export const COUNTRY_CODES = [
+  { code: '+1', name: 'USA/Canada' },
+  { code: '+44', name: 'UK' },
+  { code: '+61', name: 'Australia' },
+  { code: '+81', name: 'Japan' },
+  { code: '+65', name: 'Singapore' },
+  // Add more as needed
+] as const;
+
+export const REFERRAL_SOURCES = [
+  'Search Engine (Google, Yahoo, Bing)',
+  'Word of Mouth',
+  'Recommended by a Friend',
+  'Online Advertisement & Social Media',
+  'Tour Operator',
+  'My Bank',
+  'Other (please specify)',
+] as const;
+
+export type ReferralSource = (typeof REFERRAL_SOURCES)[number];

@@ -21,8 +21,6 @@ import { Tailwind } from '@react-email/tailwind';
 
 import tailwindConfig from './tailwind.config';
 
-const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-
 const COLORS = {
   mint: '#9ef0e4',
   sage: '#72c4ac',
@@ -149,7 +147,7 @@ export const MembershipDocumentEmail = (data: DocumentData) => {
                             </Column>
                           </Row>
                         </Section>
-                      )
+                      ),
                   )}
                 </Section>
               </Section>

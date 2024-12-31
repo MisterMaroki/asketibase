@@ -3,7 +3,7 @@ import { Tailwind } from '@react-email/tailwind';
 
 import tailwindConfig from './tailwind.config';
 
-const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+const baseUrl = process.env.VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_SITE_URL}` : 'http://localhost:3000';
 
 export function WelcomeEmail() {
   return (
@@ -13,7 +13,7 @@ export function WelcomeEmail() {
       <Tailwind config={tailwindConfig}>
         <Body className='mx-auto my-auto bg-slate-500 px-2 py-10 font-sans'>
           <Container className='mx-auto mt-[40px] w-[464px] overflow-hidden rounded-md bg-white'>
-            <Section className={`h-[255px] w-full bg-black  bg-center`}>
+            <Section className={`h-[255px] w-full bg-black bg-center`}>
               <Heading className='mb-0 mt-[70px] text-center text-[48px] font-bold text-white'>Welcome!</Heading>
             </Section>
             <Section className='p-8'>
