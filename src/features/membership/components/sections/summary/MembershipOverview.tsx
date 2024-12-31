@@ -165,6 +165,7 @@ export function MembershipOverview({ quote }: { quote: QuoteType | null }) {
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value)}
                   className='pr-8'
+                  disabled={!!quote}
                 />
                 {isValidatingCode && (
                   <div className='absolute right-2 top-1/2 -translate-y-1/2'>

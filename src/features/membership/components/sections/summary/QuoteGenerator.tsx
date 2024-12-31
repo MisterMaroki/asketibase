@@ -20,7 +20,7 @@ interface QuoteType {
   coverageType: string;
   duration: string;
   startDate: string;
-  endDate: string ;
+  endDate: string;
   members: Array<{
     memberId: string;
     countryPrice: number;
@@ -41,7 +41,15 @@ interface QuoteType {
 
 export type { QuoteType };
 
-export function QuoteGenerator({ onQuoteGenerated, quote }: { onQuoteGenerated: (quote: QuoteType | null) => void, quote: QuoteType | null }) {
+export function QuoteGenerator({
+  onQuoteGenerated,
+  quote,
+  onPressEdit,
+}: {
+  onQuoteGenerated: (quote: QuoteType | null) => void;
+  quote: QuoteType | null;
+  onPressEdit: () => void;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +68,7 @@ export function QuoteGenerator({ onQuoteGenerated, quote }: { onQuoteGenerated: 
     medicalState,
     setStep,
   } = useMembershipStore();
-    console.log("🚀 ~ QuoteGenerator ~ referralSource:", referralSource)
+  console.log('🚀 ~ QuoteGenerator ~ referralSource:', referralSource);
   const router = useRouter();
   // Prepare membership data for validation
   const membershipData = {
@@ -175,11 +183,11 @@ export function QuoteGenerator({ onQuoteGenerated, quote }: { onQuoteGenerated: 
 
       {quote && (
         <div className='mt-8'>
-          <QuoteSummary {...quote} />
+          <QuoteSummary {...quote} onPressEdit={onPressEdit} />
         </div>
       )}
 
-      <div className='mt-8 flex flex-col justify-end gap-4 '>
+      <div className='mt-8 flex flex-col justify-end gap-4'>
         {errorParam && (
           <Alert variant='destructive'>
             <AlertCircle className='h-4 w-4' />
@@ -189,7 +197,7 @@ export function QuoteGenerator({ onQuoteGenerated, quote }: { onQuoteGenerated: 
         {/* {quote ? (
           <CheckoutForm id={quote.id} />
         ) : ( */}
-        <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='w-full '>
+        <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='w-full'>
           {isLoading ? (
             <>
               <Loader2 className='mr-2 h-4 w-4 animate-spin' />

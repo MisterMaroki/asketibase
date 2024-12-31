@@ -1,0 +1,16 @@
+name: Update Exchange Rates
+
+on:
+  schedule:
+    # Run at minute 5 of every hour
+    - cron: '5 * * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-rates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Exchange Rates
+        run: |
+          curl -X GET "${{ secrets.SITE_URL }}/api/cron/update-exchange-rates" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

@@ -30,6 +30,7 @@ interface QuoteSummaryProps {
   discountApplied: number;
   finalPremium: number;
   taxAmount: number;
+  onPressEdit: () => void;
 }
 
 export default function QuoteSummary({
@@ -43,12 +44,13 @@ export default function QuoteSummary({
   discountApplied,
   finalPremium,
   taxAmount,
+  onPressEdit,
 }: QuoteSummaryProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   // Calculate the number of days
   const daysDifference = Math.ceil(
-    (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)
+    (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24),
   );
 
   return (
@@ -58,7 +60,7 @@ export default function QuoteSummary({
           <PencilIcon className='h-5 w-5 text-primary' />
           Quote Summary
         </CardTitle>
-        <Button variant='ghost' size='sm' className='text-teal-400 hover:text-teal-300'>
+        <Button variant='ghost' size='sm' className='text-teal-400 hover:text-teal-300' onClick={onPressEdit}>
           <PencilIcon className='mr-2 h-4 w-4' />
           Edit
         </Button>
@@ -88,7 +90,7 @@ export default function QuoteSummary({
             </div>
           </div>
 
-          <Collapsible open={isOpen} onOpenChange={setIsOpen} className='w-full '>
+          <Collapsible open={isOpen} onOpenChange={setIsOpen} className='w-full'>
             <CollapsibleTrigger asChild>
               <div className='mb-2 mt-4 flex w-full cursor-pointer items-center justify-between rounded-md bg-muted/50 p-2 text-sm font-medium text-primary transition-colors hover:bg-muted/70'>
                 <span>Member Breakdown</span>

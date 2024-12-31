@@ -17,6 +17,10 @@ export function Summary() {
     setQuote(quote);
   };
 
+  const handleEditQuote = () => {
+    setQuote(null);
+  };
+
   useEffect(() => {
     if (members.length === 0) {
       router.replace('/membership?step=1');
@@ -27,7 +31,7 @@ export function Summary() {
   return (
     <div className='space-y-6'>
       <MembershipOverview quote={quote} />
-      <QuoteGenerator onQuoteGenerated={handleQuoteGenerated} quote={quote} />
+      <QuoteGenerator onQuoteGenerated={handleQuoteGenerated} quote={quote} onPressEdit={handleEditQuote} />
     </div>
   );
 }

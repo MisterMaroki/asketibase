@@ -15,7 +15,7 @@ export async function getDetails(type: 'member' | 'membership' | 'quote', id: st
               *,
               quotes (*)
             )
-          `
+          `,
           )
           .eq('id', id)
           .single();
@@ -29,7 +29,7 @@ export async function getDetails(type: 'member' | 'membership' | 'quote', id: st
             *,
             members (*),
             quotes (*)
-          `
+          `,
           )
           .eq('id', id)
           .single();
@@ -45,7 +45,7 @@ export async function getDetails(type: 'member' | 'membership' | 'quote', id: st
               *,
               members (*)
             )
-          `
+          `,
           )
           .eq('id', id)
           .single();

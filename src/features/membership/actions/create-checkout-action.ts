@@ -6,6 +6,7 @@ import { getDurationDetails } from '@/constants';
 import { getOrCreateCustomer } from '@/features/membership/controllers/get-or-create-customer';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { getQuoteWithMembership } from '@/features/membership/controllers/quote-memberships';
+import { convertToGBP } from '@/libs/exchange-rates/convert-to-gbp';
 import { stripeAdmin } from '@/libs/stripe/stripe-admin';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 import { getURL } from '@/utils/get-url';
@@ -40,6 +41,29 @@ export async function createCheckoutAction(id: string) {
     redirect(`${getURL()}/membership/success?quoteId=${quote.id}&sessionId=${tx.data.session_id}`);
   } else if (tx.data) {
     throw Error('Payment already made');
+  }
+
+  // Get GBP amount for tracking
+  const gbpAmount = quote.gbp_total;
+  if (!gbpAmount) {
+    throw Error('GBP amount not available');
+  }
+
+  // Create payment record
+  const { error: paymentError } = await supabaseAdminClient.from('stripe_payments').insert({
+    amount: quote.total_price_with_tax,
+    gbp_amount: gbpAmount,
+    currency: quote.currency,
+    quote_id: quote.id,
+    membership_id: quote.membership_id,
+    user_id: quote.memberships.user_id || '',
+    session_id: 'pending', // Will be updated after successful payment
+    status: 'pending',
+  });
+
+  if (paymentError) {
+    console.log('🚀 ~ createCheckoutAction ~ paymentError:', paymentError);
+    throw Error('Failed to create payment record');
   }
 
   // 2. Retrieve or create the customer in Stripe

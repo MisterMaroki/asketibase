@@ -126,7 +126,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                   <div className='flex justify-between'>
                     <span className='text-muted-foreground'>Monthly Price</span>
                     <span>
-                      {membership.monthly_price} {membership.currency}
+                      {membership.monthly_price} {quotes.currency}
                     </span>
                   </div>
                 )}
@@ -396,7 +396,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                     <div className='flex justify-between'>
                       <span className='text-muted-foreground'>Monthly Price</span>
                       <span>
-                        {membership.monthly_price} {membership.currency}
+                        {membership.monthly_price} {data?.currency}
                       </span>
                     </div>
                   )}

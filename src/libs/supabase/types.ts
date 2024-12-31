@@ -131,6 +131,30 @@ export type Database = {
           },
         ]
       }
+      exchange_rates: {
+        Row: {
+          created_at: string | null
+          currency_code: string
+          id: string
+          last_updated: string | null
+          rate: number
+        }
+        Insert: {
+          created_at?: string | null
+          currency_code: string
+          id?: string
+          last_updated?: string | null
+          rate: number
+        }
+        Update: {
+          created_at?: string | null
+          currency_code?: string
+          id?: string
+          last_updated?: string | null
+          rate?: number
+        }
+        Relationships: []
+      }
       fires: {
         Row: {
           active: boolean
@@ -281,7 +305,6 @@ export type Database = {
         Row: {
           coverage_type: string
           created_at: string | null
-          currency: string
           duration_type: Database["public"]["Enums"]["duration_type"]
           end_date: string | null
           id: string
@@ -296,7 +319,6 @@ export type Database = {
         Insert: {
           coverage_type: string
           created_at?: string | null
-          currency: string
           duration_type: Database["public"]["Enums"]["duration_type"]
           end_date?: string | null
           id?: string
@@ -311,7 +333,6 @@ export type Database = {
         Update: {
           coverage_type?: string
           created_at?: string | null
-          currency?: string
           duration_type?: Database["public"]["Enums"]["duration_type"]
           end_date?: string | null
           id?: string
@@ -405,6 +426,7 @@ export type Database = {
           created_at: string
           currency: string
           discount_amount: number
+          gbp_total: number | null
           id: string
           medical_loading_price: number
           member_prices: Json
@@ -420,6 +442,7 @@ export type Database = {
           created_at?: string
           currency: string
           discount_amount?: number
+          gbp_total?: number | null
           id?: string
           medical_loading_price: number
           member_prices: Json
@@ -435,6 +458,7 @@ export type Database = {
           created_at?: string
           currency?: string
           discount_amount?: number
+          gbp_total?: number | null
           id?: string
           medical_loading_price?: number
           member_prices?: Json
@@ -466,6 +490,7 @@ export type Database = {
           amount: number
           created_at: string | null
           currency: string
+          gbp_amount: number | null
           id: string
           membership_id: string
           quote_id: string
@@ -478,6 +503,7 @@ export type Database = {
           amount: number
           created_at?: string | null
           currency: string
+          gbp_amount?: number | null
           id?: string
           membership_id: string
           quote_id: string
@@ -490,6 +516,7 @@ export type Database = {
           amount?: number
           created_at?: string | null
           currency?: string
+          gbp_amount?: number | null
           id?: string
           membership_id?: string
           quote_id?: string
