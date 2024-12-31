@@ -6,7 +6,6 @@ import { getDurationDetails } from '@/constants';
 import { getOrCreateCustomer } from '@/features/membership/controllers/get-or-create-customer';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { getQuoteWithMembership } from '@/features/membership/controllers/quote-memberships';
-import { convertToGBP } from '@/libs/exchange-rates/convert-to-gbp';
 import { stripeAdmin } from '@/libs/stripe/stripe-admin';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 import { getURL } from '@/utils/get-url';
@@ -14,17 +13,31 @@ import { getURL } from '@/utils/get-url';
 import { getMembershipMembers } from '../controllers/members';
 
 export async function createCheckoutAction(id: string) {
-  // export async function createCheckoutAction({ price }: { price: Price }) {
   // 1. Get the user from session
-  // const user = await getUser();
-  // console.log('🚀 ~ createCheckoutAction ~ user:', user);
+  const user = await getUser();
 
-  // if (!user?.email) {
-  //   redirect(`${getURL()}/membership?step=5&error=true`);
-  // }
+  // If no user is logged in, redirect to signup with return URL
+  if (!user?.email) {
+    const returnUrl = encodeURIComponent(`/membership/checkout/${id}`);
+    redirect(`${getURL()}/signup?returnUrl=${returnUrl}`);
+  }
+
   const quote = await getQuoteWithMembership(id);
   if (!quote) {
     redirect(`${getURL()}/membership?step=5&error=true`);
+  }
+
+  // Update membership with user_id if not set
+  if (!quote.memberships.user_id) {
+    const { error: membershipError } = await supabaseAdminClient
+      .from('memberships')
+      .update({ user_id: user.id })
+      .eq('id', quote.memberships.id);
+
+    if (membershipError) {
+      console.error('Failed to update membership with user ID:', membershipError);
+      throw Error('Failed to update membership');
+    }
   }
 
   const primaryMember = await getMembershipMembers(quote.memberships.id).then((members) =>
@@ -43,45 +56,19 @@ export async function createCheckoutAction(id: string) {
     throw Error('Payment already made');
   }
 
-  // Get GBP amount for tracking
-  const gbpAmount = quote.gbp_total;
-  if (!gbpAmount) {
-    throw Error('GBP amount not available');
-  }
-
-  // Create payment record
-  const { error: paymentError } = await supabaseAdminClient.from('stripe_payments').insert({
-    amount: quote.total_price_with_tax,
-    gbp_amount: gbpAmount,
-    currency: quote.currency,
-    quote_id: quote.id,
-    membership_id: quote.membership_id,
-    user_id: quote.memberships.user_id || '',
-    session_id: 'pending', // Will be updated after successful payment
-    status: 'pending',
-  });
-
-  if (paymentError) {
-    console.log('🚀 ~ createCheckoutAction ~ paymentError:', paymentError);
-    throw Error('Failed to create payment record');
-  }
-
-  // 2. Retrieve or create the customer in Stripe
+  // Retrieve or create the customer in Stripe
   const customer = await getOrCreateCustomer({
-    userId: primaryMember?.id || '',
-    email: primaryMember?.email || '',
+    userId: primaryMember.id,
+    email: primaryMember.email,
   });
 
-  // 3. Create a checkout session in Stripe
+  // Create a checkout session in Stripe
   const checkoutSession = await stripeAdmin.checkout.sessions.create({
-    // payment_method_types: ['card', 'sepa_debit'],
-    // billing_address_collection: 'required',
     customer,
     mode: 'payment',
-
     metadata: {
       quoteId: quote.id,
-      userId: primaryMember.id,
+      userId: user.id,
     },
     line_items: [
       {
@@ -98,7 +85,6 @@ export async function createCheckoutAction(id: string) {
         quantity: 1,
       },
     ],
-
     success_url: `${getURL()}/membership/success?quoteId=${quote.id}&sessionId={CHECKOUT_SESSION_ID}`,
     cancel_url: `${getURL()}/membership?step=5&error=true`,
   });
@@ -107,6 +93,6 @@ export async function createCheckoutAction(id: string) {
     throw Error('checkoutSession is not defined');
   }
 
-  // 4. Redirect to checkout url
+  // Redirect to checkout url
   redirect(checkoutSession.url);
 }
