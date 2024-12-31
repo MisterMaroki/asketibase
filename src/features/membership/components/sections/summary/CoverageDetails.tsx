@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { Clock } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { COVERAGE_TYPES, DURATION_DETAILS, DURATION_TYPES, MEMBERSHIP_TYPES } from '@/constants/membership';
+import { COVERAGE_TYPES, DURATION_DETAILS, DURATION_TYPES, MEMBERSHIP_TYPES } from '@/constants';
 
 interface CoverageDetailsProps {
   membershipType: string | null;

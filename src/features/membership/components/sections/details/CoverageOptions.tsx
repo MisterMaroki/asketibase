@@ -5,7 +5,7 @@ import { Award, Globe, Shield, User, UserPlus, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { BASE_PRICES, COVERAGE_DESCRIPTIONS, COVERAGE_TYPES, MEMBERSHIP_TYPES } from '@/constants/membership';
+import { BASE_PRICES, COVERAGE_DESCRIPTIONS, COVERAGE_TYPES, MEMBERSHIP_TYPES } from '@/constants';
 import { getCurrencySymbol } from '@/libs/membership/currency';
 import { useMembershipStore } from '@/store/membership-store';
 
@@ -45,11 +45,11 @@ export function CoverageOptions() {
               return (
                 <Label
                   key={key}
-                  className='group flex flex-col items-center justify-center rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent/5 active:bg-accent/10 hover:text-accent-foreground transition-colors [&:has([data-state=checked])]:border-primary'
+                  className='group flex flex-col items-center justify-center rounded-md border-2 border-muted bg-transparent p-4 transition-colors hover:bg-accent/5 hover:text-accent-foreground active:bg-accent/10 [&:has([data-state=checked])]:border-primary'
                 >
                   <RadioGroupItem value={key} className='sr-only' />
-                    <Icon className='mb-3 h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />
-                  <span className='text-sm font-medium text-center'>{value}</span>
+                  <Icon className='mb-3 h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />
+                  <span className='text-center text-sm font-medium'>{value}</span>
                 </Label>
               );
             })}
@@ -68,7 +68,7 @@ export function CoverageOptions() {
               return (
                 <Label
                   key={key}
-                  className='group flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent/5 active:bg-accent/10 hover:text-accent-foreground [&:has([data-state=checked])]:border-primary'
+                  className='group flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent/5 hover:text-accent-foreground active:bg-accent/10 [&:has([data-state=checked])]:border-primary'
                 >
                   <RadioGroupItem value={key} className='sr-only' />
                   <Icon className='mb-3 h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />

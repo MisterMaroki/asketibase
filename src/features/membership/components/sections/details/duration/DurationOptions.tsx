@@ -5,7 +5,7 @@ import { Calendar, CalendarClock, Plane } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { DURATION_DETAILS, DURATION_TYPES } from '@/constants/membership';
+import { DURATION_DETAILS, DURATION_TYPES } from '@/constants';
 import { useMembershipStore } from '@/store/membership-store';
 
 const durationIcons = {

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { DURATION_DETAILS, DURATION_TYPES } from '@/constants/membership';
+import { DURATION_DETAILS, DURATION_TYPES } from '@/constants';
 import { parseNaturalDate } from '@/utils/date-parser';
 
 interface DateSelectorProps {

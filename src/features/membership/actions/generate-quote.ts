@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
-import { DURATION_TYPES } from '@/constants/membership';
+import { DURATION_TYPES } from '@/constants';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 import { getURL } from '@/utils/get-url';
@@ -68,11 +68,11 @@ export async function generateQuoteAction(data: Membershipschema) {
   const declinedCountries = countryPrices?.filter((cp) => !cp.base_price);
   if (declinedCountries && declinedCountries.length > 0) {
     const areDeclinedCountriesACountryOfResidence = declinedCountries.some(
-      (cp) => cp.id === data.members.find((m) => m.countryOfResidence === cp.id)?.countryOfResidence
+      (cp) => cp.id === data.members.find((m) => m.countryOfResidence === cp.id)?.countryOfResidence,
     );
     if (areDeclinedCountriesACountryOfResidence) {
       throw new Error(
-        'Error: These countries are not supported: ' + declinedCountries.map((cp) => cp.country).join(', ')
+        'Error: These countries are not supported: ' + declinedCountries.map((cp) => cp.country).join(', '),
       );
     }
   }
@@ -197,7 +197,7 @@ export async function generateQuoteAction(data: Membershipschema) {
       coverage_loading_price: memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0),
       medical_loading_price: memberPrices.reduce(
         (sum, mp) => sum + (mp.medicalFactor + mp.ageFactor) * numberOfDays,
-        0
+        0,
       ),
       total_price: totalPrice,
       tax_amount: totalTax,

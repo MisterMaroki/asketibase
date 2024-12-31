@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
-import { getDurationDetails } from '@/constants/membership';
+import { getDurationDetails } from '@/constants';
 import { getOrCreateCustomer } from '@/features/membership/controllers/get-or-create-customer';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { getQuoteWithMembership } from '@/features/membership/controllers/quote-memberships';
@@ -27,7 +27,7 @@ export async function createCheckoutAction(id: string) {
   }
 
   const primaryMember = await getMembershipMembers(quote.memberships.id).then((members) =>
-    members?.find((member) => member.is_primary)
+    members?.find((member) => member.is_primary),
   );
 
   if (!primaryMember) {

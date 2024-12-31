@@ -2,7 +2,7 @@
 
 import { Resend } from 'resend';
 
-import { COVERAGE_DESCRIPTIONS, COVERAGE_TYPES, getDurationDetails, MEMBERSHIP_TYPES } from '@/constants/membership';
+import { COVERAGE_DESCRIPTIONS, COVERAGE_TYPES, getDurationDetails, MEMBERSHIP_TYPES } from '@/constants';
 import MembershipDocumentEmail from '@/features/emails/membership-document';
 import { formatDate } from '@/libs/format-date';
 import { formatPrice, formatPriceWithCurrency } from '@/libs/membership/currency';

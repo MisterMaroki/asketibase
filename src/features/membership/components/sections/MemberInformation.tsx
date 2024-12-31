@@ -5,7 +5,7 @@ import { AlertCircle } from 'lucide-react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { MEMBER_LIMITS } from '@/constants/membership';
+import { MEMBER_LIMITS } from '@/constants';
 import { getMemberValidationErrors, isMemberValid } from '@/features/membership/validations/member';
 import { useMembershipStore } from '@/store/membership-store';
 

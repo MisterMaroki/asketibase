@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { MEMBER_LIMITS } from '@/constants/membership';
+import { MEMBER_LIMITS } from '@/constants';
 import { isMemberValid } from '@/features/membership/validations/member';
 import type { MemberSchema } from '@/features/membership/validations/schemas';
 import { useMembershipStore } from '@/store/membership-store';

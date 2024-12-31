@@ -1,6 +1,6 @@
 export const getURL = (path: string = '') => {
   // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
-  let url = 'https://asketibase.vercel.app';
+  let url = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
   // let url = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
   // Trim the URL and remove trailing slash if exists.
