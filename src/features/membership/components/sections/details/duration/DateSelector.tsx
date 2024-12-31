@@ -1,15 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DURATION_DETAILS, DURATION_TYPES } from '@/constants';
-import { parseNaturalDate } from '@/utils/date-parser';
 
 interface DateSelectorProps {
   startDate: string | null;
@@ -28,16 +26,10 @@ export function DateSelector({
   maxDate,
   durationType,
 }: DateSelectorProps) {
-  const [naturalDateInput, setNaturalDateInput] = useState('');
-  const [endDateInput, setEndDateInput] = useState('');
-  const [showHint, setShowHint] = useState(false);
-  const hintTimer = useRef<NodeJS.Timeout>();
-
   // Clear end date when duration type changes
   useEffect(() => {
     if (durationType !== 'single_trip') {
       setEndDate(null);
-      setEndDateInput('');
     }
   }, [durationType, setEndDate, startDate]);
 
@@ -56,52 +48,6 @@ export function DateSelector({
     };
   }, [startDate, durationType]);
 
-  useEffect(() => {
-    return () => {
-      if (hintTimer.current) {
-        clearTimeout(hintTimer.current);
-      }
-    };
-  }, []);
-
-  const handleFocus = () => {
-    if (hintTimer.current) {
-      clearTimeout(hintTimer.current);
-    }
-    hintTimer.current = setTimeout(() => {
-      setShowHint(true);
-    }, 6000);
-  };
-
-  const handleBlur = () => {
-    if (hintTimer.current) {
-      clearTimeout(hintTimer.current);
-    }
-    setShowHint(false);
-  };
-
-  const handleNaturalDateInput = (input: string) => {
-    setNaturalDateInput(input);
-    const parsedDate = parseNaturalDate(input);
-    if (parsedDate && parsedDate >= new Date() && parsedDate <= maxDate) {
-      setStartDate(parsedDate.toISOString());
-    }
-  };
-
-  const handleEndDateInput = (input: string) => {
-    setEndDateInput(input);
-    const parsedDate = parseNaturalDate(input);
-
-    if (parsedDate && dateConstraints) {
-      if (parsedDate >= dateConstraints.min && parsedDate <= dateConstraints.max) {
-        setEndDate(parsedDate.toISOString());
-      } else {
-        // Invalid date, clear end date
-        setEndDate(null);
-      }
-    }
-  };
-
   const description = durationType ? DURATION_DETAILS[durationType]?.description : '';
   const isSingleTrip = durationType === DURATION_TYPES.single_trip;
 
@@ -111,47 +57,25 @@ export function DateSelector({
         <label className='text-sm font-medium'>Start Date</label>
         <div className='relative'>
           <div className='flex gap-2'>
-            <Input
-              placeholder='e.g. in 3 weeks'
-              value={naturalDateInput}
-              onChange={(e) => handleNaturalDateInput(e.target.value)}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              className='flex-1'
-            />
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant='outline' size='icon'>
-                  <CalendarIcon className='h-4 w-4' />
+                <Button variant='outline' className='w-full justify-start text-left font-normal'>
+                  <CalendarIcon className='mr-2 h-4 w-4' />
+                  {startDate ? format(parseISO(startDate), 'PPP') : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className='w-auto p-0' align='end'>
+              <PopoverContent className='w-auto p-0' align='start'>
                 <Calendar
                   mode='single'
                   selected={startDate ? parseISO(startDate) : undefined}
-                  onSelect={(date) => {
-                    setStartDate(date?.toISOString() || null);
-                    if (date) {
-                      setNaturalDateInput(format(date, 'PPP'));
-                      setShowHint(false);
-                    }
-                  }}
+                  onSelect={(date) => setStartDate(date?.toISOString() || null)}
                   disabled={(date) => date < new Date() || date > maxDate}
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
           </div>
-          {showHint && (
-            <div
-              className='animate-fade-in absolute right-14 top-1/2 -translate-y-1/2 text-sm text-muted-foreground'
-              style={{ animation: 'fadeIn 0.3s ease-out' }}
-            >
-              Try using the calendar →
-            </div>
-          )}
         </div>
-        {startDate && <div className='text-sm text-primary'>Start Date: {format(startDate, 'PPP')}</div>}
         {durationType && !isSingleTrip && startDate && <p className='text-sm text-muted-foreground'>{description}</p>}
       </div>
 
@@ -160,29 +84,22 @@ export function DateSelector({
           <label className='text-sm font-medium'>End Date</label>
           <div className='relative'>
             <div className='flex gap-2'>
-              <Input
-                placeholder='e.g. in 3 weeks'
-                value={endDateInput}
-                onChange={(e) => handleEndDateInput(e.target.value)}
-                className='flex-1'
-              />
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant='outline' size='icon'>
-                    <CalendarIcon className='h-4 w-4' />
+                  <Button variant='outline' className='w-full justify-start text-left font-normal'>
+                    <CalendarIcon className='mr-2 h-4 w-4' />
+                    {endDate ? format(parseISO(endDate), 'PPP') : <span>Pick a date</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className='w-auto p-0' align='end'>
+                <PopoverContent className='w-auto p-0' align='start'>
                   <Calendar
                     mode='single'
                     selected={endDate ? parseISO(endDate) : undefined}
-                    onSelect={(date) => {
-                      if (date) {
-                        setEndDate(date.toISOString());
-                        setEndDateInput(format(date, 'PPP'));
-                      }
-                    }}
+                    onSelect={(date) => setEndDate(date?.toISOString() || null)}
                     disabled={(date) => !dateConstraints || date < dateConstraints.min || date > dateConstraints.max}
+                    defaultMonth={startDate ? parseISO(startDate) : undefined}
+                    fromDate={dateConstraints?.min}
+                    toDate={dateConstraints?.max}
                     initialFocus
                   />
                 </PopoverContent>
@@ -194,7 +111,6 @@ export function DateSelector({
               </p>
             )}
           </div>
-          {endDate && <div className='text-sm text-primary'>End Date: {format(endDate, 'PPP')}</div>}
           {description && <p className='text-sm text-muted-foreground'>{description}</p>}
         </div>
       )}

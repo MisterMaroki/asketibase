@@ -1,24 +1,24 @@
 'use client';
 
-import { format } from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
 import { Clock } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { COVERAGE_TYPES, DURATION_DETAILS, DURATION_TYPES, MEMBERSHIP_TYPES } from '@/constants';
 
 interface CoverageDetailsProps {
+  durationType: string | null;
   membershipType: string | null;
   coverageType: string | null;
-  durationType: string | null;
   currency: string | null;
   startDate: string | null;
   endDate: string | null;
 }
 
 export function CoverageDetails({
+  durationType,
   membershipType,
   coverageType,
-  durationType,
   currency,
   startDate,
   endDate,
@@ -30,6 +30,7 @@ export function CoverageDetails({
   };
 
   const durationInfo = getDurationInfo();
+  const totalDays = startDate && endDate ? differenceInDays(new Date(endDate), new Date(startDate)) : null;
 
   return (
     <dl className='grid gap-6'>
@@ -50,7 +51,10 @@ export function CoverageDetails({
         </div>
         <div className='space-y-1 text-sm'>
           <dt className='text-muted-foreground'>Duration Type:</dt>
-          <dd className='font-medium'>{durationInfo?.title}</dd>
+          <dd className='font-medium'>
+            {durationInfo?.title}
+            {totalDays && ` (${totalDays} days)`}
+          </dd>
         </div>
       </div>
 
@@ -64,12 +68,12 @@ export function CoverageDetails({
           <div className='flex gap-2 pt-2'>
             {startDate && (
               <Badge variant='outline' className='font-normal'>
-                Start: {format(startDate, 'PPP')}
+                Start: {format(new Date(startDate), 'PPP')}
               </Badge>
             )}
             {endDate && (
               <Badge variant='outline' className='font-normal'>
-                End: {format(endDate, 'PPP')}
+                End: {format(new Date(endDate), 'PPP')}
               </Badge>
             )}
           </div>
