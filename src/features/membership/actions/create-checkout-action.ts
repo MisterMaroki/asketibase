@@ -93,7 +93,7 @@ export async function createCheckoutAction(id: string) {
               Coverage Type: ${quote.memberships.coverage_type} |
               Duration Type: ${getDurationDetails(quote.memberships.duration_type).title}`,
           },
-          unit_amount: quote.total_price_with_tax * 100,
+          unit_amount: Math.round(quote.total_price_with_tax * 100),
         },
         quantity: 1,
       },
