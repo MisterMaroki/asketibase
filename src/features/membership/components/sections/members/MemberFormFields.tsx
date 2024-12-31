@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { COUNTRY_CODES, SALUTATIONS } from '@/constants/options';
+import { COUNTRY_CODES, SALUTATIONS } from '@/constants/membership';
 import { isMemberValid } from '@/features/membership/validations/member';
 import { type MemberSchema, memberSchema } from '@/features/membership/validations/schemas';
 import { Country } from '@/hooks/use-countries';

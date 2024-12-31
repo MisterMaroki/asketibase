@@ -2,8 +2,7 @@
 
 import * as z from 'zod';
 
-import { COVERAGE_TYPES, DURATION_TYPES, MEMBERSHIP_TYPES } from '@/constants/membership';
-import { COUNTRY_CODES, SALUTATIONS } from '@/constants/options';
+import { COUNTRY_CODES, COVERAGE_TYPES, DURATION_TYPES, MEMBERSHIP_TYPES, SALUTATIONS } from '@/constants/membership';
 
 // UUID regex pattern
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

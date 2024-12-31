@@ -4,7 +4,7 @@ import { Globe2 } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CURRENCIES } from '@/constants/options';
+import { CURRENCIES } from '@/constants/membership';
 import { useMembershipStore } from '@/store/membership-store';
 
 export function CurrencySection() {

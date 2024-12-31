@@ -1,4 +1,4 @@
-import { CURRENCIES } from '@/constants/options';
+import { CURRENCIES } from '@/constants/membership';
 
 export function getCurrencySymbol(currencyCode: string | null): string {
   if (!currencyCode) return '$';
