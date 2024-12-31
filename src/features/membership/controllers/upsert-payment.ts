@@ -9,6 +9,7 @@ type UpsertReq = {
   session_id: string;
   status: string;
   user_id: string;
+  gbp_amount: number | null;
 };
 
 export async function upsertPayment(payment: UpsertReq) {

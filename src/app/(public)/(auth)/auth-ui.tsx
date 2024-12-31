@@ -21,10 +21,12 @@ export function AuthUI({
   mode,
   signInWithOAuth,
   signInWithEmail,
+  returnUrl,
 }: {
   mode: 'login' | 'signup';
-  signInWithOAuth: (provider: 'apple' | 'google') => Promise<ActionResponse>;
-  signInWithEmail: (email: string) => Promise<ActionResponse>;
+  signInWithOAuth: (provider: 'apple' | 'google', returnUrl?: string) => Promise<ActionResponse>;
+  signInWithEmail: (email: string, returnUrl?: string) => Promise<ActionResponse>;
+  returnUrl?: string;
 }) {
   const [pending, setPending] = useState(false);
   const [emailFormOpen, setEmailFormOpen] = useState(false);
@@ -34,7 +36,7 @@ export function AuthUI({
     setPending(true);
     const form = event.target as HTMLFormElement;
     const email = form['email'].value;
-    const response = await signInWithEmail(email);
+    const response = await signInWithEmail(email, returnUrl);
 
     if (response?.error) {
       toast({
@@ -53,7 +55,7 @@ export function AuthUI({
 
   async function handleOAuthClick(provider: 'google' | 'apple') {
     setPending(true);
-    const response = await signInWithOAuth(provider);
+    const response = await signInWithOAuth(provider, returnUrl);
 
     if (response?.error) {
       toast({
@@ -65,7 +67,7 @@ export function AuthUI({
   }
 
   return (
-    <section className='mt-16 flex w-full flex-col gap-16 rounded-lg  p-10 px-4 text-center'>
+    <section className='mt-16 flex w-full flex-col gap-16 rounded-lg p-10 px-4 text-center'>
       <div className='flex flex-col gap-4'>
         <Logo />
         <h1 className='text-lg text-white'>{titleMap[mode]}</h1>

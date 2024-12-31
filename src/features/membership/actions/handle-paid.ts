@@ -8,7 +8,6 @@ import { upsertPayment } from '../controllers/upsert-payment';
 import { generateIfNotSent } from './generate-document';
 
 export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
-  console.log('🚀 ~ handlePaid ~ checkoutSession:', checkoutSession);
   const quoteId = checkoutSession.metadata?.quoteId;
   if (!quoteId) {
     throw Error('Could not get quoteId');
@@ -33,6 +32,7 @@ export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
 
   const payment = await upsertPayment({
     amount: quote.total_price,
+    gbp_amount: quote.gbp_total,
     membership_id: membership.id,
     session_id: checkoutSession.id,
     currency: quote.currency,

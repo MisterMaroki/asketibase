@@ -30,17 +30,6 @@ export async function generateQuoteAction(data: Membershipschema) {
     discountObject = referralCode;
   }
 
-  // 1. Get the user from session
-  const user = await getUser();
-
-  if (!user) {
-    return redirect(`${getURL()}/signup`);
-  }
-
-  if (!user.email) {
-    throw Error('Could not get email');
-  }
-
   // Calculate number of days based on duration type
   let numberOfDays = 0;
   console.log('🚀 ~ generateQuoteAction ~ durationType:', data.durationType);
@@ -81,6 +70,12 @@ export async function generateQuoteAction(data: Membershipschema) {
 
   if (countryError) throw new Error('Failed to fetch country prices');
 
+  // Convert GBP amounts to chosen currency
+  const exchangeRate = await getExchangeRate(data.currency);
+  if (!exchangeRate) {
+    throw new Error('Failed to get exchange rate for the selected currency');
+  }
+
   // Get age factors
   const { data: ageFactors, error: ageError } = await supabaseAdminClient.from('age_factors').select('*');
 
@@ -105,7 +100,7 @@ export async function generateQuoteAction(data: Membershipschema) {
   const { data: membership, error: membershipError } = await supabaseAdminClient
     .from('memberships')
     .insert({
-      user_id: user.id,
+      // user_id:we set this in the create-checkout-action
       membership_type: data.membershipType,
       coverage_type: data.coverageType,
       duration_type: data.durationType as 'expat_year' | 'multi_trip' | 'single_trip',
@@ -187,25 +182,19 @@ export async function generateQuoteAction(data: Membershipschema) {
     throw new Error('Total price with tax is 0');
   }
 
-  // Convert GBP amounts to chosen currency
-  const rate = await getExchangeRate(data.currency);
-  if (!rate) {
-    throw new Error('Failed to get exchange rate for the selected currency');
-  }
-
   // Convert all amounts to chosen currency (multiply by rate since rates are GBP based)
-  const totalPrice = gbpTotalPrice * rate;
-  const discountAmount = gbpDiscountAmount * rate;
-  const totalTax = gbpTotalTax * rate;
-  const totalPriceWithTax = gbpTotalPriceWithTax * rate;
+  const totalPrice = gbpTotalPrice * exchangeRate;
+  const discountAmount = gbpDiscountAmount * exchangeRate;
+  const totalTax = gbpTotalTax * exchangeRate;
+  const totalPriceWithTax = gbpTotalPriceWithTax * exchangeRate;
   const finalMemberPrices = memberPrices.map((mp) => ({
     ...mp,
-    total: mp.total * rate,
-    countryPrice: mp.countryPrice * rate,
-    ageFactor: mp.ageFactor * rate,
-    coverageFactor: mp.coverageFactor * rate,
-    medicalFactor: mp.medicalFactor * rate,
-    dailyTotal: mp.dailyTotal * rate,
+    total: mp.total * exchangeRate,
+    countryPrice: mp.countryPrice * exchangeRate,
+    ageFactor: mp.ageFactor * exchangeRate,
+    coverageFactor: mp.coverageFactor * exchangeRate,
+    medicalFactor: mp.medicalFactor * exchangeRate,
+    dailyTotal: mp.dailyTotal * exchangeRate,
   }));
 
   // Create quote record with amounts in chosen currency and GBP total
@@ -215,10 +204,11 @@ export async function generateQuoteAction(data: Membershipschema) {
       membership_id: membership.id,
       currency: data.currency,
       member_prices: finalMemberPrices,
-      base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice, 0) * rate,
-      coverage_loading_price: memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0) * rate,
+      base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice, 0) * exchangeRate,
+      coverage_loading_price:
+        memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0) * exchangeRate,
       medical_loading_price:
-        memberPrices.reduce((sum, mp) => sum + (mp.medicalFactor + mp.ageFactor) * numberOfDays, 0) * rate,
+        memberPrices.reduce((sum, mp) => sum + (mp.medicalFactor + mp.ageFactor) * numberOfDays, 0) * exchangeRate,
       total_price: totalPrice,
       tax_amount: totalTax,
       total_price_with_tax: totalPriceWithTax,
