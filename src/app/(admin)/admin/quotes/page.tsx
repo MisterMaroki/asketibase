@@ -1,31 +1,49 @@
 import { Suspense } from 'react';
 import { Receipt } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardTitle } from '@/components/ui/card';
 import { LoadingState } from '@/features/membership/components/LoadingState';
-import { createClient } from '@/libs/supabase/client';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
+import { DataTable } from '../components/DataTable';
+import { Quote } from '../types';
+
 import { columns } from './components/columns';
-import { DataTable } from './components/DataTable';
 
 export default async function QuotesPage() {
-  const { data } = await supabaseAdminClient
+  const quotes = await supabaseAdminClient
     .from('quotes')
     .select(
       `
-            *
-          `
+      *,
+      memberships (
+        id,
+        membership_type,
+        coverage_type,
+        status,
+        members (
+          id,
+          first_name,
+          last_name,
+          email,
+          contact_number,
+          date_of_birth,
+          nationality,
+          is_primary
+        )
+      )
+    `,
     )
     .order('created_at', { ascending: false });
+
   return (
-    <main className='container mx-auto '>
+    <main className='container mx-auto'>
       <CardTitle className='mb-4 flex items-center gap-2'>
         <Receipt className='h-5 w-5 text-primary' />
         Quotes
       </CardTitle>
       <Suspense fallback={<LoadingState />}>
-        <DataTable columns={columns} data={data || []} />
+        <DataTable columns={columns} data={(quotes.data as Quote[]) || []} from='quotes' />
       </Suspense>
     </main>
   );

@@ -10,9 +10,11 @@ import { MemberActions } from './MemberActions';
 
 type Member = Tables<'members'> & {
   memberships: {
+    id: string;
     membership_type: string;
     coverage_type: string;
     status: string;
+    quotes: Tables<'quotes'>[];
   } | null;
 };
 
@@ -49,8 +51,10 @@ export const columns: ColumnDef<Member>[] = [
 
       return (
         <div className='space-y-1'>
-          <Badge variant='outline'>{membership.membership_type}</Badge>
-          <Badge variant='outline' className='ml-2'>
+          <Badge variant='outline' className='capitalize'>
+            {membership.membership_type}
+          </Badge>
+          <Badge variant='outline' className='ml-2 capitalize'>
             {membership.coverage_type}
           </Badge>
         </div>

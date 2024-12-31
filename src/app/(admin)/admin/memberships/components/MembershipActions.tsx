@@ -14,19 +14,40 @@ import { Tables } from '@/libs/supabase/types';
 
 import { DetailsPanel } from '../../components/DetailsPanel';
 
-interface MemberActionsProps {
-  member: Tables<'members'> & {
-    memberships: {
-      id: string;
-      membership_type: string;
-      coverage_type: string;
-      status: string;
-      quotes: Tables<'quotes'>[];
-    } | null;
-  };
+type Member = Pick<
+  Tables<'members'>,
+  'id' | 'first_name' | 'last_name' | 'email' | 'contact_number' | 'date_of_birth' | 'nationality' | 'is_primary'
+>;
+
+type Quote = Pick<
+  Tables<'quotes'>,
+  | 'id'
+  | 'created_at'
+  | 'base_price'
+  | 'tax_amount'
+  | 'total_price_with_tax'
+  | 'currency'
+  | 'coverage_loading_price'
+  | 'discount_amount'
+  | 'gbp_total'
+  | 'medical_loading_price'
+  | 'member_prices'
+  | 'total_price'
+>;
+
+type Membership = Tables<'memberships'> & {
+  quotes: Quote[];
+  members: Member[];
+  users: {
+    email: string;
+  } | null;
+};
+
+interface MembershipActionsProps {
+  membership: Membership;
 }
 
-export function MemberActions({ member }: MemberActionsProps) {
+export function MembershipActions({ membership }: MembershipActionsProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -43,7 +64,7 @@ export function MemberActions({ member }: MemberActionsProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <DetailsPanel type='members' id={member.id} open={open} onOpenChange={setOpen} />
+      <DetailsPanel type='memberships' id={membership.id} open={open} onOpenChange={setOpen} />
     </>
   );
 }

@@ -10,40 +10,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Tables } from '@/libs/supabase/types';
 
 import { DetailsPanel } from '../../components/DetailsPanel';
+import { Quote } from '../../types';
 
-interface MemberActionsProps {
-  member: Tables<'members'> & {
-    memberships: {
-      id: string;
-      membership_type: string;
-      coverage_type: string;
-      status: string;
-      quotes: Tables<'quotes'>[];
-    } | null;
-  };
+interface QuoteActionsProps {
+  quote: Quote;
 }
 
-export function MemberActions({ member }: MemberActionsProps) {
-  const [open, setOpen] = useState(false);
+export function QuoteActions({ quote }: QuoteActionsProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='h-8 w-8 p-0'>
-            <MoreHorizontal className='h-4 w-4' />
             <span className='sr-only'>Open menu</span>
+            <MoreHorizontal className='h-4 w-4' />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem onClick={() => setOpen(true)}>View Details</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsOpen(true)}>View Details</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <DetailsPanel type='members' id={member.id} open={open} onOpenChange={setOpen} />
+      <DetailsPanel type='quotes' id={quote.id} open={isOpen} onOpenChange={setIsOpen} />
     </>
   );
 }

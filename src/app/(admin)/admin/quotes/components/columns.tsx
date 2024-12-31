@@ -3,10 +3,13 @@
 import { format } from 'date-fns';
 
 import { Badge } from '@/components/ui/badge';
-import { getCurrencySymbol } from '@/libs/membership/currency';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const columns: ColumnDef<any>[] = [
+import { Quote } from '../../types';
+
+import { QuoteActions } from './QuoteActions';
+
+export const columns: ColumnDef<Quote, any>[] = [
   {
     accessorKey: 'created_at',
     header: 'Date',
@@ -15,21 +18,40 @@ export const columns: ColumnDef<any>[] = [
     },
   },
   {
-    accessorKey: 'membership_id',
+    id: 'customer',
     header: 'Customer',
     cell: ({ row }) => {
-      const membershipId = row.getValue('membership_id') as string;
-      return membershipId || 'N/A';
+      const membership = row.original.memberships;
+      if (!membership) return 'N/A';
+
+      const primaryMember = membership.members.find((member) => member.is_primary);
+      if (!primaryMember) return 'N/A';
+
+      return (
+        <div className='flex flex-col space-y-1'>
+          <span className='font-medium'>
+            {primaryMember.first_name} {primaryMember.last_name}
+          </span>
+          <span className='text-sm text-muted-foreground'>{primaryMember.email}</span>
+        </div>
+      );
     },
   },
   {
-    accessorKey: 'coverage_loading_price',
+    id: 'coverage',
     header: 'Coverage',
     cell: ({ row }) => {
-      const coverageLoadingPrice = row.getValue('coverage_loading_price') as number;
+      const membership = row.original.memberships;
+      if (!membership) return null;
+
       return (
         <div className='space-y-1'>
-          <Badge variant='outline'>{coverageLoadingPrice}</Badge>
+          <Badge variant='outline' className='capitalize'>
+            {membership.membership_type}
+          </Badge>
+          <Badge variant='outline' className='ml-2 capitalize'>
+            {membership.coverage_type}
+          </Badge>
         </div>
       );
     },
@@ -38,48 +60,36 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'base_price',
     header: 'Base Price',
     cell: ({ row }) => {
-      const currency = row.original.currency as string;
+      const currency = row.original.currency;
       const price = row.getValue('base_price') as number;
-      return `${getCurrencySymbol(currency)}${price.toLocaleString()}`;
+      return `${currency}${price.toLocaleString()}`;
     },
   },
   {
-    accessorKey: 'medical_loading_price',
-    header: 'Medical Loading',
+    accessorKey: 'tax_amount',
+    header: 'Tax',
     cell: ({ row }) => {
-      const currency = row.original.currency as string;
-      const price = row.getValue('medical_loading_price') as number;
-      return `${getCurrencySymbol(currency)}${price.toLocaleString()}`;
+      const currency = row.original.currency;
+      const tax = row.getValue('tax_amount') as number;
+      return `${currency}${tax.toLocaleString()}`;
     },
   },
   {
-    accessorKey: 'discount_amount',
-    header: 'Discount',
-    cell: ({ row }) => {
-      const currency = row.original.currency as string;
-      const amount = row.getValue('discount_amount') as number;
-      return amount > 0 ? (
-        <span className='text-green-500'>
-          -${getCurrencySymbol(currency)}
-          {amount.toLocaleString()}
-        </span>
-      ) : (
-        '-'
-      );
-    },
-  },
-  {
-    accessorKey: 'total_price',
+    accessorKey: 'total_price_with_tax',
     header: 'Total',
     cell: ({ row }) => {
-      const currency = row.original.currency as string;
-      const total = row.getValue('total_price') as number;
+      const currency = row.original.currency;
+      const total = row.getValue('total_price_with_tax') as number;
       return (
         <span className='font-medium'>
-          {getCurrencySymbol(currency)}
+          {currency}
           {total.toLocaleString()}
         </span>
       );
     },
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <QuoteActions quote={row.original} />,
   },
 ];

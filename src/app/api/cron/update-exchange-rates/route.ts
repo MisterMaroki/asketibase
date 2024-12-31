@@ -13,6 +13,7 @@ export async function GET(request: Request) {
     }
 
     const result = await updateExchangeRates();
+
     console.log('🚀 ~ GET ~ result:', result);
 
     if (!result.success) {

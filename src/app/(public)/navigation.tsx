@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTrigger } from '@/components/ui/sheet';
 import { getUser } from '@/features/membership/controllers/get-user';
 
+import { signOut } from './(auth)/auth-actions';
+
 // import { signOut } from './(auth)/auth-actions';
 
 export function Navigation() {
@@ -22,6 +24,9 @@ export function Navigation() {
       <Button onClick={() => router.push('/admin')} variant='sexy' className='hidden flex-shrink-0 md:flex'>
         Admin
       </Button>
+      <Button onClick={() => signOut()} variant='sexy' className='hidden flex-shrink-0 md:flex'>
+        Sign Out
+      </Button>
       <Sheet>
         <SheetTrigger className='block md:hidden'>
           <IoMenu size={28} />
@@ -32,6 +37,9 @@ export function Navigation() {
             <SheetDescription className='flex flex-col gap-2 py-8'>
               <Button variant='sexy' className='flex-shrink-0' onClick={() => router.push('/admin')}>
                 Admin
+              </Button>
+              <Button variant='sexy' className='flex-shrink-0' onClick={() => signOut()}>
+                Sign Out
               </Button>
               <ResetButton className='flex md:hidden' />
             </SheetDescription>
