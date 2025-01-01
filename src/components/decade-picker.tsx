@@ -13,7 +13,7 @@ export function DecadePicker({ onDecadeSelect, selectedDecade }: DecadePickerPro
   const currentYear = new Date().getFullYear();
   const startDecade = Math.floor((currentYear - 80) / 10) * 10;
 
-  const decades = Array.from({ length: 8 }, (_, i) => startDecade + i * 10);
+  const decades = Array.from({ length: 9 }, (_, i) => startDecade + i * 10);
 
   return (
     <div className='p-3 text-white'>

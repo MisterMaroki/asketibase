@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { format } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
@@ -11,20 +12,8 @@ interface MonthPickerProps {
 
 export function MonthPicker({ onMonthSelect, selectedMonth, year }: MonthPickerProps) {
   console.log('🚀 ~ MonthPicker ~ year:', year);
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
+  const currentMonth = new Date().getMonth();
+  const months = Array.from({ length: currentMonth + 1 }, (_, i) => format(new Date(year, i), 'MMMM'));
 
   return (
     <div className='p-3 text-white'>

@@ -14,6 +14,7 @@ export function YearPicker({ onYearSelect, selectedYear, decade }: YearPickerPro
   const currentYear = new Date().getFullYear();
 
   const filteredYears = years.filter((year) => year <= currentYear);
+  console.log('🚀 ~ YearPicker ~ filteredYears:', filteredYears);
 
   return (
     <div className='p-3 text-white'>
