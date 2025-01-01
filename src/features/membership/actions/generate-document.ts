@@ -149,7 +149,7 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
       base_price: formatPriceWithCurrency(quote.base_price + quote.coverage_loading_price, quote.currency),
       medical_risk_premium: formatPriceWithCurrency(quote.medical_loading_price, quote.currency),
       discount: formatPriceWithCurrency(quote.discount_amount, quote.currency),
-      subtotal: formatPriceWithCurrency(quote.total_price, quote.currency),
+      subtotal: formatPriceWithCurrency(quote.total_price - quote.discount_amount, quote.currency),
       tax: formatPriceWithCurrency(quote.tax_amount, quote.currency),
       total_paid: formatPriceWithCurrency(quote.total_price_with_tax, quote.currency),
       currency: quote.currency,

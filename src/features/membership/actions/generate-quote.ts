@@ -199,11 +199,11 @@ export async function generateQuoteAction(data: Membershipschema) {
       membership_id: membership.id,
       currency: data.currency,
       member_prices: convertedFromGbpMemberPrices,
-      base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice, 0) * exchangeRate,
+      base_price:
+        memberPrices.reduce((sum, mp) => sum + mp.countryPrice + mp.ageFactor * numberOfDays, 0) * exchangeRate,
       coverage_loading_price:
         memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0) * exchangeRate,
-      medical_loading_price:
-        memberPrices.reduce((sum, mp) => sum + (mp.medicalFactor + mp.ageFactor) * numberOfDays, 0) * exchangeRate,
+      medical_loading_price: memberPrices.reduce((sum, mp) => sum + mp.medicalFactor * numberOfDays, 0) * exchangeRate,
       total_price: totalPrice,
       tax_amount: totalTax,
       total_price_with_tax: totalPriceWithTax,

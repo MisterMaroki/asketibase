@@ -173,7 +173,7 @@ export default function QuoteSummary({
               </TableRow>
               <TableRow>
                 <TableCell className='text-lg font-medium'>Final Premium</TableCell>
-                <TableCell className='text-right text-lg font-bold text-teal-400'>
+                <TableCell className='whitespace-nowrap text-right text-lg font-bold text-teal-400'>
                   {formatPriceWithCurrency(finalPremium, currency)}
                 </TableCell>
               </TableRow>

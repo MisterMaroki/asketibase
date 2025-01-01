@@ -40,10 +40,15 @@ export function MedicalDeclaration() {
   const allMembersScreeningComplete = members.every((member) => isMemberScreeningComplete(member.id));
 
   useEffect(() => {
-    // clearMedicalState();
-    setAcceptedDisclaimer(false);
-    setShowQuestions(false);
-  }, [clearMedicalState]);
+    // If we have any completed medical screenings, show the questions immediately
+    if (Object.keys(memberConditions).length > 0) {
+      setAcceptedDisclaimer(true);
+      setShowQuestions(true);
+    } else {
+      setAcceptedDisclaimer(false);
+      setShowQuestions(false);
+    }
+  }, [memberConditions]);
 
   const handleMedicalComplete = (memberId: string, riskLevel: number) => {
     setMedicalState({
@@ -82,13 +87,18 @@ export function MedicalDeclaration() {
   };
 
   const handleNext = () => {
-    // setStep(5);
     router.replace('/membership?step=5');
   };
 
   const handlePrevious = () => {
-    clearMedicalState();
     router.push('/membership?step=3');
+  };
+
+  const handleClearMember = (memberId: string) => {
+    const newMedicalState = { ...medicalState };
+    delete newMedicalState.memberConditions[memberId];
+    delete newMedicalState.completedMembers[memberId];
+    setMedicalState(newMedicalState);
   };
 
   return (
@@ -125,9 +135,8 @@ export function MedicalDeclaration() {
           <div className='space-y-6'>
             <PreExistingDefinition />
             <div className='grid gap-6'>
-              {members
-                .filter((member) => completedMembers[member.id] === undefined)
-                .map((member) => (
+              {members.map((member) => (
+                <div key={member.id} className='space-y-4'>
                   <PreExistingConditions
                     key={member.id}
                     memberId={member.id}
@@ -135,7 +144,18 @@ export function MedicalDeclaration() {
                     hasConditions={memberConditions[member.id] ?? null}
                     onAnswer={handlePreExistingConditions}
                   />
-                ))}
+                  {memberConditions[member.id] !== undefined && (
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => handleClearMember(member.id)}
+                      className='text-destructive hover:text-destructive/90'
+                    >
+                      Clear Response
+                    </Button>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
