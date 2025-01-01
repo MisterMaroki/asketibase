@@ -21,6 +21,22 @@ interface CurrencyTotal {
   currency: string;
   total: number;
   gbpEquivalent: number;
+  quotedTotal: number;
+  quotedGbpEquivalent: number;
+  writtenTotal: number;
+  writtenGbpEquivalent: number;
+  basePrice: number;
+  quotedBasePrice: number;
+  writtenBasePrice: number;
+  medicalLoadingPrice: number;
+  quotedMedicalLoadingPrice: number;
+  writtenMedicalLoadingPrice: number;
+  coverageLoadingPrice: number;
+  quotedCoverageLoadingPrice: number;
+  writtenCoverageLoadingPrice: number;
+  discountAmount: number;
+  quotedDiscountAmount: number;
+  writtenDiscountAmount: number;
 }
 
 interface TaxTotal {
@@ -29,6 +45,12 @@ interface TaxTotal {
   totalWithoutTax: number;
   taxRate: number;
   gbpEquivalent: number;
+  quotedTaxAmount: number;
+  quotedTotalWithoutTax: number;
+  quotedGbpEquivalent: number;
+  writtenTaxAmount: number;
+  writtenTotalWithoutTax: number;
+  writtenGbpEquivalent: number;
 }
 
 interface StatusCount {
@@ -148,15 +170,66 @@ export default async function AdminPage() {
   const currencyTotals: CurrencyTotal[] =
     memberships?.reduce((acc: CurrencyTotal[], membership) => {
       membership.quotes?.forEach((quote) => {
+        const isWrittenBusiness = membership.status !== 'draft';
         const existingCurrency = acc.find((c) => c.currency === quote.currency);
+        const gbpTotal = quote.gbp_total || 0;
+        // Calculate the proportion of each component in GBP
+        const totalWithoutTax = quote.total_price_with_tax - quote.tax_amount;
+        const basePriceRatio = quote.base_price / totalWithoutTax;
+        const medicalLoadingRatio = quote.medical_loading_price / totalWithoutTax;
+        const coverageLoadingRatio = quote.coverage_loading_price / totalWithoutTax;
+        const discountRatio = quote.discount_amount / totalWithoutTax;
+
+        // Calculate GBP values for each component
+        const gbpBasePrice = gbpTotal * basePriceRatio;
+        const gbpMedicalLoading = gbpTotal * medicalLoadingRatio;
+        const gbpCoverageLoading = gbpTotal * coverageLoadingRatio;
+        const gbpDiscount = gbpTotal * discountRatio;
+
         if (existingCurrency) {
           existingCurrency.total += quote.total_price_with_tax;
-          existingCurrency.gbpEquivalent += quote.gbp_total || 0;
+          existingCurrency.gbpEquivalent += gbpTotal;
+          existingCurrency.basePrice += quote.base_price;
+          existingCurrency.medicalLoadingPrice += quote.medical_loading_price;
+          existingCurrency.coverageLoadingPrice += quote.coverage_loading_price;
+          existingCurrency.discountAmount += quote.discount_amount;
+
+          if (isWrittenBusiness) {
+            existingCurrency.writtenTotal += quote.total_price_with_tax;
+            existingCurrency.writtenGbpEquivalent += gbpTotal;
+            existingCurrency.writtenBasePrice += gbpBasePrice;
+            existingCurrency.writtenMedicalLoadingPrice += gbpMedicalLoading;
+            existingCurrency.writtenCoverageLoadingPrice += gbpCoverageLoading;
+            existingCurrency.writtenDiscountAmount += gbpDiscount;
+          } else {
+            existingCurrency.quotedTotal += quote.total_price_with_tax;
+            existingCurrency.quotedGbpEquivalent += gbpTotal;
+            existingCurrency.quotedBasePrice += gbpBasePrice;
+            existingCurrency.quotedMedicalLoadingPrice += gbpMedicalLoading;
+            existingCurrency.quotedCoverageLoadingPrice += gbpCoverageLoading;
+            existingCurrency.quotedDiscountAmount += gbpDiscount;
+          }
         } else {
           acc.push({
             currency: quote.currency,
             total: quote.total_price_with_tax,
-            gbpEquivalent: quote.gbp_total || 0,
+            gbpEquivalent: gbpTotal,
+            quotedTotal: isWrittenBusiness ? 0 : quote.total_price_with_tax,
+            quotedGbpEquivalent: isWrittenBusiness ? 0 : gbpTotal,
+            writtenTotal: isWrittenBusiness ? quote.total_price_with_tax : 0,
+            writtenGbpEquivalent: isWrittenBusiness ? gbpTotal : 0,
+            basePrice: quote.base_price,
+            quotedBasePrice: isWrittenBusiness ? 0 : gbpBasePrice,
+            writtenBasePrice: isWrittenBusiness ? gbpBasePrice : 0,
+            medicalLoadingPrice: quote.medical_loading_price,
+            quotedMedicalLoadingPrice: isWrittenBusiness ? 0 : gbpMedicalLoading,
+            writtenMedicalLoadingPrice: isWrittenBusiness ? gbpMedicalLoading : 0,
+            coverageLoadingPrice: quote.coverage_loading_price,
+            quotedCoverageLoadingPrice: isWrittenBusiness ? 0 : gbpCoverageLoading,
+            writtenCoverageLoadingPrice: isWrittenBusiness ? gbpCoverageLoading : 0,
+            discountAmount: quote.discount_amount,
+            quotedDiscountAmount: isWrittenBusiness ? 0 : gbpDiscount,
+            writtenDiscountAmount: isWrittenBusiness ? gbpDiscount : 0,
           });
         }
       });
@@ -167,6 +240,7 @@ export default async function AdminPage() {
   const taxTotals: TaxTotal[] =
     memberships?.reduce((acc: TaxTotal[], membership) => {
       membership.quotes?.forEach((quote) => {
+        const isWrittenBusiness = membership.status !== 'draft';
         const existingCurrency = acc.find((c) => c.currency === quote.currency);
         const taxRate = (quote.tax_amount / (quote.total_price_with_tax - quote.tax_amount)) * 100;
         const gbpTaxAmount = quote.gbp_total ? (quote.tax_amount / quote.total_price_with_tax) * quote.gbp_total : 0;
@@ -176,6 +250,16 @@ export default async function AdminPage() {
           existingCurrency.taxAmount += quote.tax_amount;
           existingCurrency.totalWithoutTax += quote.total_price_with_tax - quote.tax_amount;
           existingCurrency.gbpEquivalent += gbpTaxAmount;
+
+          if (isWrittenBusiness) {
+            existingCurrency.writtenTaxAmount += quote.tax_amount;
+            existingCurrency.writtenTotalWithoutTax += quote.total_price_with_tax - quote.tax_amount;
+            existingCurrency.writtenGbpEquivalent += gbpTaxAmount;
+          } else {
+            existingCurrency.quotedTaxAmount += quote.tax_amount;
+            existingCurrency.quotedTotalWithoutTax += quote.total_price_with_tax - quote.tax_amount;
+            existingCurrency.quotedGbpEquivalent += gbpTaxAmount;
+          }
         } else {
           acc.push({
             currency: quote.currency,
@@ -183,6 +267,12 @@ export default async function AdminPage() {
             totalWithoutTax: quote.total_price_with_tax - quote.tax_amount,
             taxRate: taxRate,
             gbpEquivalent: gbpTaxAmount,
+            quotedTaxAmount: isWrittenBusiness ? 0 : quote.tax_amount,
+            quotedTotalWithoutTax: isWrittenBusiness ? 0 : quote.total_price_with_tax - quote.tax_amount,
+            quotedGbpEquivalent: isWrittenBusiness ? 0 : gbpTaxAmount,
+            writtenTaxAmount: isWrittenBusiness ? quote.tax_amount : 0,
+            writtenTotalWithoutTax: isWrittenBusiness ? quote.total_price_with_tax - quote.tax_amount : 0,
+            writtenGbpEquivalent: isWrittenBusiness ? gbpTaxAmount : 0,
           });
         }
       });

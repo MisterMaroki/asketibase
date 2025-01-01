@@ -1,10 +1,19 @@
 import { Tables } from '@/libs/supabase/types';
 
 export type DetailsType = 'members' | 'memberships' | 'quotes';
-export type Member = Pick<
-  Tables<'members'>,
-  'id' | 'first_name' | 'last_name' | 'email' | 'contact_number' | 'date_of_birth' | 'nationality' | 'is_primary'
->;
+export interface Member {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  date_of_birth: string;
+  nationality: string;
+  country_of_residence: string;
+  contact_number?: string;
+  country_code?: string;
+  is_primary: boolean;
+  has_conditions: boolean;
+}
 
 export type Quote = {
   id: string;

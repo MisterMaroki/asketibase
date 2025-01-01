@@ -16,8 +16,11 @@ async function getMembershipById(id: string): Promise<Membership | null> {
         last_name,
         email,
         contact_number,
+        country_code,
         date_of_birth,
         nationality,
+        has_conditions,
+        country_of_residence,
         is_primary
       ),
       quotes (

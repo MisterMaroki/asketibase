@@ -20,15 +20,15 @@ export default async function PricingPage() {
   ]);
 
   return (
-    <main className='container mx-auto'>
-      <CardTitle className='mb-4 flex items-center gap-2'>
+    <main className='container mx-auto px-2 py-4 sm:px-4 sm:py-6'>
+      <CardTitle className='mb-6 flex items-center gap-2'>
         <Coins className='h-5 w-5 text-primary' />
         Pricing Management
       </CardTitle>
-      <Tabs defaultValue='country-prices' className='space-y-4'>
-        <TabsList>
-          <TabsTrigger value='country-prices'>Country Base Prices</TabsTrigger>
-          <TabsTrigger value='medical-risk'>Medical Risk Factors</TabsTrigger>
+      <Tabs defaultValue='country-prices'>
+        <TabsList className=''>
+          <TabsTrigger value='country-prices'>Country Prices</TabsTrigger>
+          <TabsTrigger value='medical-risk'>Medical Factors</TabsTrigger>
           <TabsTrigger value='age-factors'>Age Factors</TabsTrigger>
         </TabsList>
         <TabsContent value='country-prices'>
