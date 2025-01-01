@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { BlackDOBInput } from '@/components/dob-input';
@@ -75,6 +76,27 @@ export function MemberFormFields({
       },
     };
   };
+
+  const nationalities = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          countries
+            .filter((country) => country.nationality && country.nationality !== 'n/a')
+            .map((country) => country.nationality),
+        ),
+      )
+        .map((nationality) => ({
+          id: countries.find((country) => country.nationality === nationality)?.id,
+          name: nationality || '',
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [countries],
+  );
+
+  console.log(nationalities);
+
+  console.log(nationalities);
 
   return (
     <form id={id} onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
@@ -191,13 +213,11 @@ export function MemberFormFields({
             <SelectValue placeholder={isLoadingCountries ? 'Loading...' : 'Select nationality'} />
           </SelectTrigger>
           <SelectContent>
-            {countries
-              .filter((country) => country.nationality && country.nationality !== 'n/a')
-              .map((country) => (
-                <SelectItem key={country.id} value={country.id}>
-                  {country.nationality}
-                </SelectItem>
-              ))}
+            {nationalities.map((nationality) => (
+              <SelectItem key={nationality.id} value={nationality.id || ''}>
+                {nationality.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         {touchedFields.nationality && errors.nationality && (

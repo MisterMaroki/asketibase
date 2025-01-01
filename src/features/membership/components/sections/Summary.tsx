@@ -9,16 +9,18 @@ import { MembershipOverview } from './summary/MembershipOverview';
 import { QuoteGenerator, QuoteType } from './summary/QuoteGenerator';
 
 export function Summary() {
-  const { members, setStep } = useMembershipStore();
+  const { members, setStep, setQuoteId } = useMembershipStore();
   const router = useRouter();
   const [quote, setQuote] = useState<QuoteType | null>(null);
 
   const handleQuoteGenerated = (quote: QuoteType | null) => {
     setQuote(quote);
+    setQuoteId(quote?.id || null);
   };
 
   const handleEditQuote = () => {
     setQuote(null);
+    setQuoteId(null);
   };
 
   useEffect(() => {

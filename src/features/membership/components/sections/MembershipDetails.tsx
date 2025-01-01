@@ -13,14 +13,25 @@ const RETURN_TO_SUMMARY_STEP = 5;
 
 export function MembershipDetails() {
   const router = useRouter();
-  const { setStep, durationType, startDate,removeUnnecessaryMembers, endDate, hasStateChanged, clearOriginalState, originalState } =
-    useMembershipStore();
+  const {
+    setStep,
+    durationType,
+    startDate,
+    removeUnnecessaryMembers,
+    endDate,
+    hasStateChanged,
+    clearOriginalState,
+    originalState,
+    currency,
+  } = useMembershipStore();
 
   const canContinue = () => {
     // For single trip, require both start and end date
     if (durationType === 'single_trip') {
       return startDate && endDate;
     }
+
+    if (!currency) return false;
     // For other types, only start date is required
     return !!startDate;
   };

@@ -23,7 +23,14 @@ export const memberSchema = z.object({
   salutation: z.enum(SALUTATIONS as unknown as [string, ...string[]]),
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  dateOfBirth: z.string().datetime(),
+  dateOfBirth: z
+    .string()
+    .datetime()
+    .refine((val) => {
+      const birthDate = new Date(val);
+      const today = new Date();
+      return birthDate <= today;
+    }, 'Date of birth must be before today.'),
   gender: z.enum(['male', 'female']),
   nationality: uuidSchema.describe('Nationality'),
   countryCode: z.enum(COUNTRY_CODES.map((c) => c.code) as [string, ...string[]]),

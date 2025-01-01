@@ -234,7 +234,7 @@ export const useMembershipStore = create<MembershipState>()(
                 ? state.members.slice(0, 2)
                 : state.members.slice(0, 15),
         })),
-      clearOriginalState: () => set({ originalState: null }),
+      clearOriginalState: () => set({ originalState: null, quoteId: null }),
       hasStateChanged: () => {
         const state = get();
         if (!state.originalState) return true;

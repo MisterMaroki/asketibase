@@ -1,13 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
 import { DURATION_TYPES } from '@/constants';
-import { getUser } from '@/features/membership/controllers/get-user';
-import { convertToGBP } from '@/libs/exchange-rates/convert-to-gbp';
 import { getExchangeRate } from '@/libs/exchange-rates/get-rate';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
-import { getURL } from '@/utils/get-url';
 
 import { checkReferralCode } from '../controllers/check-referral-code';
 import { createMember } from '../controllers/members';
@@ -187,7 +182,7 @@ export async function generateQuoteAction(data: Membershipschema) {
   const discountAmount = gbpDiscountAmount * exchangeRate;
   const totalTax = gbpTotalTax * exchangeRate;
   const totalPriceWithTax = gbpTotalPriceWithTax * exchangeRate;
-  const finalMemberPrices = memberPrices.map((mp) => ({
+  const convertedFromGbpMemberPrices = memberPrices.map((mp) => ({
     ...mp,
     total: mp.total * exchangeRate,
     countryPrice: mp.countryPrice * exchangeRate,
@@ -203,7 +198,7 @@ export async function generateQuoteAction(data: Membershipschema) {
     .insert({
       membership_id: membership.id,
       currency: data.currency,
-      member_prices: finalMemberPrices,
+      member_prices: convertedFromGbpMemberPrices,
       base_price: memberPrices.reduce((sum, mp) => sum + mp.countryPrice, 0) * exchangeRate,
       coverage_loading_price:
         memberPrices.reduce((sum, mp) => sum + mp.coverageFactor * numberOfDays, 0) * exchangeRate,
@@ -230,7 +225,7 @@ export async function generateQuoteAction(data: Membershipschema) {
     duration: data.durationType,
     startDate: data.startDate,
     endDate: data.endDate || calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
-    members: finalMemberPrices,
+    members: convertedFromGbpMemberPrices,
     totalPremium: totalPrice,
     taxAmount: totalTax,
     discountApplied: discountAmount,

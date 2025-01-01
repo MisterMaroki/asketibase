@@ -46,12 +46,16 @@ export default function QuoteSummary({
   taxAmount,
   onPressEdit,
 }: QuoteSummaryProps) {
+  console.log('🚀 ~ duration:', duration);
   const [isOpen, setIsOpen] = React.useState(false);
 
   // Calculate the number of days
-  const daysDifference = Math.ceil(
-    (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24),
-  );
+  const daysDifference =
+    duration === 'single_trip'
+      ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))
+      : duration === 'multi_trip'
+        ? 45
+        : 365;
 
   return (
     <Card className=''>
@@ -111,19 +115,19 @@ export default function QuoteSummary({
                         <TableRow>
                           <TableCell className='text-gray-400'>Base Premium</TableCell>
                           <TableCell className='text-right'>
-                            {currency} {formatPrice(member.countryPrice + member.coverageFactor * daysDifference)}
+                            {formatPriceWithCurrency(member.total - member.medicalFactor * daysDifference, currency)}
                           </TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className='text-gray-400'>Medical Premium</TableCell>
                           <TableCell className='text-right'>
-                            {currency} {formatPrice((member.medicalFactor + member.ageFactor) * daysDifference)}
+                            {formatPriceWithCurrency(member.medicalFactor * daysDifference, currency)}
                           </TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className='font-medium'>Total Premium</TableCell>
                           <TableCell className='text-right font-medium'>
-                            {currency} {formatPrice(member.total)}
+                            {formatPriceWithCurrency(member.total, currency)}
                           </TableCell>
                         </TableRow>
                       </TableBody>
@@ -137,7 +141,9 @@ export default function QuoteSummary({
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell className='font-medium text-gray-400'>Total Premium</TableCell>
+                <TableCell className='font-medium text-gray-400'>
+                  Subtotal <span className='text-gray-500'>(Pre Discount)</span>
+                </TableCell>
                 <TableCell className='text-right font-medium'>
                   {formatPriceWithCurrency(totalPremium, currency)}
                 </TableCell>
@@ -149,8 +155,21 @@ export default function QuoteSummary({
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className='font-medium text-gray-400'>Tax</TableCell>
-                <TableCell className='text-right font-medium'>{formatPriceWithCurrency(taxAmount, currency)}</TableCell>
+                <TableCell className='font-medium text-gray-400'>
+                  Subtotal <span className='text-gray-500'>(Discount Applied)</span>
+                </TableCell>
+                <TableCell className='text-right font-medium'>
+                  {formatPriceWithCurrency(totalPremium - discountApplied, currency)}
+                </TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell className='font-medium text-gray-400'>
+                  Tax <span className='text-gray-500'>(20%)</span>
+                </TableCell>
+                <TableCell className='text-right font-medium text-gray-500'>
+                  {formatPriceWithCurrency(taxAmount, currency)}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className='text-lg font-medium'>Final Premium</TableCell>

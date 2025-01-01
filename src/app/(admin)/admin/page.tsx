@@ -1,14 +1,12 @@
 import { Suspense } from 'react';
-import { Activity, AlertTriangle, FileText, Shield, Users } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingState } from '@/features/membership/components/LoadingState';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
-import { columns } from './components/columns';
 import { ConversionFunnel } from './components/ConversionFunnel';
-import { DataTable } from './components/DataTable';
 import { FinancialOverview } from './components/FinancialOverview';
 import { MetricCards } from './components/MetricCard';
 
@@ -145,27 +143,6 @@ export default async function AdminPage() {
     if (denominator === 0) return 0;
     return (numerator / denominator) * 100;
   };
-
-  const eligibilityStats: EligibilityStats[] = [
-    {
-      period: 'Last 24 Hours',
-      views: last24HourViews?.length || 0,
-      accepts: last24HourAccepts?.length || 0,
-      conversionRate: calculateConversionRate(last24HourViews?.length || 0, last24HourAccepts?.length || 0),
-    },
-    {
-      period: 'Last 7 Days',
-      views: last7DayViews?.length || 0,
-      accepts: last7DayAccepts?.length || 0,
-      conversionRate: calculateConversionRate(last7DayViews?.length || 0, last7DayAccepts?.length || 0),
-    },
-    {
-      period: 'All Time',
-      views: allViewChecks?.length || 0,
-      accepts: allAcceptChecks?.length || 0,
-      conversionRate: calculateConversionRate(allViewChecks?.length || 0, allAcceptChecks?.length || 0),
-    },
-  ];
 
   // Calculate totals by currency
   const currencyTotals: CurrencyTotal[] =
