@@ -62,7 +62,6 @@ export function MembershipDetails() {
         <Button
           variant='outline'
           onClick={() => {
-            setStep(1);
             router.push('/membership?step=1');
           }}
           className='min-w-[100px]'

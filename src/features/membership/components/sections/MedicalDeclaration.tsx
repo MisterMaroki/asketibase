@@ -86,6 +86,11 @@ export function MedicalDeclaration() {
     router.replace('/membership?step=5');
   };
 
+  const handlePrevious = () => {
+    clearMedicalState();
+    router.push('/membership?step=3');
+  };
+
   return (
     <div className='space-y-6'>
       {!showQuestions ? (
@@ -107,6 +112,9 @@ export function MedicalDeclaration() {
             </label>
           </div>
           <div className='flex justify-end space-x-4'>
+            <Button variant='outline' onClick={handlePrevious}>
+              Previous
+            </Button>
             <Button onClick={handleContinueToQuestions} disabled={!acceptedDisclaimer} className='min-w-[200px]'>
               Continue
             </Button>
@@ -178,6 +186,9 @@ export function MedicalDeclaration() {
           )}
 
           <div className='flex justify-end space-x-4'>
+            <Button variant='outline' onClick={handlePrevious}>
+              Previous
+            </Button>
             <Button
               onClick={handleNext}
               disabled={!allMembersAnswered || !allMembersScreeningComplete}
