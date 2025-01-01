@@ -38,7 +38,6 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
       setIsLoading(true);
       setError(null);
       const details = await getDetails(type, id);
-      console.log('Loaded details:', { type, id, details });
       if (!details) {
         setError('No details found');
         return;
@@ -54,7 +53,6 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
 
   const renderMemberContent = () => {
     if (!data) return null;
-    console.log('Rendering member content:', data);
     const members = (data.members || []) as Member[];
     const quotes = (data.quotes || []) as Quote[];
     const primaryMember = members.find((member: Member) => member.is_primary);

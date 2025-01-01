@@ -53,7 +53,7 @@ export default async function AdminRootLayout({ children }: PropsWithChildren) {
         <div className='flex flex-col px-2 md:px-4'>
           <main className='relative flex-1'>
             <Sidebar signOut={signOut} />
-            <div className='relative h-full max-w-[1880px] pt-10 md:ml-64'>{children}</div>
+            <div className='relative h-full max-w-[1880px] md:ml-64'>{children}</div>
           </main>
         </div>
       </body>

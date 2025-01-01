@@ -6,20 +6,17 @@ import { createSupabaseServerClient } from '@/libs/supabase/server-client';
 import { ActionResponse } from '@/types/action-response';
 import { getURL } from '@/utils/get-url';
 
-export async function signInWithOAuth(provider: 'apple' | 'google', returnUrl?: string): Promise<ActionResponse> {
+export async function signInWithOAuth(provider: 'apple' | 'google'): Promise<ActionResponse> {
   const supabase = await createSupabaseServerClient();
-  const redirectUrl = new URL('/auth/callback', getURL());
-  if (returnUrl) {
-    redirectUrl.searchParams.set('returnUrl', returnUrl);
-  }
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: redirectUrl.toString(),
-      queryParams: {
-        returnTo: getURL(),
-      },
+      redirectTo: getURL('/auth/callback'),
+      // queryParams: {
+      //   access_type: 'offline',
+      //   prompt: 'consent',
+      // },
     },
   });
 
@@ -30,21 +27,13 @@ export async function signInWithOAuth(provider: 'apple' | 'google', returnUrl?: 
 
   return redirect(data.url);
 }
-
-export async function signInWithEmail(email: string, returnUrl?: string): Promise<ActionResponse> {
+export async function signInWithEmail(email: string): Promise<ActionResponse> {
   const supabase = await createSupabaseServerClient();
-  const redirectUrl = new URL('/auth/callback', getURL());
-  if (returnUrl) {
-    redirectUrl.searchParams.set('returnUrl', returnUrl);
-  }
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: redirectUrl.toString(),
-      data: {
-        returnTo: getURL(),
-      },
+      emailRedirectTo: getURL('/auth/callback'),
     },
   });
 

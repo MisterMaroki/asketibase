@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { checkAdmin } from '@/features/admin/check-admin';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { cn } from '@/utils/cn';
+import { User } from '@supabase/supabase-js';
 import { Analytics } from '@vercel/analytics/react';
 
 import { Navigation } from './navigation';
@@ -56,8 +57,15 @@ export default function RootLayout({ children }: PropsWithChildren) {
 }
 
 async function AppBar() {
-  const user = await getUser();
-  const isAdmin = await checkAdmin();
+  let user = null;
+  let isAdmin: boolean = false;
+
+  try {
+    user = await getUser();
+    isAdmin = await checkAdmin();
+  } catch (error) {
+    console.error('Failed to load user:', error);
+  }
 
   return (
     <header className='z-50 flex items-center justify-between p-4 md:p-6'>

@@ -16,10 +16,9 @@ export async function createCheckoutAction(id: string) {
   // 1. Get the user from session
   const user = await getUser();
 
-  // If no user is logged in, redirect to login with return URL
+  // If no user is logged in, throw error
   if (!user?.email) {
-    const returnUrl = encodeURIComponent(`/membership?step=5`);
-    redirect(`${getURL()}/login?returnUrl=${returnUrl}`);
+    throw new Error('No user logged in');
   }
 
   const quote = await getQuoteWithMembership(id);

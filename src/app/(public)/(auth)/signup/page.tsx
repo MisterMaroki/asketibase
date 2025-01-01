@@ -5,17 +5,10 @@ import { getSession } from '@/features/membership/controllers/get-session';
 import { signInWithEmail, signInWithOAuth } from '../auth-actions';
 import { AuthUI } from '../auth-ui';
 
-export default async function SignUp({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const params = await searchParams;
-  const returnUrl = params.returnUrl as string | undefined;
-
+export default async function SignUp() {
   return (
     <section className='py-xl m-auto flex h-full max-w-lg items-center'>
-      <AuthUI signInWithEmail={signInWithEmail} signInWithOAuth={signInWithOAuth} mode='signup' returnUrl={returnUrl} />
+      <AuthUI signInWithEmail={signInWithEmail} signInWithOAuth={signInWithOAuth} mode='signup' />
     </section>
   );
 }

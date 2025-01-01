@@ -5,15 +5,15 @@ export async function getUser() {
   const supabase = await createSupabaseServerClient();
   const { error: userError } = await supabase.auth.getUser();
 
-  if (userError) {
-    console.error(userError);
-  }
+  // if (userError) {
+  //   console.error(userError);
+  // }
 
   const { data, error } = await supabase.from('users').select('*').single();
 
-  if (error) {
-    console.error(error);
-  }
+  // if (error) {
+  //   console.error(error);
+  // }
 
   return data;
 }

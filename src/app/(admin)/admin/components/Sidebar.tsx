@@ -39,7 +39,7 @@ const navigation = [
 function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> }) {
   const pathname = usePathname();
   return (
-    <div className='flex h-[100dvh] flex-col '>
+    <div className='flex h-[100dvh] flex-col pt-2'>
       <div className='flex items-center gap-2 p-6 pl-4'>
         <Logo />
       </div>
@@ -53,7 +53,7 @@ function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> })
               href={item.href}
               className={cn(
                 'mb-1 flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+                isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted',
               )}
             >
               <item.icon className='h-4 w-4' />

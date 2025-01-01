@@ -5,11 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { FieldError } from 'react-hook-form';
 
+import { AuthModal } from '@/components/auth-modal';
 import QuoteSummary from '@/components/QuoteSummary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { createCheckoutAction } from '@/features/membership/actions/create-checkout-action';
 import { generateQuoteAction } from '@/features/membership/actions/generate-quote';
+import { loadQuoteAction } from '@/features/membership/actions/load-quote';
 import { getApplicationValidationErrors, isApplicationValid } from '@/features/membership/validations/membership';
 import { MemberSchema } from '@/features/membership/validations/schemas';
 import { useMembershipStore } from '@/store/membership-store';
@@ -52,6 +54,7 @@ export function QuoteGenerator({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const searchParams = useSearchParams();
   const errorParam = searchParams.get('error');
@@ -66,10 +69,36 @@ export function QuoteGenerator({
     referralCode,
     referralSource,
     medicalState,
-    setStep,
+    quoteId,
+    setQuoteId,
   } = useMembershipStore();
-  console.log('🚀 ~ QuoteGenerator ~ referralSource:', referralSource);
   const router = useRouter();
+
+  // Load quote from quoteId if available
+  useEffect(() => {
+    if (quoteId && !quote) {
+      const loadQuote = async () => {
+        try {
+          setIsLoading(true);
+          const loadedQuote = await loadQuoteAction(quoteId);
+          if (loadedQuote) {
+            onQuoteGenerated(loadedQuote);
+          } else {
+            // If quote couldn't be loaded, clear the ID from store
+            setQuoteId(null);
+          }
+        } catch (err) {
+          console.error('Failed to load quote:', err);
+          setError('Failed to load quote');
+          setQuoteId(null);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadQuote();
+    }
+  }, [quoteId, quote, onQuoteGenerated, setQuoteId]);
+
   // Prepare membership data for validation
   const membershipData = {
     membershipType,
@@ -105,6 +134,10 @@ export function QuoteGenerator({
       try {
         await createCheckoutAction(quote.id);
       } catch (error) {
+        if (error instanceof Error && error.message.includes('No user')) {
+          setShowAuthModal(true);
+          return;
+        }
         setError(error instanceof Error ? error.message : 'Failed to process your membership');
       } finally {
         setIsLoading(false);
@@ -115,6 +148,7 @@ export function QuoteGenerator({
       setIsLoading(true);
       setError(null);
       onQuoteGenerated(null);
+      setQuoteId(null);
 
       // Clear error param from URL without refresh
       if (errorParam) {
@@ -138,8 +172,7 @@ export function QuoteGenerator({
       });
 
       if (quote) {
-        console.log('🚀 ~ handleGenerateQuote ~ quote:', quote);
-
+        setQuoteId(quote.id);
         onQuoteGenerated(quote);
 
         setTimeout(() => {
@@ -156,6 +189,19 @@ export function QuoteGenerator({
       setError(err instanceof Error ? err.message : 'Failed to process your membership');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAuthSuccess = async () => {
+    if (quoteId) {
+      try {
+        setIsLoading(true);
+        await createCheckoutAction(quoteId);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Failed to process your membership');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -194,9 +240,6 @@ export function QuoteGenerator({
             <AlertDescription>There was an error processing your payment. Please try again.</AlertDescription>
           </Alert>
         )}
-        {/* {quote ? (
-          <CheckoutForm id={quote.id} />
-        ) : ( */}
         <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='w-full'>
           {isLoading ? (
             <>
@@ -209,8 +252,14 @@ export function QuoteGenerator({
             'Generate Quote'
           )}
         </Button>
-        {/* )} */}
       </div>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+        mode='login'
+      />
     </div>
   );
 }
