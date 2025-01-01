@@ -5,6 +5,8 @@ import { Inter } from 'next/font/google';
 import { Logo } from '@/components/logo';
 import { Background } from '@/components/ui/background';
 import { Toaster } from '@/components/ui/toaster';
+import { checkAdmin } from '@/features/admin/check-admin';
+import { getUser } from '@/features/membership/controllers/get-user';
 import { cn } from '@/utils/cn';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -41,7 +43,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <AppBar />
           <div className='absolute inset-0 bg-black/40 backdrop-blur-xl' />
           <main className='relative flex-1'>
-            <div className='relative h-full '>{children}</div>
+            <div className='relative h-full'>{children}</div>
           </main>
           {/* <Footer /> */}
         </div>
@@ -54,10 +56,13 @@ export default function RootLayout({ children }: PropsWithChildren) {
 }
 
 async function AppBar() {
+  const user = await getUser();
+  const isAdmin = await checkAdmin();
+
   return (
     <header className='z-50 flex items-center justify-between p-4 md:p-6'>
       <Logo />
-      <Navigation />
+      <Navigation user={user} isAdmin={isAdmin} />
     </header>
   );
 }

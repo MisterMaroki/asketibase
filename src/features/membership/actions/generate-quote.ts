@@ -35,7 +35,7 @@ export async function generateQuoteAction(data: Membershipschema) {
   console.log('🚀 ~ generateQuoteAction ~ durationType:', data.durationType);
   switch (data.durationType) {
     case 'expat_year':
-      numberOfDays = 365;
+      numberOfDays = 364; // 365 - 1 day
       break;
     case 'multi_trip':
       numberOfDays = 45;
@@ -250,14 +250,9 @@ function calculateAge(birthDate: Date): number {
 }
 
 function calculateEndDate(startDate: string, durationType: keyof typeof DURATION_TYPES): string {
-  if (durationType === 'expat_year') {
+  if (durationType === 'expat_year' || durationType === 'multi_trip') {
     const endDate = new Date(startDate);
-    endDate.setFullYear(endDate.getFullYear() + 1);
-    return endDate.toISOString().split('T')[0];
-  }
-  if (durationType === 'multi_trip') {
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 45);
+    endDate.setDate(endDate.getDate() + 364);
     return endDate.toISOString().split('T')[0];
   }
 

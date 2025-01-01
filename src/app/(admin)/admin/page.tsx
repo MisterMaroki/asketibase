@@ -334,19 +334,6 @@ export default async function AdminPage() {
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Memberships</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<LoadingState />}>
-            <div className='overflow-x-auto'>
-              <DataTable columns={columns} data={memberships || []} />
-            </div>
-          </Suspense>
-        </CardContent>
-      </Card>
     </main>
   );
 }
