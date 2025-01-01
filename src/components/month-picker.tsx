@@ -12,8 +12,22 @@ interface MonthPickerProps {
 
 export function MonthPicker({ onMonthSelect, selectedMonth, year }: MonthPickerProps) {
   console.log('🚀 ~ MonthPicker ~ year:', year);
+  const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  const months = Array.from({ length: currentMonth + 1 }, (_, i) => format(new Date(year, i), 'MMMM'));
+  const currentDay = new Date().getDate();
+  const months = Array.from({ length: 12 }, (_, i) => ({
+    name: format(new Date(year, i), 'MMMM'),
+    days: new Date(year, i + 1, 0).getDate(),
+  }))
+    .filter((month, index) => {
+      if (year < currentYear) return true;
+      if (year === currentYear) {
+        if (index < currentMonth) return true;
+        if (index === currentMonth) return currentDay > 1;
+      }
+      return false;
+    })
+    .map((month) => month.name);
 
   return (
     <div className='p-3 text-white'>
