@@ -43,7 +43,7 @@ export default async function QuotesPage() {
         Quotes
       </CardTitle>
       <Suspense fallback={<LoadingState />}>
-        <DataTable columns={columns} data={(quotes.data as Quote[]) || []} from='quotes' />
+        <DataTable columns={columns as any} data={quotes.data as Quote[]} from='quotes' />
       </Suspense>
     </main>
   );
