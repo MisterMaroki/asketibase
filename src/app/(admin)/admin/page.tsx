@@ -174,7 +174,8 @@ export default async function AdminPage() {
       membership.quotes?.forEach((quote) => {
         const isWrittenBusiness = membership.status !== 'draft';
         const existingCurrency = acc.find((c) => c.currency === quote.currency);
-        const gbpTotal = quote.total_price_with_tax / (quote.exchange_rate || 1);
+        const netAmount = quote.total_price_with_tax - quote.tax_amount;
+        const gbpTotal = netAmount / (quote.exchange_rate || 1);
         // Calculate the proportion of each component in GBP
         const totalWithoutTax = quote.total_price_with_tax - quote.tax_amount;
         const basePriceRatio = quote.base_price / totalWithoutTax;

@@ -170,74 +170,47 @@ export function FinancialOverview({ currencyTotals, taxTotals }: FinancialOvervi
         <Card>
           <CardContent className='pt-6'>
             <div className='text-sm font-medium text-muted-foreground'>Total Premium (GBP)</div>
+            <div className='mt-2 text-2xl font-bold'>{formatPriceWithCurrency(totals.totalGbp, 'GBP')}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className='pt-6'>
+            <div className='text-sm font-medium text-muted-foreground'>Total Net (GBP)</div>
             <div className='mt-2 text-2xl font-bold'>
-              {new Intl.NumberFormat('en-GB', {
-                style: 'currency',
-                currency: 'GBP',
-                maximumFractionDigits: 0,
-              }).format(totals.totalGbp)}
+              {formatPriceWithCurrency(totals.totalGbp - totals.totalTax, 'GBP')}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className='pt-6'>
             <div className='text-sm font-medium text-muted-foreground'>Base Premium</div>
-            <div className='mt-2 text-2xl font-bold'>
-              {new Intl.NumberFormat('en-GB', {
-                style: 'currency',
-                currency: 'GBP',
-                maximumFractionDigits: 0,
-              }).format(totals.totalBasePrice)}
-            </div>
+            <div className='mt-2 text-2xl font-bold'>{formatPriceWithCurrency(totals.totalBasePrice, 'GBP')}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className='pt-6'>
             <div className='text-sm font-medium text-muted-foreground'>Medical Loading</div>
-            <div className='mt-2 text-2xl font-bold'>
-              {new Intl.NumberFormat('en-GB', {
-                style: 'currency',
-                currency: 'GBP',
-                maximumFractionDigits: 0,
-              }).format(totals.totalMedicalLoading)}
-            </div>
+            <div className='mt-2 text-2xl font-bold'>{formatPriceWithCurrency(totals.totalMedicalLoading, 'GBP')}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className='pt-6'>
             <div className='text-sm font-medium text-muted-foreground'>Coverage Loading</div>
-            <div className='mt-2 text-2xl font-bold'>
-              {new Intl.NumberFormat('en-GB', {
-                style: 'currency',
-                currency: 'GBP',
-                maximumFractionDigits: 0,
-              }).format(totals.totalCoverageLoading)}
-            </div>
+            <div className='mt-2 text-2xl font-bold'>{formatPriceWithCurrency(totals.totalCoverageLoading, 'GBP')}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className='pt-6'>
             <div className='text-sm font-medium text-muted-foreground'>Total Discounts</div>
             <div className='mt-2 text-2xl font-bold text-green-600'>
-              -
-              {new Intl.NumberFormat('en-GB', {
-                style: 'currency',
-                currency: 'GBP',
-                maximumFractionDigits: 0,
-              }).format(totals.totalDiscount)}
+              -{formatPriceWithCurrency(totals.totalDiscount, 'GBP')}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className='pt-6'>
             <div className='text-sm font-medium text-muted-foreground'>Total Tax</div>
-            <div className='mt-2 text-2xl font-bold'>
-              {new Intl.NumberFormat('en-GB', {
-                style: 'currency',
-                currency: 'GBP',
-                maximumFractionDigits: 0,
-              }).format(totals.totalTax)}
-            </div>
+            <div className='mt-2 text-2xl font-bold'>{formatPriceWithCurrency(totals.totalTax, 'GBP')}</div>
           </CardContent>
         </Card>
       </div>
@@ -269,7 +242,10 @@ export function FinancialOverview({ currencyTotals, taxTotals }: FinancialOvervi
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>GBP equivalent amount stored at the time of quote creation</p>
+                        <p>
+                          GBP equivalent amounts are calculated at the time of quote creation. They are not updated when
+                          the exchange rate changes.
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -321,7 +297,7 @@ export function FinancialOverview({ currencyTotals, taxTotals }: FinancialOvervi
                     {formatPriceWithCurrency(netAmount, data.currency)}
                   </TableCell>
                   <TableCell className='whitespace-nowrap text-right'>
-                    {formatPriceWithCurrency(total / (data.exchange_rate || 1), 'GBP')}
+                    {formatPriceWithCurrency(netAmount / (data.exchange_rate || 1), 'GBP')}
                   </TableCell>
                 </TableRow>
               );
@@ -354,7 +330,7 @@ export function FinancialOverview({ currencyTotals, taxTotals }: FinancialOvervi
                 {formatPriceWithCurrency(totals.totalGbp - totals.totalTax, 'GBP')}
               </TableCell>
               <TableCell className='whitespace-nowrap text-right font-bold'>
-                {formatPriceWithCurrency(totals.totalGbp, 'GBP')}
+                {formatPriceWithCurrency(totals.totalGbp - totals.totalTax, 'GBP')}
               </TableCell>
             </TableRow>
           </TableBody>
