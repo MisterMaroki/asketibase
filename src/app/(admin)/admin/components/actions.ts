@@ -11,36 +11,10 @@ async function getMembershipById(id: string): Promise<Membership | null> {
       `
       *,
       members (
-        id,
-        first_name,
-        last_name,
-        email,
-        contact_number,
-        country_code,
-        date_of_birth,
-        nationality,
-        has_conditions,
-        country_of_residence,
-        is_primary
+       *
       ),
       quotes (
-        id,
-        created_at,
-        base_price,
-        tax_amount,
-        total_price_with_tax,
-        currency,
-        coverage_loading_price,
-        discount_amount,
-        gbp_total,
-        medical_loading_price,
-        member_prices,
-        total_price,
-        membership_id,
-        referral_code_id
-      ),
-      users (
-        email
+       *
       )
     `,
     )

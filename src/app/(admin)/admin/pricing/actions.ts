@@ -36,8 +36,13 @@ export async function updateCountryBasePrice(id: string, updates: Partial<Countr
 }
 
 export async function getCountryBasePrices(): Promise<CountryBasePrice[]> {
-  const { data, error } = await supabaseAdminClient.from('country_base_prices').select('*').order('country');
+  try {
+    const { data, error } = await supabaseAdminClient.from('country_base_prices').select('*').order('country');
 
-  if (error) throw error;
-  return data;
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error getting country base prices:', error);
+    return [];
+  }
 }

@@ -10,7 +10,6 @@ const siteUrl = getURL();
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  console.log('🚀 ~ GET ~ code:', code);
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/';
 

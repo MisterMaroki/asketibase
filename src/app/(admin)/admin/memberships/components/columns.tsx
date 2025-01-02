@@ -1,12 +1,12 @@
 'use client';
 
 import { format } from 'date-fns';
+import { ArrowUpDown } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tables } from '@/libs/supabase/types';
 import { ColumnDef } from '@tanstack/react-table';
-
-import { MembershipActions } from './MembershipActions';
 
 type Member = Pick<
   Tables<'members'>,
@@ -37,74 +37,198 @@ type Membership = Tables<'memberships'> & {
   } | null;
 };
 
-export const columns: ColumnDef<Membership, any>[] = [
+export const columns: ColumnDef<Membership>[] = [
+  {
+    accessorKey: 'membership_number',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Membership Number
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const num = String(row.getValue('membership_number'));
+      return <div className='pl-4 font-medium'>ASK-2024-{num.padStart(4, '0')}</div>;
+    },
+    sortingFn: 'text',
+  },
   {
     accessorKey: 'membership_type',
-    header: 'Type',
-    cell: ({ row }) => {
+    header: ({ column }) => {
       return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Type
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className='pl-4'>
         <Badge variant='outline' className='capitalize'>
           {row.getValue('membership_type')}
         </Badge>
-      );
-    },
+      </div>
+    ),
+    sortingFn: 'text',
   },
   {
     accessorKey: 'coverage_type',
-    header: 'Coverage',
-    cell: ({ row }) => {
+    header: ({ column }) => {
       return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Coverage
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className='pl-4'>
         <Badge variant='outline' className='capitalize'>
           {row.getValue('coverage_type')}
         </Badge>
+      </div>
+    ),
+    sortingFn: 'text',
+  },
+  {
+    accessorKey: 'members',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Primary Member
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
       );
+    },
+    cell: ({ row }) => {
+      const members = row.getValue('members') as Member[];
+      const primaryMember = members.find((member) => member.is_primary);
+      return (
+        <div className='pl-4'>{primaryMember ? `${primaryMember.first_name} ${primaryMember.last_name}` : '-'}</div>
+      );
+    },
+    sortingFn: (rowA, rowB) => {
+      const membersA = rowA.getValue('members') as Member[];
+      const membersB = rowB.getValue('members') as Member[];
+      const primaryA = membersA.find((member) => member.is_primary);
+      const primaryB = membersB.find((member) => member.is_primary);
+      return (primaryA?.first_name || '').localeCompare(primaryB?.first_name || '');
     },
   },
   {
     accessorKey: 'members',
-    header: 'Members',
+    id: 'member_count',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Members
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const members = row.getValue('members') as Member[];
-      const primaryMember = members.find((member) => member.is_primary);
-      if (!primaryMember) return null;
+      return <div className='pl-4'>{members.length}</div>;
+    },
+    sortingFn: (rowA, rowB) => {
+      const membersA = rowA.getValue('members') as Member[];
+      const membersB = rowB.getValue('members') as Member[];
+      return membersA.length - membersB.length;
+    },
+  },
+  {
+    accessorKey: 'quotes',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Latest Quote
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const quotes = row.getValue('quotes') as Quote[];
+      const latestQuote = quotes[0]; // Assuming quotes are ordered by created_at desc
+      if (!latestQuote || latestQuote.gbp_total === null) return <div className='pl-4'>-</div>;
 
       return (
-        <div className='flex flex-col space-y-1'>
-          <span className='font-medium'>
-            {primaryMember.first_name} {primaryMember.last_name}
-          </span>
-          <span className='text-sm text-muted-foreground'>{primaryMember.email}</span>
+        <div className='pl-4'>
+          £{latestQuote.gbp_total.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </div>
       );
     },
-  },
-  {
-    accessorKey: 'start_date',
-    header: 'Start Date',
-    cell: ({ row }) => {
-      return format(new Date(row.getValue('start_date')), 'PPP');
-    },
-  },
-  {
-    accessorKey: 'end_date',
-    header: 'End Date',
-    cell: ({ row }) => {
-      return format(new Date(row.getValue('end_date')), 'PPP');
+    sortingFn: (rowA, rowB) => {
+      const quotesA = rowA.getValue('quotes') as Quote[];
+      const quotesB = rowB.getValue('quotes') as Quote[];
+      const latestQuoteA = quotesA[0]?.gbp_total ?? 0;
+      const latestQuoteB = quotesB[0]?.gbp_total ?? 0;
+      return latestQuoteA - latestQuoteB;
     },
   },
   {
     accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => {
+    header: ({ column }) => {
       return (
-        <Badge variant='outline' className='capitalize'>
-          {row.getValue('status')}
-        </Badge>
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Status
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
       );
     },
+    cell: ({ row }) => (
+      <div className='pl-4'>
+        <Badge variant={row.getValue('status') === 'active' ? 'default' : 'secondary'} className='capitalize'>
+          {row.getValue('status')}
+        </Badge>
+      </div>
+    ),
+    sortingFn: 'text',
   },
   {
-    id: 'actions',
-    cell: ({ row }) => <MembershipActions membership={row.original} />,
+    accessorKey: 'created_at',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='w-full justify-start font-medium hover:bg-transparent'
+        >
+          Created At
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className='pl-4'>{format(new Date(row.getValue('created_at')), 'PPP')}</div>,
+    sortingFn: 'datetime',
   },
 ];

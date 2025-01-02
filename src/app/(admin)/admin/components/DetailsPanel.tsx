@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { differenceInYears, format } from 'date-fns';
-import { Calculator, Calendar, Globe2, Loader2, Mail, MapPin, Phone, PoundSterling, User } from 'lucide-react';
+import { Calculator, Calendar, Globe2, Loader2, Mail, MapPin, Phone, User } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -149,10 +149,9 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
           </div>
           {quote.gbp_total && quote.currency !== 'GBP' && (
             <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>GBP Equivalent</span>
+              <span className='text-teal-500'>GBP Equivalent</span>
               <div className='flex items-center gap-1'>
-                <PoundSterling className='h-3 w-3 text-muted-foreground' />
-                <span>
+                <span className='text-teal-500'>
                   {new Intl.NumberFormat('en-GB', {
                     style: 'currency',
                     currency: 'GBP',
@@ -260,94 +259,12 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
     );
   };
 
-  const renderQuoteContent = () => {
-    if (!data) return null;
-    const members = (data.members || []) as Member[];
-    const quote = data.quotes?.[0] as Quote | undefined;
-    const riskLevel = members.some((member) => member.has_conditions) ? 1 : 0;
-
-    if (!quote) return null;
-
-    return (
-      <div className='space-y-6 sm:p-6'>
-        <div className='space-y-4'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h2 className='text-2xl font-bold'>Quote #{quote.id.slice(0, 8)}</h2>
-              <p className='text-sm text-muted-foreground'>Created {format(new Date(quote.created_at), 'PPP')}</p>
-            </div>
-            <div className='flex items-center gap-2'>
-              <Badge variant='outline' className='h-6 px-3 text-sm capitalize'>
-                {data.status}
-              </Badge>
-              <Badge variant={riskLevel === 1 ? 'destructive' : 'secondary'} className='h-6 w-fit px-3 text-sm'>
-                Risk Level {riskLevel}
-              </Badge>
-            </div>
-          </div>
-
-          <div className='rounded-lg border bg-muted/40 p-4'>{renderQuoteBreakdown(quote)}</div>
-        </div>
-
-        <Separator />
-        <div className='space-y-4'>
-          <h3 className='text-lg font-semibold'>Membership Details</h3>
-          <div className='rounded-lg border bg-muted/40 p-4'>
-            <div className='mb-4 flex flex-wrap gap-2'>
-              <Badge variant='outline' className='h-6 px-3 text-sm'>
-                {data.membership_type}
-              </Badge>
-              <Badge variant='outline' className='h-6 px-3 text-sm'>
-                {data.coverage_type}
-              </Badge>
-              <Badge variant='secondary' className='h-6 px-3 text-xs'>
-                {data.duration_type.replace('_', ' ').toUpperCase()}
-              </Badge>
-              {data.users?.email && (
-                <Badge variant='outline' className='h-6 px-3 text-sm'>
-                  {data.users.email}
-                </Badge>
-              )}
-            </div>
-
-            <div className='grid gap-2 text-sm'>
-              {data.start_date && (
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground'>Start Date</span>
-                  <span>{format(new Date(data.start_date), 'PPP')}</span>
-                </div>
-              )}
-              {data.end_date && (
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground'>End Date</span>
-                  <span>{format(new Date(data.end_date), 'PPP')}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {members.length > 0 && (
-          <>
-            <Separator />
-            <div className='space-y-4'>
-              <div className='flex items-center justify-between'>
-                <h3 className='text-lg font-semibold'>Members</h3>
-                <Badge variant='outline'>{members.length} Total</Badge>
-              </div>
-              {renderMemberList(members)}
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
-
   const renderMembershipContent = () => {
     if (!data) return null;
     const members = (data.members || []) as Member[];
     const quote = data.quotes?.[0] as Quote | undefined;
     const riskLevel = members.some((member) => member.has_conditions) ? 1 : 0;
+    const membershipNumber = String(data.membership_number).padStart(4, '0');
 
     return (
       <div className='space-y-6 p-4 sm:p-6'>
@@ -358,7 +275,13 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
               <div className='flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground'>
                 <span>Created {format(new Date(data.created_at || ''), 'MMMM d, yyyy')}</span>
                 <span className='hidden sm:inline'>•</span>
-                <span>#{data.membership_number}</span>
+                <span className='font-medium'>ASK-2024-{membershipNumber}</span>
+                {data.user_id && (
+                  <>
+                    <span className='hidden sm:inline'>•</span>
+                    <span>User ID: {data.user_id}</span>
+                  </>
+                )}
               </div>
             </div>
             <div className='flex items-center gap-2'>
@@ -379,14 +302,21 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
               <Badge variant='secondary' className='h-6 px-3 text-xs'>
                 {data.duration_type.replace('_', ' ').toUpperCase()}
               </Badge>
-              {data.users?.email && (
-                <Badge variant='outline' className='h-6 max-w-[200px] truncate px-3 text-sm'>
-                  {data.users.email}
-                </Badge>
-              )}
             </div>
 
             <div className='grid gap-2 text-sm'>
+              <div className='flex justify-between'>
+                <span className='text-muted-foreground'>Membership Number</span>
+                <span>ASK-2024-{membershipNumber}</span>
+              </div>
+              <div className='flex justify-between'>
+                <span className='text-muted-foreground'>Status</span>
+                <span className='capitalize'>{data.status}</span>
+              </div>
+              <div className='flex justify-between'>
+                <span className='text-muted-foreground'>Duration Type</span>
+                <span className='capitalize'>{data.duration_type.replace('_', ' ')}</span>
+              </div>
               {data.start_date && (
                 <div className='flex justify-between'>
                   <span className='text-muted-foreground'>Start Date</span>
@@ -397,6 +327,12 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                 <div className='flex justify-between'>
                   <span className='text-muted-foreground'>End Date</span>
                   <span>{format(new Date(data.end_date), 'PPP')}</span>
+                </div>
+              )}
+              {data.created_at && (
+                <div className='flex justify-between'>
+                  <span className='text-muted-foreground'>Created At</span>
+                  <span>{format(new Date(data.created_at), 'PPP p')}</span>
                 </div>
               )}
               {quote && (
@@ -450,14 +386,29 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                 <h3 className='text-lg font-semibold'>Quote Details</h3>
                 <div className='flex items-center gap-2'>
                   <Badge variant='outline' className='text-xs'>
-                    #{quote.id.slice(0, 8)}
-                  </Badge>
-                  <Badge variant='outline' className='text-xs'>
                     {format(new Date(quote.created_at), 'PPP')}
                   </Badge>
+                  {quote.referral_code_id && (
+                    <Badge variant='secondary' className='text-xs'>
+                      Referral Applied
+                    </Badge>
+                  )}
                 </div>
               </div>
-              <div className='rounded-lg border bg-muted/40 p-4'>{renderQuoteBreakdown(quote)}</div>
+              <div className='rounded-lg border bg-muted/40 p-4'>
+                {renderQuoteBreakdown(quote)}
+                <Separator className='my-3' />
+                <div className='grid gap-2 text-sm'>
+                  <div className='flex justify-between'>
+                    <span className='text-muted-foreground'>Quote ID</span>
+                    <span className='font-mono'>{quote.id}</span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span className='text-muted-foreground'>Created At</span>
+                    <span>{format(new Date(quote.created_at), 'PPP p')}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -476,11 +427,11 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
 
     switch (type) {
       case 'members':
-        return renderMembershipContent();
       case 'memberships':
-        return renderMembershipContent();
       case 'quotes':
-        return renderQuoteContent();
+        return renderMembershipContent();
+      // case 'quotes':
+      //   return renderQuoteContent();
       default:
         return null;
     }

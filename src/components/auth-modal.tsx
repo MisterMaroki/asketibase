@@ -29,7 +29,7 @@ export function AuthModal({ isOpen, onClose, onSuccess, mode = 'login' }: AuthMo
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className='max-w-md bg-black p-0 text-white'>
+      <DialogContent className='max-w-sm rounded-lg bg-card/50 p-0 text-white backdrop-blur-lg sm:max-w-md'>
         <AuthUI
           mode={mode}
           signInWithOAuth={async (provider) => {

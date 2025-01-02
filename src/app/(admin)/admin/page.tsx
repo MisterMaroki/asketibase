@@ -37,6 +37,7 @@ interface CurrencyTotal {
   discountAmount: number;
   quotedDiscountAmount: number;
   writtenDiscountAmount: number;
+  exchange_rate: number;
 }
 
 interface TaxTotal {
@@ -51,6 +52,7 @@ interface TaxTotal {
   writtenTaxAmount: number;
   writtenTotalWithoutTax: number;
   writtenGbpEquivalent: number;
+  exchange_rate: number;
 }
 
 interface StatusCount {
@@ -172,7 +174,7 @@ export default async function AdminPage() {
       membership.quotes?.forEach((quote) => {
         const isWrittenBusiness = membership.status !== 'draft';
         const existingCurrency = acc.find((c) => c.currency === quote.currency);
-        const gbpTotal = quote.gbp_total || 0;
+        const gbpTotal = quote.total_price_with_tax / (quote.exchange_rate || 1);
         // Calculate the proportion of each component in GBP
         const totalWithoutTax = quote.total_price_with_tax - quote.tax_amount;
         const basePriceRatio = quote.base_price / totalWithoutTax;
@@ -180,11 +182,11 @@ export default async function AdminPage() {
         const coverageLoadingRatio = quote.coverage_loading_price / totalWithoutTax;
         const discountRatio = quote.discount_amount / totalWithoutTax;
 
-        // Calculate GBP values for each component
-        const gbpBasePrice = gbpTotal * basePriceRatio;
-        const gbpMedicalLoading = gbpTotal * medicalLoadingRatio;
-        const gbpCoverageLoading = gbpTotal * coverageLoadingRatio;
-        const gbpDiscount = gbpTotal * discountRatio;
+        // Calculate GBP values for each component using exchange rate
+        const gbpBasePrice = quote.base_price / (quote.exchange_rate || 1);
+        const gbpMedicalLoading = quote.medical_loading_price / (quote.exchange_rate || 1);
+        const gbpCoverageLoading = quote.coverage_loading_price / (quote.exchange_rate || 1);
+        const gbpDiscount = quote.discount_amount / (quote.exchange_rate || 1);
 
         if (existingCurrency) {
           existingCurrency.total += quote.total_price_with_tax;
@@ -193,6 +195,7 @@ export default async function AdminPage() {
           existingCurrency.medicalLoadingPrice += quote.medical_loading_price;
           existingCurrency.coverageLoadingPrice += quote.coverage_loading_price;
           existingCurrency.discountAmount += quote.discount_amount;
+          existingCurrency.exchange_rate = quote.exchange_rate;
 
           if (isWrittenBusiness) {
             existingCurrency.writtenTotal += quote.total_price_with_tax;
@@ -230,6 +233,7 @@ export default async function AdminPage() {
             discountAmount: quote.discount_amount,
             quotedDiscountAmount: isWrittenBusiness ? 0 : gbpDiscount,
             writtenDiscountAmount: isWrittenBusiness ? gbpDiscount : 0,
+            exchange_rate: quote.exchange_rate,
           });
         }
       });
@@ -243,13 +247,14 @@ export default async function AdminPage() {
         const isWrittenBusiness = membership.status !== 'draft';
         const existingCurrency = acc.find((c) => c.currency === quote.currency);
         const taxRate = (quote.tax_amount / (quote.total_price_with_tax - quote.tax_amount)) * 100;
-        const gbpTaxAmount = quote.gbp_total ? (quote.tax_amount / quote.total_price_with_tax) * quote.gbp_total : 0;
-        const gbpTotalWithoutTax = quote.gbp_total ? quote.gbp_total - gbpTaxAmount : 0;
+        const gbpTaxAmount = quote.tax_amount / (quote.exchange_rate || 1);
+        const gbpTotalWithoutTax = (quote.total_price_with_tax - quote.tax_amount) / (quote.exchange_rate || 1);
 
         if (existingCurrency) {
           existingCurrency.taxAmount += quote.tax_amount;
           existingCurrency.totalWithoutTax += quote.total_price_with_tax - quote.tax_amount;
           existingCurrency.gbpEquivalent += gbpTaxAmount;
+          existingCurrency.exchange_rate = quote.exchange_rate;
 
           if (isWrittenBusiness) {
             existingCurrency.writtenTaxAmount += quote.tax_amount;
@@ -273,6 +278,7 @@ export default async function AdminPage() {
             writtenTaxAmount: isWrittenBusiness ? quote.tax_amount : 0,
             writtenTotalWithoutTax: isWrittenBusiness ? quote.total_price_with_tax - quote.tax_amount : 0,
             writtenGbpEquivalent: isWrittenBusiness ? gbpTaxAmount : 0,
+            exchange_rate: quote.exchange_rate,
           });
         }
       });

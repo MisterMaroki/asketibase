@@ -5,11 +5,9 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Quote } from '../../types';
+import { Member, Membership, Quote } from '../../types';
 
-import { QuoteActions } from './QuoteActions';
-
-export const columns: ColumnDef<Quote, any>[] = [
+export const columns: ColumnDef<Quote & { memberships: Membership }, any>[] = [
   {
     accessorKey: 'created_at',
     header: 'Date',
@@ -24,7 +22,7 @@ export const columns: ColumnDef<Quote, any>[] = [
       const membership = row.original.memberships;
       if (!membership) return 'N/A';
 
-      const primaryMember = membership.members.find((member) => member.is_primary);
+      const primaryMember = membership?.members?.find((member) => member.is_primary);
       if (!primaryMember) return 'N/A';
 
       return (
@@ -45,7 +43,7 @@ export const columns: ColumnDef<Quote, any>[] = [
       if (!membership) return null;
 
       return (
-        <div className='space-y-1'>
+        <div className='flex flex-col items-center space-y-1'>
           <Badge variant='outline' className='capitalize'>
             {membership.membership_type}
           </Badge>
@@ -89,7 +87,11 @@ export const columns: ColumnDef<Quote, any>[] = [
     },
   },
   {
-    id: 'actions',
-    cell: ({ row }) => <QuoteActions quote={row.original} />,
+    accessorKey: 'gbp_total',
+    header: 'GBP Total',
+    cell: ({ row }) => {
+      const total = row.getValue('gbp_total') as number;
+      return `GBP${total.toLocaleString()}`;
+    },
   },
 ];

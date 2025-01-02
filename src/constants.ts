@@ -47,7 +47,7 @@ export const getDurationDetails = (durationType: keyof typeof DURATION_TYPES) =>
 export const DURATION_DETAILS = {
   expat_year: {
     title: 'Expat Year',
-    description: '365 Days Contiguous Coverage from Membership Start Date - No Maximum Trip Duration',
+    description: '365 Days Continuous Coverage from Membership Start Date - No Maximum Trip Duration',
     maxTripDuration: DURATION_MAX_TRIP_DURATION.expat_year,
   },
   multi_trip: {

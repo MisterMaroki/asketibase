@@ -54,7 +54,7 @@ export function DateSelector({
   return (
     <div className='space-y-4'>
       <div className='space-y-2'>
-        <label className='text-sm font-medium'>Start Date</label>
+        <label className='text-sm font-medium'>Cover Start Date</label>
         <div className='relative'>
           <div className='flex gap-2'>
             <Popover>
@@ -81,7 +81,7 @@ export function DateSelector({
 
       {isSingleTrip && startDate && (
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>End Date</label>
+          <label className='text-sm font-medium'>Cover End Date</label>
           <div className='relative'>
             <div className='flex gap-2'>
               <Popover>

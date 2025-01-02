@@ -426,6 +426,7 @@ export type Database = {
           created_at: string
           currency: string
           discount_amount: number
+          exchange_rate: number
           gbp_total: number | null
           id: string
           medical_loading_price: number
@@ -442,6 +443,7 @@ export type Database = {
           created_at?: string
           currency: string
           discount_amount?: number
+          exchange_rate?: number
           gbp_total?: number | null
           id?: string
           medical_loading_price: number
@@ -458,6 +460,7 @@ export type Database = {
           created_at?: string
           currency?: string
           discount_amount?: number
+          exchange_rate?: number
           gbp_total?: number | null
           id?: string
           medical_loading_price?: number

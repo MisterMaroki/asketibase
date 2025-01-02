@@ -93,7 +93,7 @@ export const MembershipDocumentEmail = (data: DocumentData) => {
                         Duration Details
                       </Text>
                       <Text className='text-[14px] text-[#758388]'>
-                        {data.maximum_trip_duration} Days Contiguous Coverage from Membership Start Date
+                        {data.maximum_trip_duration} Days Continuous Coverage from Membership Start Date
                       </Text>
                       <Text className='mt-2 text-[14px] text-[#758388]'>Start: {data.start_date}</Text>
                     </Column>

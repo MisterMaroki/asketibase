@@ -132,31 +132,40 @@ export function QuoteGenerator({
       setIsLoading(true);
       setError(null);
       try {
-        await createCheckoutAction(quote.id);
+        const result = await createCheckoutAction(quote.id);
+        if (result.success && result.url) {
+          window.location.href = result.url;
+          return;
+        }
+        if (result.error) {
+          throw new Error(result.error);
+        }
       } catch (error) {
         if (error instanceof Error && error.message.includes('No user')) {
           setShowAuthModal(true);
+          setIsLoading(false);
           return;
         }
         setError(error instanceof Error ? error.message : 'Failed to process your membership');
-      } finally {
         setIsLoading(false);
         return;
       }
+      return;
     }
+
+    setIsLoading(true);
+    setError(null);
+    onQuoteGenerated(null);
+    setQuoteId(null);
+
+    // Clear error param from URL without refresh
+    if (errorParam) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('error');
+      router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+    }
+
     try {
-      setIsLoading(true);
-      setError(null);
-      onQuoteGenerated(null);
-      setQuoteId(null);
-
-      // Clear error param from URL without refresh
-      if (errorParam) {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.delete('error');
-        router.replace(newUrl.pathname + newUrl.search, { scroll: false });
-      }
-
       // Generate quote
       const quote = await generateQuoteAction({
         membershipType: membershipType!,
@@ -171,19 +180,19 @@ export function QuoteGenerator({
         medicalState,
       });
 
-      if (quote) {
-        setQuoteId(quote.id);
-        onQuoteGenerated(quote);
-
-        setTimeout(() => {
-          window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: 'smooth',
-          });
-        }, 100);
-      } else {
+      if (!quote.success || !quote.data) {
         throw new Error('Failed to generate quote');
       }
+
+      setQuoteId(quote.data.id);
+      onQuoteGenerated(quote.data);
+
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
+      }, 100);
     } catch (err) {
       console.error('Failed to process membership:', err);
       setError(err instanceof Error ? err.message : 'Failed to process your membership');
@@ -258,7 +267,7 @@ export function QuoteGenerator({
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
-        mode='login'
+        mode='signup'
       />
     </div>
   );
