@@ -25,12 +25,27 @@ interface Prediction {
   placeId: string;
 }
 
+interface ManualAddress {
+  line1: string;
+  line2: string;
+  city: string;
+  region: string;
+  postcode: string;
+}
+
 export function AddressInput({ value, onChange, disabled, className }: AddressInputProps) {
   const [isManual, setIsManual] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [manualAddress, setManualAddress] = useState<ManualAddress>({
+    line1: '',
+    line2: '',
+    city: '',
+    region: '',
+    postcode: '',
+  });
   const error = getAddressError(value);
 
   useEffect(() => {
@@ -67,6 +82,36 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
       setLoading(false);
       setOpen(false);
     }
+  };
+
+  useEffect(() => {
+    if (isManual && value) {
+      const parts = value.split(',').map((part) => part.trim());
+      setManualAddress({
+        line1: parts[0] || '',
+        line2: parts[1] || '',
+        city: parts[2] || '',
+        region: parts[3] || '',
+        postcode: parts[4] || '',
+      });
+    }
+  }, [isManual, value]);
+
+  const handleManualChange = (field: keyof ManualAddress, fieldValue: string) => {
+    const newAddress = { ...manualAddress, [field]: fieldValue };
+    setManualAddress(newAddress);
+
+    const combinedAddress = [
+      newAddress.line1,
+      newAddress.line2,
+      newAddress.city,
+      newAddress.region,
+      newAddress.postcode,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    onChange(combinedAddress);
   };
 
   return (
@@ -131,18 +176,72 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
           </Button>
         </div>
       ) : (
-        <div className='space-y-1'>
-          <Input
-            id='address'
-            name='address'
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder='Enter your full address'
-            autoComplete='street-address'
-            required
+        <div className='space-y-4'>
+          <div className='space-y-2'>
+            <Input
+              placeholder='Address Line 1'
+              value={manualAddress.line1}
+              onChange={(e) => handleManualChange('line1', e.target.value)}
+              disabled={disabled}
+              className={cn(error ? 'border-destructive' : '', className)}
+            />
+          </div>
+          <div className='space-y-2'>
+            <Input
+              placeholder='Address Line 2 (Optional)'
+              value={manualAddress.line2}
+              onChange={(e) => handleManualChange('line2', e.target.value)}
+              disabled={disabled}
+              className={cn(error ? 'border-destructive' : '', className)}
+            />
+          </div>
+          <div className='grid gap-4 sm:grid-cols-2'>
+            <div className='space-y-2'>
+              <Input
+                placeholder='City'
+                value={manualAddress.city}
+                onChange={(e) => handleManualChange('city', e.target.value)}
+                disabled={disabled}
+                className={cn(error ? 'border-destructive' : '', className)}
+              />
+            </div>
+            <div className='space-y-2'>
+              <Input
+                placeholder='State/Region'
+                value={manualAddress.region}
+                onChange={(e) => handleManualChange('region', e.target.value)}
+                disabled={disabled}
+                className={cn(error ? 'border-destructive' : '', className)}
+              />
+            </div>
+          </div>
+          <div className='space-y-2'>
+            <Input
+              placeholder='Postcode'
+              value={manualAddress.postcode}
+              onChange={(e) => handleManualChange('postcode', e.target.value)}
+              disabled={disabled}
+              className={cn(error ? 'border-destructive' : '', className)}
+            />
+          </div>
+          <Button
+            type='button'
+            variant='link'
+            className='text-xs'
+            onClick={() => {
+              setIsManual(false);
+              setManualAddress({
+                line1: '',
+                line2: '',
+                city: '',
+                region: '',
+                postcode: '',
+              });
+            }}
             disabled={disabled}
-            className={cn(error ? 'border-destructive' : '', className)}
-          />
+          >
+            Use address search
+          </Button>
           {error && <p className='text-xs text-destructive'>{error}</p>}
         </div>
       )}
