@@ -7,7 +7,6 @@ export const ELIGIBILITY_REQUIREMENTS = [
   'Not awaiting tests, test results or investigations',
   'Not taking part in a medical trial',
   'Not having or awaiting dialysis or any form of cancer treatment',
-  'Have not had any physical or psychological conditions requiring treatment, consultations, investigations, or medication',
   'Have not been diagnosed with a terminal illness',
 ];
 
