@@ -83,22 +83,6 @@ export const MembershipDocumentEmail = (data: DocumentData) => {
                     <Text className='text-[16px] text-[#758388]'>{data.duration_type}</Text>
                   </Column>
                 </Row>
-
-                {/* Duration Details Box */}
-                <Section className='mb-6 rounded-lg bg-[#9ef0e4]/10 p-4'>
-                  <Row>
-                    <Column>
-                      <Text className='mb-2 text-[16px] font-medium text-[#72c4ac]'>
-                        <span className='mr-2'>⏱</span>
-                        Duration Details
-                      </Text>
-                      <Text className='text-[14px] text-[#758388]'>
-                        {data.maximum_trip_duration} Days Continuous Coverage from Membership Start Date
-                      </Text>
-                      <Text className='mt-2 text-[14px] text-[#758388]'>Start: {data.start_date}</Text>
-                    </Column>
-                  </Row>
-                </Section>
               </Section>
 
               {/* Members Section */}
