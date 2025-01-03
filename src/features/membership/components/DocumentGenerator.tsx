@@ -100,7 +100,7 @@ export function DocumentGenerator({ quoteId, hasSentEmail }: DocumentGeneratorPr
             <p
               className={cn(
                 'mt-8 text-center text-sm text-muted-foreground transition-opacity duration-1000',
-                'animate-in fade-in fill-mode-forwards'
+                'animate-in fade-in fill-mode-forwards',
               )}
             >
               You can email us at{' '}
@@ -113,7 +113,7 @@ export function DocumentGenerator({ quoteId, hasSentEmail }: DocumentGeneratorPr
             <p
               className={cn(
                 'mt-8 text-center text-sm text-muted-foreground transition-opacity duration-1000',
-                'animate-in fade-in fill-mode-forwards'
+                'animate-in fade-in fill-mode-forwards',
               )}
             >
               You can safely close this tab now. We&apos;ll email you if we need anything else.

@@ -7,9 +7,9 @@ import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 import { checkReferralCode } from '../controllers/check-referral-code';
 import { createMember } from '../controllers/members';
 import { validateApplication } from '../validations/membership';
-import { Membershipschema } from '../validations/schemas';
+import { MembershipSchema } from '../validations/schemas';
 
-export async function generateQuoteAction(data: Membershipschema) {
+export async function generateQuoteAction(data: MembershipSchema) {
   try {
     const valid = validateApplication(data);
     if (!valid.success) {
@@ -148,6 +148,7 @@ export async function generateQuoteAction(data: Membershipschema) {
             address: member.address,
             country_of_residence: countryOfRes?.country as string,
             country_code: member.countryCode,
+            home_phone: member.landlineNumber,
             is_primary: !!member.isPrimary,
             nationality: countryNationality?.nationality as string,
             has_conditions: !!riskLevel,

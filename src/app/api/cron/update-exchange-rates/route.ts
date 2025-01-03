@@ -14,8 +14,6 @@ export async function GET(request: Request) {
 
     const result = await updateExchangeRates();
 
-    console.log('🚀 ~ GET ~ result:', result);
-
     if (!result.success) {
       return new NextResponse(JSON.stringify({ error: result.error }), {
         status: 500,

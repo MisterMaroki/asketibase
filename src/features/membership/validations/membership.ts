@@ -1,6 +1,6 @@
-import { type Membershipschema, membershipSchema } from './schemas';
+import { type MembershipSchema, membershipSchema } from './schemas';
 
-export function validateApplication(data: Partial<Membershipschema>) {
+export function validateApplication(data: Partial<MembershipSchema>) {
   try {
     membershipSchema.safeParse(data);
     return { success: true, errors: null };
@@ -18,12 +18,12 @@ export function validateApplication(data: Partial<Membershipschema>) {
   }
 }
 
-export function isApplicationValid(data: Partial<Membershipschema>): boolean {
+export function isApplicationValid(data: Partial<MembershipSchema>): boolean {
   const result = validateApplication(data);
   return result.success;
 }
 
-export function getApplicationValidationErrors(data: Partial<Membershipschema>) {
+export function getApplicationValidationErrors(data: Partial<MembershipSchema>) {
   const result = validateApplication(data);
   if (result.success) return [];
 

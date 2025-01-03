@@ -28,7 +28,6 @@ export default async function MembershipSuccessPage({
   }
 
   const res = await handlePaid(checkoutSession);
-  console.log('🚀 ~ MembershipSuccessPage ~ res:', res);
   if (!res) {
     redirect('/membership?step=5&error=true');
   }

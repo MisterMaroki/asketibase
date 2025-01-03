@@ -345,8 +345,9 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
               <Text>{primaryMember?.address || ''}</Text>
             </View>
             <View style={[styles.tableCell, styles.tableCellLast]}>
-              <Text>Contact Number: {primaryMember?.contact_number || ''}</Text>
               <Text>Email: {primaryMember?.email || ''}</Text>
+              <Text>Contact Number: {primaryMember?.contact_number || ''}</Text>
+              <Text>Home Phone: {primaryMember?.home_phone || ''}</Text>
             </View>
           </View>
         </View>

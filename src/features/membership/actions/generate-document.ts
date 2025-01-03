@@ -24,6 +24,7 @@ export interface DocumentData {
     has_declaration: string;
     address: string;
     contact_number: string;
+    home_phone: string;
     email: string;
     is_primary: boolean;
   }>;
@@ -131,6 +132,8 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
         ?.sort((a, b) => (a.is_primary ? -1 : 1))
         ?.map((member) => ({
           ...member,
+          contact_number: member.country_code + member.contact_number || '',
+          home_phone: member.home_phone || '',
           age: member.date_of_birth ? new Date().getFullYear() - new Date(member.date_of_birth).getFullYear() + '' : '',
           has_declaration: member.has_conditions ? 'Yes' : 'No',
           address: member.address || '',

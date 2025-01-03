@@ -245,6 +245,7 @@ export type Database = {
           first_name: string
           gender: string
           has_conditions: boolean
+          home_phone: string | null
           id: string
           is_primary: boolean
           last_name: string
@@ -264,6 +265,7 @@ export type Database = {
           first_name: string
           gender: string
           has_conditions?: boolean
+          home_phone?: string | null
           id?: string
           is_primary?: boolean
           last_name: string
@@ -283,6 +285,7 @@ export type Database = {
           first_name?: string
           gender?: string
           has_conditions?: boolean
+          home_phone?: string | null
           id?: string
           is_primary?: boolean
           last_name?: string

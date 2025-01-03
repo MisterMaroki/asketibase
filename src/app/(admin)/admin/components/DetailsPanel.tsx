@@ -191,6 +191,8 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                 ? `tel:${cleanPhoneNumber}`
                 : undefined;
 
+          const cleanHomePhoneNumber = member.home_phone?.replace(/\s+/g, '').replace(/^0+/, '');
+          const homePhoneLink = member.home_phone ? `tel:${cleanHomePhoneNumber}` : undefined;
           return (
             <div key={member.id} className='rounded-lg border bg-muted/40 p-4'>
               <div className='mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
@@ -248,6 +250,14 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                     <Phone className='h-4 w-4 shrink-0 text-muted-foreground' />
                     <a href={phoneLink} className='hover:text-primary hover:underline'>
                       {formattedPhoneNumber}
+                    </a>
+                  </div>
+                )}
+                {homePhoneLink && (
+                  <div className='flex items-center gap-2'>
+                    <Phone className='h-4 w-4 shrink-0 text-muted-foreground' />
+                    <a href={homePhoneLink} className='hover:text-primary hover:underline'>
+                      {member.home_phone}
                     </a>
                   </div>
                 )}

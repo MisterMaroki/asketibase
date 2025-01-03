@@ -12,5 +12,5 @@ export function formatPrice(price: number): string {
 
 export function formatPriceWithCurrency(price: number, currencyCode: string): string {
   const currency = getCurrencySymbol(currencyCode);
-  return `${currency} ${formatPrice(price)}`;
+  return `${currency}${formatPrice(price)}`;
 }

@@ -34,7 +34,17 @@ export const memberSchema = z.object({
   gender: z.enum(['male', 'female']),
   nationality: uuidSchema.describe('Nationality'),
   countryCode: z.enum(COUNTRY_CODES.map((c) => c.code) as [string, ...string[]]),
-  contactNumber: z.string().regex(/^\d{10}$/, 'Contact number must be 10 digits'),
+  contactNumber: z.string().regex(/^\d{10}$/, 'Contact number must be 10 digits and contain only numbers'),
+  landlineNumber: z
+    .string()
+    .refine((val) => {
+      if (val.length === 0) return true;
+      const trimmed = val.trim();
+      if (trimmed.split('').some((char) => char !== ' ' && isNaN(Number(char)))) return false;
+      const digits = trimmed.replace(/\s/g, '');
+      return digits.length >= 8 && digits.length <= 12;
+    }, 'Landline number must be between 8-12 digits and contain only numbers and spaces')
+    .optional(),
   email: z.string().email('Invalid email address'),
   countryOfResidence: uuidSchema.describe('Country of residence'),
   address: addressSchema,
@@ -59,4 +69,4 @@ export const membershipSchema = z.object({
   }),
 });
 
-export type Membershipschema = z.infer<typeof membershipSchema>;
+export type MembershipSchema = z.infer<typeof membershipSchema>;

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { BlackDOBInput } from '@/components/dob-input';
+import { PhoneInput } from '@/components/phone-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -226,44 +227,35 @@ export function MemberFormFields({
       </div>
 
       {/* Contact Information */}
-      <div className='grid gap-4 sm:grid-cols-3'>
-        <div className='space-y-2'>
-          <Label htmlFor='countryCode'>Country Code</Label>
-          <Select
-            value={watch('countryCode')}
-            onValueChange={(value) => handleFieldUpdate('countryCode', value)}
-            required
-          >
-            <SelectTrigger
-              id='countryCode'
-              className={cn(touchedFields.countryCode && errors.countryCode && 'border-destructive')}
-            >
-              <SelectValue placeholder='Select' />
-            </SelectTrigger>
-            <SelectContent>
-              {COUNTRY_CODES.map((code) => (
-                <SelectItem key={code.code} value={code.code}>
-                  {code.code} ({code.name})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {touchedFields.countryCode && errors.countryCode && (
-            <p className='text-sm text-destructive'>{errors.countryCode.message}</p>
-          )}
-        </div>
-        <div className='space-y-2 sm:col-span-2'>
-          <Label htmlFor='contactNumber'>Contact Number</Label>
-          <Input
-            {...registerWithOnChange('contactNumber')}
-            type='tel'
-            autoComplete='tel'
-            className={cn(touchedFields.contactNumber && errors.contactNumber && 'border-destructive')}
-          />
-          {touchedFields.contactNumber && errors.contactNumber && (
-            <p className='text-sm text-destructive'>{errors.contactNumber.message}</p>
-          )}
-        </div>
+      <div className='space-y-2'>
+        <Label htmlFor='contactNumber'>Mobile Number</Label>
+        <PhoneInput
+          countryCode={watch('countryCode')}
+          onCountryCodeChange={(value) => handleFieldUpdate('countryCode', value)}
+          {...registerWithOnChange('contactNumber')}
+          error={touchedFields.contactNumber && !!errors.contactNumber}
+          autoComplete='tel'
+          placeholder='Enter your mobile number'
+        />
+        {touchedFields.contactNumber && errors.contactNumber && (
+          <p className='text-sm text-destructive'>{errors.contactNumber.message}</p>
+        )}
+      </div>
+
+      {/* Landline Number field */}
+      <div className='space-y-2'>
+        <Label htmlFor='landlineNumber'>Landline Number (Optional)</Label>
+        <Input
+          {...registerWithOnChange('landlineNumber')}
+          type='tel'
+          id='landlineNumber'
+          autoComplete='tel'
+          placeholder='Enter your landline number'
+          className={cn(touchedFields.landlineNumber && errors.landlineNumber && 'border-destructive')}
+        />
+        {touchedFields.landlineNumber && errors.landlineNumber && (
+          <p className='text-sm text-destructive'>{errors.landlineNumber.message}</p>
+        )}
       </div>
 
       {/* Email field */}
