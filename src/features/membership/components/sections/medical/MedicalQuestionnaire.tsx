@@ -184,16 +184,6 @@ export function MedicalQuestionnaire({ memberId, memberName, onComplete }: Medic
             <div className='text-sm font-normal text-muted-foreground'>{memberName}</div>
           </div>
         </CardTitle>
-        {Object.keys(answers).length > 0 && !isDeclined && (
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handleClear}
-            className='text-destructive hover:text-destructive/90'
-          >
-            Clear All Answers
-          </Button>
-        )}
       </CardHeader>
       <CardContent className='space-y-6'>
         {isDeclined ? (

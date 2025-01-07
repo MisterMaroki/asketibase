@@ -34,7 +34,10 @@ export const memberSchema = z.object({
   gender: z.enum(['male', 'female']),
   nationality: uuidSchema.describe('Nationality'),
   countryCode: z.enum(COUNTRY_CODES.map((c) => c.code) as [string, ...string[]]),
-  contactNumber: z.string().regex(/^\d{10}$/, 'Contact number must be 10 digits and contain only numbers'),
+  contactNumber: z
+    .string()
+    .regex(/^(\d{10}|0\d{10})$/, 'Contact number must be 10 digits, or 11 digits starting with 0')
+    .transform((val) => val.replace(/^0/, '')),
   landlineNumber: z
     .string()
     .refine((val) => {

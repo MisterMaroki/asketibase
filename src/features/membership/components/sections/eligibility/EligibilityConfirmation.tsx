@@ -80,8 +80,8 @@ export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
           className='mt-1'
         />
         <Label htmlFor='eligibility' className='cursor-pointer text-sm leading-relaxed'>
-          I confirm that I have read, understood, and agree to the eligibility requirements and medical disclaimers
-          stated above.
+          I confirm that I have read, understood, and meet the eligibility requirements and medical disclaimers stated
+          above.
         </Label>
       </div>
 
