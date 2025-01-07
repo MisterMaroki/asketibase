@@ -30,13 +30,6 @@ export function MedicalDeclaration() {
     });
   };
 
-  const handleClearAll = () => {
-    setMedicalState({
-      ...medicalState,
-      completedMembers: {},
-    });
-  };
-
   const allMembersScreeningComplete = members.every((member) => {
     const riskLevel = medicalState.completedMembers[member.id];
     return riskLevel !== undefined;
