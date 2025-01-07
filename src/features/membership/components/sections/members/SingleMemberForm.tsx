@@ -1,6 +1,7 @@
 'use client';
 
 import { UserCircle } from 'lucide-react';
+import { nanoid } from 'nanoid';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
@@ -16,10 +17,7 @@ export function SingleMemberForm() {
   const { toast } = useToast();
 
   const handleFieldChange = (field: string, value: any) => {
-    console.log('🚀 ~ handleFieldChange ~ field:', field, value);
-    const memberData = existingMember
-      ? { ...existingMember, [field]: value }
-      : { id: crypto.randomUUID(), [field]: value };
+    const memberData = existingMember ? { ...existingMember, [field]: value } : { id: nanoid(), [field]: value };
 
     if (existingMember) {
       updateMember(existingMember.id, memberData);

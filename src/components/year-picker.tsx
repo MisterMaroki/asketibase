@@ -1,7 +1,5 @@
-import * as React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
+import { cn } from '@/utils/cn';
 
 interface YearPickerProps {
   onYearSelect: (year: number) => void;
@@ -14,12 +12,11 @@ export function YearPicker({ onYearSelect, selectedYear, decade }: YearPickerPro
   const currentYear = new Date().getFullYear();
 
   const filteredYears = years.filter((year) => year <= currentYear);
-  console.log('🚀 ~ YearPicker ~ filteredYears:', filteredYears);
 
   return (
-    <div className='p-3 text-white'>
+    <div className='bg-background p-3'>
       <div className='mb-2 flex items-center justify-center'>
-        <span>{decade}s</span>
+        <span className='text-card-foreground'>{decade}s</span>
       </div>
       <div className='grid grid-cols-2 gap-2'>
         {filteredYears.map((year) => (
@@ -27,9 +24,10 @@ export function YearPicker({ onYearSelect, selectedYear, decade }: YearPickerPro
             key={year}
             onClick={() => onYearSelect(year)}
             variant='outline'
-            className={`text-white hover:bg-gray-700 ${
-              year === selectedYear ? 'bg-white text-black hover:bg-gray-200 hover:text-black' : ''
-            }`}
+            className={cn(
+              'border-border bg-card text-card-foreground hover:bg-secondary hover:text-secondary-foreground',
+              year === selectedYear && 'bg-primary text-primary-foreground hover:bg-primary/90',
+            )}
           >
             {year}
           </Button>

@@ -13,13 +13,13 @@ import { DecadePicker } from './decade-picker';
 import { MonthPicker } from './month-picker';
 import { YearPicker } from './year-picker';
 
-export interface BlackDOBInputProps {
+export interface DOBInputProps {
   value: Date | null;
   onChange: (date: Date | null) => void;
   className?: string;
 }
 
-export function BlackDOBInput({ value, onChange, className }: BlackDOBInputProps) {
+export function DOBInput({ value, onChange, className }: DOBInputProps) {
   const date = value ? new Date(value) : undefined;
   const [decade, setDecade] = React.useState<number>();
   const [year, setYear] = React.useState<number>();
@@ -91,7 +91,7 @@ export function BlackDOBInput({ value, onChange, className }: BlackDOBInputProps
             {date ? format(date, 'PPP') : <span>Date of Birth</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='h-96 scale-95 border-gray-700 bg-black/80 p-0 backdrop-blur-xl sm:scale-100'>
+        <PopoverContent className='h-96 scale-95 border-gray-700 bg-background/80 p-1 backdrop-blur-xl sm:scale-100'>
           {step === 'decade' && <DecadePicker onDecadeSelect={handleDecadeSelect} />}
           {step === 'year' && decade && <YearPicker onYearSelect={handleYearSelect} decade={decade} />}
           {step === 'month' && year ? <MonthPicker onMonthSelect={handleMonthSelect} year={year} /> : null}

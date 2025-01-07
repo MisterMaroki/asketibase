@@ -22,7 +22,7 @@ export function EligibilitySection() {
   }, []);
 
   return (
-    <Card className='border-0 bg-transparent backdrop-blur-sm md:bg-background/50 '>
+    <Card className='border-0 bg-transparent backdrop-blur-sm md:bg-background/50'>
       <CardHeader className='pb-2'>
         <CardTitle className='flex items-center gap-2 text-xl'>
           <AlertCircle className='h-5 w-5 text-primary' />

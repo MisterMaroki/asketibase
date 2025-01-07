@@ -5,26 +5,8 @@ export const MEMBERSHIP_TYPES = {
 } as const;
 
 export const COVERAGE_TYPES = {
-  WORLDWIDE: 'Worldwide Comprehensive',
-  PLATINUM: 'Worldwide Platinum',
-} as const;
-
-export const COVERAGE_DESCRIPTIONS = {
-  WORLDWIDE: 'Excluding High Risk Countries',
-  PLATINUM: 'Including High Risk Countries',
-} as const;
-
-export const BASE_PRICES = {
-  WORLDWIDE: {
-    INDIVIDUAL: 1000,
-    COUPLE: 1800,
-    FAMILY: 2500,
-  },
-  PLATINUM: {
-    INDIVIDUAL: 2000,
-    COUPLE: 3600,
-    FAMILY: 5000,
-  },
+  WORLDWIDE: 'Worldwide (excluding USA, Canada, Mexico, Greenland, Bermuda & Caribbean)',
+  PLATINUM: 'Worldwide',
 } as const;
 
 // Duration types must match the database values
@@ -36,7 +18,7 @@ export const DURATION_TYPES = {
 
 export const DURATION_MAX_TRIP_DURATION = {
   expat_year: 365,
-  multi_trip: 28,
+  multi_trip: 31,
   single_trip: 180,
 } as const;
 
@@ -46,18 +28,18 @@ export const getDurationDetails = (durationType: keyof typeof DURATION_TYPES) =>
 
 export const DURATION_DETAILS = {
   expat_year: {
-    title: 'Expat Year',
+    title: '365 Days Continuous Coverage',
     description: '365 Days Continuous Coverage from Membership Start Date - No Maximum Trip Duration',
     maxTripDuration: DURATION_MAX_TRIP_DURATION.expat_year,
   },
   multi_trip: {
     title: 'Annual Multi-Trip',
-    description: 'Multiple Trips a Year, Maximum 28 Day Trip Duration (Maximum 45 Days Aggregated Duration Per Year)',
+    description: 'Multiple Trips a Year, Maximum 31 Day Trip Duration (Maximum 60 Days Aggregated Duration Per Year)',
     maxTripDuration: DURATION_MAX_TRIP_DURATION.multi_trip,
   },
   single_trip: {
     title: 'Single Trip Cover',
-    description: 'Policy Holder Specifies Coverage Duration: Minimum 7 Days; Maximum 180 Day',
+    description: 'Policy Holder Specifies Coverage Duration: Minimum 2 Days; Maximum 180 Day',
     maxTripDuration: DURATION_MAX_TRIP_DURATION.single_trip,
   },
 } as const;

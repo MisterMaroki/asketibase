@@ -15,38 +15,35 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ currentStep, steps }: StepIndicatorProps) {
-  const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
+  const visualStep = currentStep <= 2 ? 1 : currentStep - 1;
+  const progress = Math.min(((visualStep - 1) / 3) * 100, 100);
 
   return (
     <div className='relative mb-8'>
-      <StepProgress progress={progress} color='#9ef0e4' />
+      <StepProgress progress={progress} />
       <div className='mx-auto flex max-w-3xl justify-between px-6'>
         {steps.map((step, index) => {
-          const isEligibility = index === 0;
+          if (index === 0) return null;
 
-          if (isEligibility) {
-            return null;
-          }
-
-          const isCompleted = index + 1 < currentStep;
-          const isCurrent = index + 1 === currentStep;
+          const visualIndex = index - 1;
+          const isCompleted = currentStep > index + 1;
+          const isCurrent = index === 1 ? currentStep <= 2 : currentStep === index + 1;
 
           return (
             <div
               key={index}
               className='flex flex-col items-center'
               style={{
-                animation: `fadeIn 0.5s ease-out ${index * 0.1}s`,
+                animation: `fadeIn 0.5s ease-out ${visualIndex * 0.1}s`,
                 opacity: 0,
                 animationFillMode: 'forwards',
               }}
             >
               <div
                 className={cn('flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500', {
-                  'scale-110 bg-[#9ef0e4] text-gray-900': isCurrent,
-                  'bg-[#72c4ac] text-white': isCompleted,
-                  'bg-[#758382]/20 text-gray-600': !isCompleted && !isCurrent,
-                  'ring-4 ring-[#9ef0e4]/30': isCurrent,
+                  'scale-110 bg-primary text-primary-foreground': isCurrent,
+                  'bg-muted text-muted-foreground': !isCurrent && !isCompleted,
+                  'bg-primary text-primary-foreground': isCompleted,
                 })}
               >
                 {isCompleted ? (
@@ -57,9 +54,9 @@ export function StepIndicator({ currentStep, steps }: StepIndicatorProps) {
               </div>
               <span
                 className={cn('mt-2 text-xs font-medium transition-colors duration-300', {
-                  'scale-105 text-[#72c4ac]': isCurrent,
-                  'text-gray-900': isCompleted,
-                  'text-gray-500': !isCompleted && !isCurrent,
+                  'scale-105 font-semibold text-primary': isCurrent,
+                  'text-muted-foreground': !isCurrent && !isCompleted,
+                  'text-primary/80': isCompleted,
                 })}
               >
                 {step.label}

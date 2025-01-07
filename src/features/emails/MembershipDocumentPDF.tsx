@@ -423,9 +423,6 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
                 Membership Coverage: <Text style={styles.detailsTableValue}>{data.coverage_type}</Text>
               </Text>
               <Text>
-                Destination Coverage: <Text style={styles.detailsTableValue}>{data.destination_coverage}</Text>
-              </Text>
-              <Text>
                 Membership Start Date: <Text style={styles.detailsTableValue}>{data.start_date}</Text>
               </Text>
               <Text>
@@ -526,7 +523,7 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
         <View style={styles.countriesSection}>
           <Text style={styles.sectionTitle}>Countries Covered</Text>
           <View style={styles.countriesContent}>
-            <Text style={styles.countriesHeader}>Worldwide Platinum Membership</Text>
+            <Text style={styles.countriesHeader}>Worldwide Membership</Text>
             <Text>All Countries</Text>
 
             <Text style={styles.countriesHeader}>Worldwide Comprehensive Membership</Text>

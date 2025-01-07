@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { CheckCircle2, PencilIcon, Trash2, Users, X } from 'lucide-react';
 import { useMediaQuery } from 'usehooks-ts';
@@ -11,27 +11,60 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { MEMBER_LIMITS } from '@/constants';
-import { isMemberValid } from '@/features/membership/validations/member';
 import type { MemberSchema } from '@/features/membership/validations/schemas';
 import { useMembershipStore } from '@/store/membership-store';
 
 import { MemberForm } from './MemberForm';
 
 export function MemberList() {
-  const { members, removeMember, medicalState, membershipType } = useMembershipStore();
+  const { members, removeMember, medicalState, membershipType, addMember } = useMembershipStore();
   const [editingMember, setEditingMember] = useState<(typeof members)[0] | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(!members.length);
   const [addFormData, setAddFormData] = useState<Partial<MemberSchema>>({});
   const isMobile = useMediaQuery('(max-width: 768px)');
+
+  const maxMembers = membershipType ? MEMBER_LIMITS[membershipType] : 1;
+  const canAddMore = members.length < maxMembers;
+
+  const handleAddFormChange = (field: string, value: any) => {
+    setAddFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleAddFormSubmit = (data: MemberSchema) => {
+    addMember(data);
+    setShowAddForm(false);
+    setAddFormData({});
+  };
 
   const isMedicalComplete = (memberId: string) => {
     return medicalState.completedMembers[memberId] !== undefined;
   };
 
-  if (!members.length) return null;
-
-  const maxMembers = MEMBER_LIMITS[membershipType!];
-  const canAddMore = members.length < maxMembers;
+  if (!members.length) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className='flex items-center gap-2'>
+            <Users className='h-5 w-5 text-primary' />
+            Members (0)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='space-y-4'>
+            <MemberForm
+              onSubmit={handleAddFormSubmit}
+              existingMember={addFormData as any}
+              onFieldChange={handleAddFormChange}
+              showSubmitButton
+            />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const EditFormContent = () => {
     const handleSubmit = (data: MemberSchema) => {
@@ -76,20 +109,6 @@ export function MemberList() {
       </div>
     );
   };
-
-  const handleAddFormChange = (field: string, value: any) => {
-    setAddFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleAddFormSubmit = (data: MemberSchema) => {
-    setShowAddForm(false);
-    setAddFormData({});
-  };
-
-  const isAddFormValid = Object.keys(addFormData).length > 0 && isMemberValid(addFormData);
 
   return (
     <Card>

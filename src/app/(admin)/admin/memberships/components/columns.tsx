@@ -54,7 +54,7 @@ export const columns: ColumnDef<Membership>[] = [
     },
     cell: ({ row }) => {
       const num = String(row.getValue('membership_number'));
-      return <div className='pl-4 font-medium'>ASK-2024-{num.padStart(4, '0')}</div>;
+      return <div className='pl-4 font-medium'>GOASK-J-98001/{num.padStart(4, '0')}</div>;
     },
     sortingFn: 'text',
   },

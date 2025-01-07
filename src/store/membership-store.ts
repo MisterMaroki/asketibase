@@ -1,5 +1,6 @@
 'use client';
 
+import { nanoid } from 'nanoid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -75,22 +76,6 @@ export type MembershipState = {
   reset: () => void;
 };
 
-// // Default member for testing
-// const defaultMember: Member = {
-//   id: crypto.randomUUID(),
-//   salutation: 'Mr',
-//   firstName: 'John',
-//   lastName: 'Smith',
-//   dateOfBirth: '1990-01-01',
-//   gender: 'male',
-//   nationality: '669ae8ab-a40b-4be3-b1ab-24e35b108418',
-//   countryCode: '+1',
-//   contactNumber: '2025550123',
-//   email: 'john.smith@example.com',
-//   countryOfResidence: '669ae8ab-a40b-4be3-b1ab-24e35b108418',
-//   address: '123 Main St, New York, NY 10001',
-// };
-
 // Default state
 const defaultState = {
   currentStep: 1,
@@ -156,7 +141,7 @@ export const useMembershipStore = create<MembershipState>()(
       setQuoteId: (id) => set({ quoteId: id }),
       addMember: (member) =>
         set((state) => ({
-          members: [...state.members, { ...member, id: crypto.randomUUID() }],
+          members: [...state.members, { ...member, id: nanoid() }],
         })),
       updateMember: (id, member) =>
         set((state) => {

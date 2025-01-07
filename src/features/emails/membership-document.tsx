@@ -91,7 +91,6 @@ export const MembershipDocumentEmail = (data: DocumentData) => {
                   <Column>
                     <Text className='flex items-center text-[18px] font-medium text-[#758388]'>
                       Members
-                      <span className='ml-2 text-[#72c4ac]'>✏️</span>
                     </Text>
                   </Column>
                 </Row>

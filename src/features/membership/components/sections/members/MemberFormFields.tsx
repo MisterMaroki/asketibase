@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { BlackDOBInput } from '@/components/dob-input';
+import { DOBInput } from '@/components/dob-input';
 import { PhoneInput } from '@/components/phone-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -95,10 +95,6 @@ export function MemberFormFields({
     [countries],
   );
 
-  console.log(nationalities);
-
-  console.log(nationalities);
-
   return (
     <form id={id} onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
       {/* Salutation field */}
@@ -158,7 +154,7 @@ export function MemberFormFields({
       <div className='grid gap-4 sm:grid-cols-2'>
         <div className='space-y-2'>
           <Label htmlFor='dob'>Date of Birth</Label>
-          <BlackDOBInput
+          <DOBInput
             value={dateValue}
             onChange={handleDateChange}
             className={cn(touchedFields.dateOfBirth && errors.dateOfBirth && 'border-destructive')}
@@ -234,7 +230,7 @@ export function MemberFormFields({
           onCountryCodeChange={(value) => handleFieldUpdate('countryCode', value)}
           {...registerWithOnChange('contactNumber')}
           error={touchedFields.contactNumber && !!errors.contactNumber}
-          autoComplete='tel'
+          // autoComplete='tel'
           placeholder='Enter your mobile number'
         />
         {touchedFields.contactNumber && errors.contactNumber && (

@@ -31,10 +31,10 @@ export async function generateQuoteAction(data: MembershipSchema) {
     console.log('🚀 ~ generateQuoteAction ~ durationType:', data.durationType);
     switch (data.durationType) {
       case 'expat_year':
-        numberOfDays = 364; // 365 - 1 day
+        numberOfDays = 365; // 365 - 1 day
         break;
       case 'multi_trip':
-        numberOfDays = 45;
+        numberOfDays = 60;
         break;
       case 'single_trip':
         if (!data.startDate || !data.endDate) {

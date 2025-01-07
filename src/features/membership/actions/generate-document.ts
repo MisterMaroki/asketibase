@@ -2,10 +2,10 @@
 
 import { Resend } from 'resend';
 
-import { COVERAGE_DESCRIPTIONS, COVERAGE_TYPES, getDurationDetails, MEMBERSHIP_TYPES } from '@/constants';
+import { COVERAGE_TYPES, getDurationDetails, MEMBERSHIP_TYPES } from '@/constants';
 import MembershipDocumentEmail from '@/features/emails/membership-document';
 import { formatDate } from '@/libs/format-date';
-import { formatPrice, formatPriceWithCurrency } from '@/libs/membership/currency';
+import { formatPriceWithCurrency } from '@/libs/membership/currency';
 import { renderToBuffer } from '@react-pdf/renderer';
 
 import { MembershipDocumentPDF } from '../../emails/MembershipDocumentPDF';
@@ -42,42 +42,7 @@ export interface DocumentData {
   currency: string;
   duration_type: string;
   maximum_trip_duration: string;
-  destination_coverage: string;
 }
-
-// const dummyData: DocumentData = {
-//   membership_number: 'ASK-2024-001',
-//   members: [
-//     {
-//       salutation: 'Mr',
-//       first_name: 'John',
-//       last_name: 'Smith',
-//       age: '35',
-//       has_declaration: 'No pre-existing conditions',
-//     },
-//     {
-//       salutation: 'Mrs',
-//       first_name: 'Jane',
-//       last_name: 'Smith',
-//       age: '32',
-//       has_declaration: 'No pre-existing conditions',
-//     },
-//   ],
-//   purchase_date: '20 March 2024',
-//   membership_type: 'Premium',
-//   coverage_type: 'International',
-//   start_date: '01 April 2024',
-//   end_date: '01 April 2025',
-//   base_price: '1,200.00',
-//   medical_risk_premium: '0.00',
-//   discount: '-100.00',
-//   subtotal: '1,100.00',
-//   tax: '220.00',
-//   total_paid: '1,320.00',
-//   currency: 'USD',
-//   duration_type: 'Annual Multi-Trip',
-//   maximum_trip_duration: '45 days per trip',
-// };
 
 export async function generateAndSendDocument(data: DocumentData) {
   console.log('🚀 ~ generateAndSendDocument ~ data:', data);
@@ -158,8 +123,6 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
       currency: quote.currency,
       duration_type: durationDetails.title,
       maximum_trip_duration: durationDetails.maxTripDuration + ' days',
-      destination_coverage:
-        COVERAGE_DESCRIPTIONS[quote.memberships.coverage_type as keyof typeof COVERAGE_DESCRIPTIONS] || '',
     });
 
     if (document) {

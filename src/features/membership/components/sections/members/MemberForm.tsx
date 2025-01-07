@@ -21,21 +21,23 @@ export function MemberForm({ id, existingMember, onSubmit, onFieldChange, showSu
   const { toast } = useToast();
 
   const handleSubmit = (data: MemberSchema) => {
-    if (existingMember?.id) {
-      updateMember(existingMember.id, data);
-      toast({
-        title: 'Member updated',
-        description: 'Member updated successfully',
-      });
+    if (!onSubmit) {
+      if (existingMember?.id) {
+        updateMember(existingMember.id, data);
+        toast({
+          title: 'Member updated',
+          description: 'Member updated successfully',
+        });
+      } else {
+        addMember(data);
+        toast({
+          title: 'Member added',
+          description: 'Member added successfully',
+        });
+      }
     } else {
-      addMember(data);
-      toast({
-        title: 'Member added',
-        description: 'Member added successfully',
-      });
+      onSubmit(data);
     }
-
-    onSubmit?.(data);
   };
 
   return (

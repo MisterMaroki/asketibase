@@ -95,7 +95,7 @@ export const MembershipLongText = () => (
     <View style={longTextStyles.termsSection}>
       <Text style={longTextStyles.termsHuge}>
         MEMBER SERVICES AGREEMENT AND TERMS OF SERVICE FOR ALL INDIVIDUAL, COUPLE, FAMILY & GROUP; ANNUAL, ANNUAL
-        MULTI-TRIP, SINGLE TRIP; COMPREHENSIVE AND PLATINUM MEMEBRSHIPS.
+        MULTI-TRIP, SINGLE TRIP MEMEBRSHIPS.
       </Text>
 
       <Text style={longTextStyles.termsImportant}>IMPORTANT</Text>
@@ -302,7 +302,7 @@ export const MembershipLongText = () => (
             list or not) and such transport is related, directly or indirectly, to such condition(s), treatment and/or
             transplant; (vii) the Traveling Member is Hospitalized or in need of Hospitalization due to circumstances
             that were diagnosed or treated, or for which symptoms existed which would cause an ordinarily prudent person
-            to seek such diagnosis or treatment, within forty-five (45) days (one year for Traveling Members between
+            to seek such diagnosis or treatment, within forty-five (60) days (one year for Traveling Members between
             ages 75-85 years old) prior to the effective date of this Agreement or prior to traveling; (viii) the
             Traveling Member’s condition occurred while or resulted from serving as an armed or unarmed combatant or in
             a security role during an act of declared or undeclared war, invasion, armed conflict, police action, or

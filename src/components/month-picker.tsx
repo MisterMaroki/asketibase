@@ -11,7 +11,6 @@ interface MonthPickerProps {
 }
 
 export function MonthPicker({ onMonthSelect, selectedMonth, year }: MonthPickerProps) {
-  console.log('🚀 ~ MonthPicker ~ year:', year);
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const currentDay = new Date().getDate();
@@ -30,9 +29,9 @@ export function MonthPicker({ onMonthSelect, selectedMonth, year }: MonthPickerP
     .map((month) => month.name);
 
   return (
-    <div className='p-3 text-white'>
+    <div className='bg-background p-3'>
       <div className='mb-2 text-center'>
-        <span className='text-lg font-semibold'>{year}</span>
+        <span className='text-lg font-semibold text-card-foreground'>{year}</span>
       </div>
       <div className='grid grid-cols-3 gap-2'>
         {months.map((month, index) => (
@@ -41,8 +40,8 @@ export function MonthPicker({ onMonthSelect, selectedMonth, year }: MonthPickerP
             onClick={() => onMonthSelect(index)}
             variant='outline'
             className={cn(
-              'text-white hover:bg-gray-700',
-              index === selectedMonth && 'bg-white text-black hover:bg-gray-200 hover:text-black',
+              'border-border bg-card text-card-foreground hover:bg-secondary hover:text-secondary-foreground',
+              index === selectedMonth && 'bg-primary text-primary-foreground hover:bg-primary/90',
             )}
           >
             {month}

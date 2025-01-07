@@ -4,6 +4,29 @@
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 171 76% 35%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 165 42% 51%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 197 3% 41%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 171 76% 35%;
+    --radius: 0.5rem;
+  }
+
+  [data-theme='dark'] {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -23,7 +46,6 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 171 76% 75%;
-    --radius: 0.5rem;
   }
   ::selection {
     @apply text-white;

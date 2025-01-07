@@ -1,16 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { AlertCircle } from 'lucide-react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { MEMBER_LIMITS } from '@/constants';
-import { getMemberValidationErrors, isMemberValid } from '@/features/membership/validations/member';
+import { isMemberValid } from '@/features/membership/validations/member';
 import { useMembershipStore } from '@/store/membership-store';
 
 import { MemberList } from './members/MemberList';
-import { MultiMemberManager } from './members/MultiMemberManager';
 import { PrivacyDisclaimer } from './members/PrivacyDisclaimer';
 import { SingleMemberForm } from './members/SingleMemberForm';
 
@@ -32,28 +29,6 @@ export function MemberInformation() {
   const canContinue = hasValidMemberCount && allMembersComplete;
   const allMembersScreeningComplete = members.every((member) => medicalState.completedMembers[member.id] !== undefined);
 
-  const getMemberRequirementMessage = () => {
-    if (!hasValidMemberCount) {
-      if (membershipType === 'INDIVIDUAL' && members.length > 1) {
-        return 'Individual plans can only have one member';
-      }
-      if (membershipType === 'COUPLE' && members.length !== 2) {
-        return 'Couples plans must have exactly two members';
-      }
-      if (members.length > maxMembers) {
-        return `Maximum ${maxMembers} members allowed for this plan`;
-      }
-      if (members.length === 0) {
-        return 'Please add at least one member to continue';
-      }
-    }
-    if (!allMembersComplete) {
-      const errors = members.map((member) => getMemberValidationErrors(member)).flat();
-      return errors.join('\n');
-    }
-    return null;
-  };
-
   const handleNext = () => {
     if ((originalState && !hasStateChanged()) || allMembersScreeningComplete) {
       clearOriginalState();
@@ -72,13 +47,6 @@ export function MemberInformation() {
   return (
     <div className='space-y-6'>
       {membershipType === 'INDIVIDUAL' ? <SingleMemberForm /> : <MemberList />}
-
-      {/* {!canContinue && (
-        <Alert variant='destructive'>
-          <AlertCircle className='h-4 w-4' />
-          <AlertDescription>{getMemberRequirementMessage()}</AlertDescription>
-        </Alert>
-      )} */}
 
       <PrivacyDisclaimer />
 

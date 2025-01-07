@@ -37,7 +37,7 @@ export function DateSelector({
   const dateConstraints = useMemo(() => {
     if (!startDate || durationType !== 'single_trip') return null;
     const minDate = new Date(startDate);
-    minDate.setDate(minDate.getDate() + 7); // Minimum 7 days
+    minDate.setDate(minDate.getDate() + 2); // Minimum 2 days
 
     const maxDate = new Date(startDate);
     maxDate.setDate(maxDate.getDate() + 180); // Maximum 180 days
@@ -69,7 +69,13 @@ export function DateSelector({
                   mode='single'
                   selected={startDate ? parseISO(startDate) : undefined}
                   onSelect={(date) => setStartDate(date?.toISOString() || null)}
-                  disabled={(date) => date < new Date() || date > maxDate}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const dateToCheck = new Date(date);
+                    dateToCheck.setHours(0, 0, 0, 0);
+                    return dateToCheck < today || date > maxDate;
+                  }}
                   initialFocus
                 />
               </PopoverContent>

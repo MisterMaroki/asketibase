@@ -46,7 +46,6 @@ export default function QuoteSummary({
   taxAmount,
   onPressEdit,
 }: QuoteSummaryProps) {
-  console.log('🚀 ~ duration:', duration);
   const [isOpen, setIsOpen] = React.useState(false);
 
   // Calculate the number of days

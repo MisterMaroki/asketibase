@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { redirect } from 'next/navigation';
 
+import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { createSupabaseServerClient } from '@/libs/supabase/server-client';
 import { cn } from '@/utils/cn';
@@ -49,13 +50,15 @@ export default async function AdminRootLayout({ children }: PropsWithChildren) {
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={cn('font-sans antialiased', inter.className)}>
-        <Toaster />
-        <div className='flex flex-col px-2 md:px-4'>
-          <main className='relative flex-1'>
-            <Sidebar signOut={signOut} />
-            <div className='relative h-full max-w-[1880px] pt-8 md:ml-64'>{children}</div>
-          </main>
-        </div>
+        <ThemeProvider>
+          <Toaster />
+          <div className='flex flex-col px-2 md:px-4'>
+            <main className='relative flex-1'>
+              <Sidebar signOut={signOut} />
+              <div className='relative h-full max-w-[1880px] pt-8 md:ml-64'>{children}</div>
+            </main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

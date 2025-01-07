@@ -217,7 +217,7 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
           </div>
           <div className='space-y-2'>
             <Input
-              placeholder='Postcode'
+              placeholder='Postal/ZIP Code'
               value={manualAddress.postcode}
               onChange={(e) => handleManualChange('postcode', e.target.value)}
               disabled={disabled}

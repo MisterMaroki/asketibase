@@ -16,7 +16,7 @@ interface PhoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export function PhoneInput({ className, countryCode, onCountryCodeChange, error, ...props }: PhoneInputProps) {
   const [open, setOpen] = React.useState(false);
   const selectedCountry = COUNTRY_CODES.find((c) => c.code === countryCode);
-  const formattedCountryCode = `(${countryCode}) `;
+  const formattedCountryCode = countryCode ? `(${countryCode}) ` : '';
 
   return (
     <div className={cn('flex w-full items-center gap-2', className)}>

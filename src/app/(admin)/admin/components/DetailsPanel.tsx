@@ -285,7 +285,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
               <div className='flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground'>
                 <span>Created {format(new Date(data.created_at || ''), 'MMMM d, yyyy')}</span>
                 <span className='hidden sm:inline'>•</span>
-                <span className='font-medium'>ASK-2024-{membershipNumber}</span>
+                <span className='font-medium'>GOASK-J-98001/{membershipNumber}</span>
                 {data.user_id && (
                   <>
                     <span className='hidden sm:inline'>•</span>
@@ -317,7 +317,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
             <div className='grid gap-2 text-sm'>
               <div className='flex justify-between'>
                 <span className='text-muted-foreground'>Membership Number</span>
-                <span>ASK-2024-{membershipNumber}</span>
+                <span>GOASK-J-98001/{membershipNumber}</span>
               </div>
               <div className='flex justify-between'>
                 <span className='text-muted-foreground'>Status</span>

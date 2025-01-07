@@ -5,7 +5,7 @@ import { Award, Globe, Shield, User, UserPlus, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { BASE_PRICES, COVERAGE_DESCRIPTIONS, COVERAGE_TYPES, MEMBERSHIP_TYPES } from '@/constants';
+import { COVERAGE_TYPES, MEMBERSHIP_TYPES } from '@/constants';
 import { getCurrencySymbol } from '@/libs/membership/currency';
 import { useMembershipStore } from '@/store/membership-store';
 
@@ -74,9 +74,7 @@ export function CoverageOptions() {
                   <Icon className='mb-3 h-8 w-8 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />
                   <div className='space-y-1.5 text-center'>
                     <span className='text-sm font-medium'>{value}</span>
-                    <p className='text-xs text-muted-foreground'>
-                      {COVERAGE_DESCRIPTIONS[key as keyof typeof COVERAGE_TYPES]}
-                    </p>
+
                     {/* {membershipType &&
                       BASE_PRICES[key as keyof typeof COVERAGE_TYPES] &&
                       BASE_PRICES[key as keyof typeof COVERAGE_TYPES][membershipType] && (

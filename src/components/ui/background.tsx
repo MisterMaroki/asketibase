@@ -13,7 +13,7 @@
 export function Background() {
   return (
     <div className='fixed inset-0 -z-10 overflow-hidden'>
-      <div className='absolute inset-0 bg-black/90' />
+      <div className='absolute inset-0 bg-card' />
 
       {/* Primary gradient orb */}
       <div

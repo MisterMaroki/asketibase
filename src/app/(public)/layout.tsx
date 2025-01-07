@@ -3,12 +3,12 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 
 import { Logo } from '@/components/logo';
+import { ThemeProvider } from '@/components/theme-provider';
 import { Background } from '@/components/ui/background';
 import { Toaster } from '@/components/ui/toaster';
 import { checkAdmin } from '@/features/admin/check-admin';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { cn } from '@/utils/cn';
-import { User } from '@supabase/supabase-js';
 import { Analytics } from '@vercel/analytics/react';
 
 import { Navigation } from './navigation';
@@ -25,7 +25,6 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   initialScale: 1,
   width: 'device-width',
-
   maximumScale: 1,
 };
 
@@ -38,19 +37,18 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={cn('font-sans antialiased', inter.className)}>
-        {/* <div className='flex h-full  bg-black/60 backdrop-blur-xl'> */}
-        <Toaster />
-        <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
-          <AppBar />
-          <div className='absolute inset-0 bg-black/40 backdrop-blur-xl' />
-          <main className='relative flex-1'>
-            <div className='relative h-full'>{children}</div>
-          </main>
-          {/* <Footer /> */}
-        </div>
-        {/* </div> */}
-        <Analytics />
-        <Background />
+        <ThemeProvider>
+          <Toaster />
+          <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
+            <AppBar />
+            <div className='absolute inset-0' />
+            <main className='relative flex-1'>
+              <div className='relative h-full'>{children}</div>
+            </main>
+          </div>
+          <Analytics />
+          <Background />
+        </ThemeProvider>
       </body>
     </html>
   );

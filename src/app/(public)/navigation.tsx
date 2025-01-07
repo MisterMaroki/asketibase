@@ -7,6 +7,7 @@ import { IoMenu } from 'react-icons/io5';
 import { AccountMenu } from '@/components/account-menu';
 import { Logo } from '@/components/logo';
 import { ResetButton } from '@/components/reset';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTrigger } from '@/components/ui/sheet';
 import { getUser } from '@/features/membership/controllers/get-user';
@@ -16,11 +17,17 @@ import { signOut } from './(auth)/auth-actions';
 
 // import { signOut } from './(auth)/auth-actions';
 
-export function Navigation({ user, isAdmin }: { user: Tables<'users'> | null; isAdmin: boolean }) {
+interface NavigationProps {
+  user: Tables<'users'> | null;
+  isAdmin: boolean;
+}
+
+export function Navigation({ user, isAdmin }: NavigationProps) {
   const router = useRouter();
 
   return (
     <div className='relative flex items-center gap-6'>
+      <ThemeToggle />
       <ResetButton className='hidden md:flex' />
       {isAdmin && (
         <Button onClick={() => router.push('/admin')} variant='sexy' className='hidden flex-shrink-0 md:flex'>

@@ -1,6 +1,3 @@
-import * as React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
 
@@ -16,9 +13,9 @@ export function DecadePicker({ onDecadeSelect, selectedDecade }: DecadePickerPro
   const decades = Array.from({ length: 9 }, (_, i) => startDecade + i * 10);
 
   return (
-    <div className='p-3 text-white'>
+    <div className='bg-background p-3'>
       <div className='mb-2 flex items-center justify-center'>
-        <span>
+        <span className='text-card-foreground'>
           {startDecade} - {startDecade + 79}
         </span>
       </div>
@@ -29,8 +26,8 @@ export function DecadePicker({ onDecadeSelect, selectedDecade }: DecadePickerPro
             onClick={() => onDecadeSelect(decade)}
             variant='outline'
             className={cn(
-              'text-white hover:bg-gray-700',
-              decade === selectedDecade && 'bg-white text-black hover:bg-gray-200 hover:text-black',
+              'border-border bg-card text-card-foreground hover:bg-secondary hover:text-secondary-foreground',
+              decade === selectedDecade && 'bg-primary text-primary-foreground hover:bg-primary/90',
             )}
           >
             {decade}s
