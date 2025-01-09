@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 const KEY_BENEFITS = [
   {
     icon: HeartPulse,
-    text: 'Up to $10M Medical Coverage',
+    text: 'Up to $10M Medical Coverage & Emergency Evacuation',
     color: 'text-rose-500',
     bgColor: 'bg-rose-50',
     ringColor: 'ring-rose-200',
@@ -44,13 +44,6 @@ const KEY_BENEFITS = [
     color: 'text-emerald-500',
     bgColor: 'bg-emerald-50',
     ringColor: 'ring-emerald-200',
-  },
-  {
-    icon: HeartPulse,
-    text: 'Emergency Evacuation',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-50',
-    ringColor: 'ring-purple-200',
   },
 ];
 
