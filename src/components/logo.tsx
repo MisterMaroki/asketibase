@@ -11,8 +11,8 @@ export function Logo() {
     <Link href='/' className='flex w-fit items-center gap-2'>
       <Image
         src='/logo.png'
-        width={110}
-        height={50}
+        width={180}
+        height={100}
         priority
         style={{ height: 'auto', filter: theme === 'dark' ? 'invert(1)' : 'invert(0)' }}
         className='h-auto transition-[filter] duration-300 dark:invert'
