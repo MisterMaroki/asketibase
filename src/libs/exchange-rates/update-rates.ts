@@ -1,3 +1,5 @@
+'use server';
+
 import { CURRENCIES } from '@/constants';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
@@ -13,7 +15,6 @@ export async function updateExchangeRates() {
     // Fetch latest rates from the API
     const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/${BASE_CURRENCY}`);
 
-    console.log('🚀 ~ updateExchangeRates ~ response:', response);
     if (!response.ok) {
       throw new Error('Failed to fetch exchange rates');
     }
@@ -29,7 +30,6 @@ export async function updateExchangeRates() {
       last_updated: new Date().toISOString(),
     })).filter((rate) => rate.rate !== null); // Filter out any currencies that don't have rates
 
-    console.log('🚀 ~ exchangeRates ~ exchangeRates:', exchangeRates);
     // Upsert the rates into our database
     const { error } = await supabaseAdminClient.from('exchange_rates').upsert(exchangeRates, {
       onConflict: 'currency_code',
