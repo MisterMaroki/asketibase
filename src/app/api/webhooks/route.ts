@@ -6,16 +6,7 @@ import { upsertProduct } from '@/features/pricing/controllers/upsert-product';
 import { stripeAdmin } from '@/libs/stripe/stripe-admin';
 import { getEnvVar } from '@/utils/get-env-var';
 
-const relevantEvents = new Set([
-  'product.created',
-  'product.updated',
-  'price.created',
-  'price.updated',
-  'checkout.session.completed',
-  'customer.subscription.created',
-  'customer.subscription.updated',
-  'customer.subscription.deleted',
-]);
+const relevantEvents = new Set(['checkout.session.completed']);
 export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   const body = await req.text();
