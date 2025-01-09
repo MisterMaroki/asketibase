@@ -19,7 +19,6 @@ export function Logo() {
         quality={100}
         alt='ASKETI logo mark'
       />
-      {/* <span className='text-xl text-white'>ASKETI</span> */}
     </Link>
   );
 }

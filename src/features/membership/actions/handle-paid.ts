@@ -26,7 +26,7 @@ export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
     return true;
   }
 
-  await updateApplication(quote.membership_id, {
+  await updateApplication(membership.id, {
     status: 'paid',
   });
 
@@ -36,7 +36,7 @@ export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
     membership_id: membership.id,
     session_id: checkoutSession.id,
     currency: quote.currency,
-    user_id: membership.user_id || '',
+    // user_id: membership.user_id || '',
     quote_id: quote.id,
     status: 'paid',
   });

@@ -41,7 +41,7 @@ export function DocumentGenerator({ quoteId, hasSentEmail }: DocumentGeneratorPr
 
         await new Promise((resolve) => setTimeout(resolve, 6000));
 
-        const success = await generateIfNotSent(quoteId);
+        const success = await generateIfNotSent(quoteId, false);
 
         if (success) {
           setMessages((prev) => [prev[0], ...SUCCESS_MESSAGES]);
@@ -60,9 +60,7 @@ export function DocumentGenerator({ quoteId, hasSentEmail }: DocumentGeneratorPr
       }
     };
 
-    if (!hasSentEmail) {
-      generateDocuments();
-    }
+    generateDocuments();
   }, [quoteId, hasSentEmail]);
 
   return (

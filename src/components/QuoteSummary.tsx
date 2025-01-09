@@ -35,7 +35,6 @@ interface QuoteSummaryProps {
 
 export default function QuoteSummary({
   currency,
-  coverageType,
   duration,
   startDate,
   endDate,

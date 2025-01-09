@@ -174,7 +174,7 @@ export function QuoteGenerator({
         coverageType: coverageType!,
         durationType: durationType!,
         startDate: startDate!,
-        endDate: endDate!,
+        endDate: endDate,
         currency: currency!,
         members: members.map((member, i) => ({ ...member, isPrimary: i === 0 })) as MemberSchema[],
         referralCode,

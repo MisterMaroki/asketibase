@@ -1,8 +1,6 @@
 import Stripe from 'stripe';
 
 import { handlePaid } from '@/features/membership/actions/handle-paid';
-import { upsertPrice } from '@/features/pricing/controllers/upsert-price';
-import { upsertProduct } from '@/features/pricing/controllers/upsert-product';
 import { stripeAdmin } from '@/libs/stripe/stripe-admin';
 import { getEnvVar } from '@/utils/get-env-var';
 
@@ -24,14 +22,14 @@ export async function POST(req: Request) {
   if (relevantEvents.has(event.type)) {
     try {
       switch (event.type) {
-        case 'product.created':
-        case 'product.updated':
-          await upsertProduct(event.data.object as Stripe.Product);
-          break;
-        case 'price.created':
-        case 'price.updated':
-          await upsertPrice(event.data.object as Stripe.Price);
-          break;
+        // case 'product.created':
+        // case 'product.updated':
+        //   await upsertProduct(event.data.object as Stripe.Product);
+        //   break;
+        // case 'price.created':
+        // case 'price.updated':
+        //   await upsertPrice(event.data.object as Stripe.Price);
+        //   break;
 
         case 'checkout.session.completed':
           const checkoutSession = event.data.object as Stripe.Checkout.Session;

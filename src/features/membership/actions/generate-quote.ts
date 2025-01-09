@@ -40,6 +40,9 @@ export async function generateQuoteAction(data: MembershipSchema) {
         if (!data.startDate || !data.endDate) {
           throw new Error('Start date and end date are required for single duration');
         }
+        if (data.startDate === data.endDate) {
+          throw new Error('Start date and end date cannot be the same');
+        }
         const start = new Date(data.startDate);
         const end = new Date(data.endDate);
         numberOfDays = Math.min(Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)), 180);
@@ -102,7 +105,7 @@ export async function generateQuoteAction(data: MembershipSchema) {
         duration_type: data.durationType as 'expat_year' | 'multi_trip' | 'single_trip',
         referral_source: data.referralSource,
         start_date: data.startDate,
-        end_date: calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
+        end_date: data.endDate || calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
       })
       .select()
       .single();

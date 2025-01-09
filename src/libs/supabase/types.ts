@@ -503,7 +503,6 @@ export type Database = {
           session_id: string
           status: string
           updated_at: string | null
-          user_id: string
         }
         Insert: {
           amount: number
@@ -516,7 +515,6 @@ export type Database = {
           session_id: string
           status: string
           updated_at?: string | null
-          user_id: string
         }
         Update: {
           amount?: number
@@ -529,7 +527,6 @@ export type Database = {
           session_id?: string
           status?: string
           updated_at?: string | null
-          user_id?: string
         }
         Relationships: [
           {
@@ -544,13 +541,6 @@ export type Database = {
             columns: ["quote_id"]
             isOneToOne: false
             referencedRelation: "quotes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "stripe_payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

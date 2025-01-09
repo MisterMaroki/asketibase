@@ -16,7 +16,7 @@ interface MemberFormProps {
 }
 
 export function MemberForm({ id, existingMember, onSubmit, onFieldChange, showSubmitButton = true }: MemberFormProps) {
-  const { addMember, updateMember, members } = useMembershipStore();
+  const { addMember, updateMember } = useMembershipStore();
   const { countries, isLoading: loadingCountries } = useCountries();
   const { toast } = useToast();
 
@@ -47,7 +47,6 @@ export function MemberForm({ id, existingMember, onSubmit, onFieldChange, showSu
         countries={countries}
         isLoadingCountries={loadingCountries}
         showSubmitButton={showSubmitButton}
-        // members={members}
       />
     </div>
   );

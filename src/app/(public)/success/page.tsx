@@ -1,4 +1,5 @@
 'use server';
+
 import { redirect } from 'next/navigation';
 
 import { handlePaid } from '@/features/membership/actions/handle-paid';
