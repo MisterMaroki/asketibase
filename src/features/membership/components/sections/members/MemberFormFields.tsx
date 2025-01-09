@@ -11,6 +11,7 @@ import { COUNTRY_CODES, SALUTATIONS } from '@/constants';
 import { isMemberValid } from '@/features/membership/validations/member';
 import { type MemberSchema, memberSchema } from '@/features/membership/validations/schemas';
 import { Country } from '@/hooks/use-countries';
+import { Member, useMembershipStore } from '@/store/membership-store';
 import { cn } from '@/utils/cn';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -47,6 +48,8 @@ export function MemberFormFields({
     defaultValues: member || {},
     mode: 'onTouched',
   });
+
+  const { members } = useMembershipStore();
 
   const handleFormSubmit = (data: MemberSchema) => {
     onSubmit?.(data);
@@ -298,8 +301,11 @@ export function MemberFormFields({
       <div className='space-y-2'>
         <AddressInput
           value={watch('address')}
-          onChange={(value) => handleFieldUpdate('address', value)}
+          onChange={(value) => {
+            handleFieldUpdate('address', value);
+          }}
           className={cn(touchedFields.address && errors.address && 'border-destructive')}
+          showCopyFromPrimary={members.length > 0 && !member?.id}
         />
         {touchedFields.address && errors.address && (
           <p className='text-sm text-destructive'>{errors.address.message}</p>

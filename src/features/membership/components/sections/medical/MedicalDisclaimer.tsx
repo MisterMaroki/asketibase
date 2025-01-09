@@ -26,8 +26,8 @@ export function MedicalDisclaimer() {
               questions carefully.
             </p>
             <p className='text-sm leading-relaxed'>
-              There are just 3 questions to answer to complete the Medical Declaration. This Membership will not cover
-              claims relating to a Pre-Existing Medical Condition unless you comply with the following Declaration.
+              This Membership will not cover claims relating to a Pre-Existing Medical Condition unless you comply with
+              the following Declaration.
             </p>
           </div>
 
@@ -38,17 +38,13 @@ export function MedicalDisclaimer() {
                 You will not be covered for any claims arising directly or indirectly from:
               </p>
               <ol className='list-decimal space-y-3 pl-4 text-muted-foreground'>
-                <li>
-                  Any pre-existing medical condition UNLESS all pre-existing medical conditions are included on the
-                  &ldquo;No Screen Medical Conditions&rdquo; list
-                </li>
                 <li>Any medical condition where you are travelling against medical advice</li>
                 <li>
                   Any medical condition for which you are travelling specifically to obtain and/or receive treatment
                 </li>
                 <li>
-                  Travel against World Health Organisation (WHO) advice, government body, or that of the carrier, their
-                  handling agent or any other public transport provider
+                  Travel against World Health Organisation (WHO) advice, home government body, or that of the carrier,
+                  their handling agent or any other public transport provider
                 </li>
                 <li>
                   Any medical condition for which you are not taking the recommended treatment or prescribed medication

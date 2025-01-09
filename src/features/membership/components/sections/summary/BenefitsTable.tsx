@@ -198,7 +198,7 @@ export function BenefitsTable() {
                           <span className='font-medium text-foreground'>17 comprehensive benefits</span>, from medical
                           coverage to adventure sports protection.{' '}
                           <span className='hidden sm:inline'>
-                            Click &ldquo;View All Benefits&rdquo; below for the complete breakdown of your coverage.
+                            Click &ldquo;View All Benefits&rdquo; for the complete breakdown of your coverage.
                           </span>
                         </p>
                       </div>

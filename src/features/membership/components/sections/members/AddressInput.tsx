@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2, MapPin } from 'lucide-react';
+import { Copy, Loader2, MapPin } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
@@ -18,6 +18,7 @@ interface AddressInputProps {
   onChange: (value: string) => void;
   disabled?: boolean;
   className?: string;
+  showCopyFromPrimary?: boolean;
 }
 
 interface Prediction {
@@ -41,7 +42,7 @@ interface ManualAddressErrors {
   postcode?: string;
 }
 
-export function AddressInput({ value, onChange, disabled, className }: AddressInputProps) {
+export function AddressInput({ value, onChange, disabled, className, showCopyFromPrimary }: AddressInputProps) {
   const [isManual, setIsManual] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -68,6 +69,7 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
     };
   });
   const error = getAddressError(value);
+  const { members } = useMembershipStore();
 
   useEffect(() => {
     const debounceTimeout = setTimeout(async () => {
@@ -151,7 +153,24 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
 
   return (
     <div className='space-y-2'>
-      <Label htmlFor='address'>Home Address</Label>
+      <div className='flex items-center justify-between'>
+        <Label htmlFor='address'>Home Address</Label>
+        {showCopyFromPrimary && members.length > 0 && (
+          <Button
+            type='button'
+            variant='link'
+            className='text-xs text-muted-foreground hover:text-foreground'
+            onClick={() => {
+              const primaryMember = members[0];
+              onChange(primaryMember.address);
+            }}
+            disabled={disabled}
+          >
+            <Copy className='mr-2 h-3 w-3' />
+            Copy from primary member
+          </Button>
+        )}
+      </div>
       {!isManual ? (
         <div className='space-y-2 overflow-hidden'>
           <Popover open={open} onOpenChange={setOpen}>
@@ -263,25 +282,27 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
             />
             {errors.postcode && <p className='text-xs text-destructive'>{errors.postcode}</p>}
           </div>
-          <Button
-            type='button'
-            variant='link'
-            className='text-xs'
-            onClick={() => {
-              setIsManual(false);
-              setManualAddress({
-                line1: '',
-                line2: '',
-                city: '',
-                region: '',
-                postcode: '',
-              });
-              setErrors({});
-            }}
-            disabled={disabled}
-          >
-            Use address search
-          </Button>
+          <div className='flex items-center gap-4'>
+            <Button
+              type='button'
+              variant='link'
+              className='text-xs'
+              onClick={() => {
+                setIsManual(false);
+                setManualAddress({
+                  line1: '',
+                  line2: '',
+                  city: '',
+                  region: '',
+                  postcode: '',
+                });
+                setErrors({});
+              }}
+              disabled={disabled}
+            >
+              Use address search
+            </Button>
+          </div>
         </div>
       )}
     </div>
