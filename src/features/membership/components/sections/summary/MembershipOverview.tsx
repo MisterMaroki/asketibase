@@ -93,7 +93,9 @@ export function MembershipOverview({ quote }: { quote: QuoteType | null }) {
       <CardHeader>
         <CardTitle className='flex items-center justify-between'>
           <span className='flex items-center gap-2'>
-            <ClipboardList className='h-5 w-5 text-primary' />
+            <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/10 sm:h-9 sm:w-9'>
+              <ClipboardList className='h-5 w-5 text-primary' />
+            </div>
             Membership Overview
           </span>
         </CardTitle>

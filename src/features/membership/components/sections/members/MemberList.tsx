@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useToast } from '@/components/ui/use-toast';
 import { MEMBER_LIMITS } from '@/constants';
 import type { MemberSchema } from '@/features/membership/validations/schemas';
 import { useMembershipStore } from '@/store/membership-store';
@@ -17,7 +18,7 @@ import { useMembershipStore } from '@/store/membership-store';
 import { MemberForm } from './MemberForm';
 
 export function MemberList() {
-  const { members, removeMember, medicalState, membershipType, addMember } = useMembershipStore();
+  const { members, removeMember, medicalState, membershipType, addMember, updateMember } = useMembershipStore();
   const [editingMember, setEditingMember] = useState<(typeof members)[0] | null>(null);
   const [showAddForm, setShowAddForm] = useState(!members.length);
   const [addFormData, setAddFormData] = useState<Partial<MemberSchema>>({});
@@ -25,6 +26,7 @@ export function MemberList() {
 
   const maxMembers = membershipType ? MEMBER_LIMITS[membershipType] : 1;
   const canAddMore = members.length < maxMembers;
+  const { toast } = useToast();
 
   const handleAddFormChange = (field: string, value: any) => {
     setAddFormData((prev) => ({
@@ -34,7 +36,7 @@ export function MemberList() {
   };
 
   const handleAddFormSubmit = (data: MemberSchema) => {
-    addMember(data);
+    // addMember(data);
     setShowAddForm(false);
     setAddFormData({});
   };
@@ -68,7 +70,13 @@ export function MemberList() {
 
   const EditFormContent = () => {
     const handleSubmit = (data: MemberSchema) => {
+      console.log('🚀 ~ handleSubmit ~ data:', data);
       if (editingMember?.id) {
+        // updateMember(editingMember.id, data);
+        // toast({
+        //   title: 'Member updated',
+        //   description: 'Member details have been updated successfully',
+        // });
         setEditingMember(null);
       }
     };
@@ -101,9 +109,7 @@ export function MemberList() {
             <DialogHeader>
               <DialogTitle>Edit Member Details</DialogTitle>
             </DialogHeader>
-            {editingMember && (
-              <MemberForm existingMember={editingMember as any} onSubmit={() => setEditingMember(null)} />
-            )}
+            {editingMember && <MemberForm existingMember={editingMember as any} onSubmit={handleSubmit} />}
           </>
         )}
       </div>

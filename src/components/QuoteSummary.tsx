@@ -53,14 +53,16 @@ export default function QuoteSummary({
     duration === 'single_trip'
       ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))
       : duration === 'multi_trip'
-        ? 45
+        ? 60
         : 365;
 
   return (
     <Card className=''>
       <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
         <CardTitle className='flex items-center gap-2 text-2xl font-bold'>
-          <PencilIcon className='h-5 w-5 text-primary' />
+          <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/10 sm:h-9 sm:w-9'>
+            <PencilIcon className='h-5 w-5 text-primary' />
+          </div>{' '}
           Quote Summary
         </CardTitle>
         <Button variant='ghost' size='sm' className='text-teal-400 hover:text-teal-300' onClick={onPressEdit}>
@@ -87,7 +89,13 @@ export default function QuoteSummary({
                 </div>
                 <div className='flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary'>
                   <CalendarDaysIcon className='h-4 w-4' />
-                  <span>{daysDifference} days coverage</span>
+                  <span>
+                    {duration === 'single_trip'
+                      ? `${daysDifference} days coverage`
+                      : duration === 'multi_trip'
+                        ? '60 days aggregated coverage'
+                        : '365 days coverage'}
+                  </span>
                 </div>
               </div>
             </div>

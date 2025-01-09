@@ -6,6 +6,7 @@ import { AlertTriangle, CheckCircle, Edit2, Trash2, User } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useMembershipStore } from '@/store/membership-store';
 import { cn } from '@/utils/cn';
 
 interface MedicalQuestionnaireProps {
@@ -67,10 +68,11 @@ const QUESTIONS: Question[] = [
 
 export function MedicalQuestionnaire({ memberId, memberName, onComplete }: MedicalQuestionnaireProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const { medicalState } = useMembershipStore();
+  console.log('🚀 ~ MedicalQuestionnaire ~ medicalState:', medicalState);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [isDeclined, setIsDeclined] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
-  const [showMedicalQuestions, setShowMedicalQuestions] = useState(false);
 
   useEffect(() => {
     if (Object.keys(answers).length > 0) {
@@ -88,7 +90,6 @@ export function MedicalQuestionnaire({ memberId, memberName, onComplete }: Medic
     setCurrentQuestion(0);
     setIsDeclined(false);
     setEditingQuestion(null);
-    setShowMedicalQuestions(false);
     onComplete(memberId, -1); // Use -1 to indicate no answer
   };
 
@@ -120,7 +121,6 @@ export function MedicalQuestionnaire({ memberId, memberName, onComplete }: Medic
     // Handle pre-screen question
     if (questionId === 'pre_existing') {
       if (answer) {
-        setShowMedicalQuestions(true);
         setCurrentQuestion(1); // Start with first medical question
       } else {
         onComplete(memberId, 0); // No pre-existing conditions, risk level 0

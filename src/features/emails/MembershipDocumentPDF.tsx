@@ -519,32 +519,6 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
           </View>
         </View>
 
-        {/* Countries Covered */}
-        <View style={styles.countriesSection}>
-          <Text style={styles.sectionTitle}>Countries Covered</Text>
-          <View style={styles.countriesContent}>
-            <Text style={styles.countriesHeader}>Worldwide Membership</Text>
-            <Text>All Countries</Text>
-
-            <Text style={styles.countriesHeader}>Worldwide Comprehensive Membership</Text>
-            <Text style={styles.countriesText}>
-              All, EXCLUDING Afghanistan; Algeria; Angola; Antarctica; Armenia; Azerbaijan; Bangladesh; Belarus; Belize;
-              Benin; Bolivia; Brunei; Burkina Faso; Burundi; Cameroon; Central African Republic; Chad; China; Colombia;
-              Comoros; Congo; Côte d&apos;Ivoires; Cuba; Democratic Republic of the Congo; Djibouti; Dominican Republic;
-              Ecuador; Egypt; El Salvador; Equatorial Guinea; Eritrea; Eswatini; Ethiopia; Gabon; Gambia; Georgia;
-              Ghana; Grenada; Guatemala; Guinea; Guinea-Bissau; Guyana; Haiti; Heard Island and McDonald Islands;
-              Honduras; Iran; Iraq; Israel; Jamaica; Jordan; Kazakhstan; Kenya; Kiribati; Kosovo; Kuwait; Kyrgyzstan;
-              Lebanon; Lesotho; Liberia; Libya; Macao; Madagascar; Malawi; Mali; Mauritania; Mexico; Moldova; Mongolia;
-              Morocco; Mozambique; Myanmar; Namibia; Nepal; New Caledona; Nicaragua; Niger; Nigeria; North Korea;
-              Pakistan; Palestinian Territories; Panama; Papua New Guinea; Peru; Russian Federation; Rwanda; Saint
-              Vincent and the Grenadines; Senegal; Serbia; Sierra Leones; Solomon Islands; Somalia; South Africa; South
-              Sudan; Sudan; Syria; Taiwan; Tajikistan; Tanzania; Timor-Leste; Togo; Trinidad and Tobago; Tunisia;
-              Turkmenistan; Tuvalu; Uganda; Ukraine; Uzbekistan; Venezuela; Western Sahara&apos;; Yemen; Zambia;
-              Zimbabwe
-            </Text>
-          </View>
-        </View>
-
         {/* Benefits Table */}
         <View style={styles.benefitsSection}>
           <Text style={styles.sectionTitle}>Membership Details</Text>
@@ -552,7 +526,7 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
             <View style={styles.benefitsRow}>
               <Text style={styles.benefitsHeader}>Benefit</Text>
               <Text style={styles.benefitsHeader}>
-                Benefits (Shown as Aggregated Total Per Membership) Stated In USD
+                Benefits (Shown as Aggregated Total Per Member Per Membership) Stated In USD
               </Text>
               <Text style={styles.benefitsHeader}>Excess (If Applicable)</Text>
             </View>
@@ -628,6 +602,21 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
               <Text style={styles.benefitsCell}>Legal Expenses & Assistance</Text>
               <Text style={styles.benefitsCell}>Up to $2,000</Text>
               <Text style={styles.benefitsCellLast}>$100</Text>
+            </View>
+            <View style={styles.benefitsRow}>
+              <Text style={styles.benefitsCell}>Cruise Cover</Text>
+              <Text style={styles.benefitsCell}>Included</Text>
+              <Text style={styles.benefitsCellLast}> </Text>
+            </View>
+            <View style={styles.benefitsRow}>
+              <Text style={styles.benefitsCell}>Winter Sports Cover</Text>
+              <Text style={styles.benefitsCell}>Included</Text>
+              <Text style={styles.benefitsCellLast}> </Text>
+            </View>
+            <View style={styles.benefitsRow}>
+              <Text style={styles.benefitsCell}>Dive Cover</Text>
+              <Text style={styles.benefitsCell}>Included</Text>
+              <Text style={styles.benefitsCellLast}> </Text>
             </View>
           </View>
         </View>

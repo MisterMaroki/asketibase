@@ -13,16 +13,16 @@ import { getURL } from '@/utils/get-url';
 import { getMembershipMembers } from '../controllers/members';
 
 export async function createCheckoutAction(id: string) {
-  // 1. Get the user from session
-  const user = await getUser();
+  // // 1. Get the user from session
+  // const user = await getUser();
 
-  // If no user is logged in, throw error
-  if (!user?.email) {
-    return {
-      success: false,
-      error: 'No user logged in.',
-    };
-  }
+  // // If no user is logged in, throw error
+  // if (!user?.email) {
+  //   return {
+  //     success: false,
+  //     error: 'No user logged in.',
+  //   };
+  // }
 
   const quote = await getQuoteWithMembership(id);
   if (!quote) {
@@ -39,17 +39,17 @@ export async function createCheckoutAction(id: string) {
 
   try {
     // Update membership with user_id if not set
-    if (!quote.memberships.user_id) {
-      const { error: membershipError } = await supabaseAdminClient
-        .from('memberships')
-        .update({ user_id: user.id })
-        .eq('id', quote.memberships.id);
+    // if (!quote.memberships.user_id) {
+    //   const { error: membershipError } = await supabaseAdminClient
+    //     .from('memberships')
+    //     .update({ user_id: user.id })
+    //     .eq('id', quote.memberships.id);
 
-      if (membershipError) {
-        console.error('Failed to update membership with user ID:', membershipError);
-        throw Error('Failed to update membership');
-      }
-    }
+    //   if (membershipError) {
+    //     console.error('Failed to update membership with user ID:', membershipError);
+    //     throw Error('Failed to update membership');
+    //   }
+    // }
 
     const tx = await supabaseAdminClient.from('stripe_payments').select('*').eq('quote_id', quote.id).single();
 
@@ -75,7 +75,7 @@ export async function createCheckoutAction(id: string) {
       mode: 'payment',
       metadata: {
         quoteId: quote.id,
-        userId: user.id,
+        // userId: user.id,
       },
       line_items: [
         {

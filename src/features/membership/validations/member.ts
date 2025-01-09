@@ -38,7 +38,6 @@ export function validateMember(member: Partial<Member>): ValidationResult {
 
 export function isMemberValid(member: Partial<Member>): boolean {
   const result = validateMember(member);
-  console.log('🚀 ~ isMemberValid ~ result:', result);
   return result.success;
 }
 

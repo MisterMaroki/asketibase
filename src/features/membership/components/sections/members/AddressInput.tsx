@@ -33,18 +33,39 @@ interface ManualAddress {
   postcode: string;
 }
 
+interface ManualAddressErrors {
+  line1?: string;
+  line2?: string;
+  city?: string;
+  region?: string;
+  postcode?: string;
+}
+
 export function AddressInput({ value, onChange, disabled, className }: AddressInputProps) {
   const [isManual, setIsManual] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [predictions, setPredictions] = useState<Prediction[]>([]);
-  const [manualAddress, setManualAddress] = useState<ManualAddress>({
-    line1: '',
-    line2: '',
-    city: '',
-    region: '',
-    postcode: '',
+  const [errors, setErrors] = useState<ManualAddressErrors>({});
+  const [manualAddress, setManualAddress] = useState<ManualAddress>(() => {
+    if (value) {
+      const parts = value.split(',').map((part) => part.trim());
+      return {
+        line1: parts[0] || '',
+        line2: parts[1] || '',
+        city: parts[2] || '',
+        region: parts[3] || '',
+        postcode: parts[4] || '',
+      };
+    }
+    return {
+      line1: '',
+      line2: '',
+      city: '',
+      region: '',
+      postcode: '',
+    };
   });
   const error = getAddressError(value);
 
@@ -84,34 +105,48 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
     }
   };
 
-  useEffect(() => {
-    if (isManual && value) {
-      const parts = value.split(',').map((part) => part.trim());
-      setManualAddress({
-        line1: parts[0] || '',
-        line2: parts[1] || '',
-        city: parts[2] || '',
-        region: parts[3] || '',
-        postcode: parts[4] || '',
-      });
+  const validateAddress = (address: ManualAddress): ManualAddressErrors => {
+    const errors: ManualAddressErrors = {};
+
+    if (!address.line1.trim()) {
+      errors.line1 = 'Address line 1 is required';
     }
-  }, [isManual, value]);
+
+    if (!address.city.trim()) {
+      errors.city = 'City is required';
+    }
+
+    if (!address.region.trim()) {
+      errors.region = 'State/Region is required';
+    }
+
+    if (!address.postcode.trim()) {
+      errors.postcode = 'Postal/ZIP code is required';
+    } else if (!/^[A-Z0-9]{2,10}$/i.test(address.postcode.trim())) {
+      errors.postcode = 'Invalid postal/ZIP code format';
+    }
+
+    return errors;
+  };
 
   const handleManualChange = (field: keyof ManualAddress, fieldValue: string) => {
     const newAddress = { ...manualAddress, [field]: fieldValue };
     setManualAddress(newAddress);
 
-    const combinedAddress = [
-      newAddress.line1,
-      newAddress.line2,
-      newAddress.city,
-      newAddress.region,
-      newAddress.postcode,
-    ]
-      .filter(Boolean)
-      .join(', ');
+    // Clear the error for this field as user types
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
 
-    onChange(combinedAddress);
+    const parts = Object.values(newAddress);
+    const nonEmptyParts = parts.filter((part) => part !== '');
+    onChange(nonEmptyParts.join(', '));
+
+    // Validate after a short delay to avoid interrupting typing
+    const timeoutId = setTimeout(() => {
+      const newErrors = validateAddress(newAddress);
+      setErrors(newErrors);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
   };
 
   return (
@@ -183,8 +218,9 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
               value={manualAddress.line1}
               onChange={(e) => handleManualChange('line1', e.target.value)}
               disabled={disabled}
-              className={cn(error ? 'border-destructive' : '', className)}
+              className={cn(errors.line1 ? 'border-destructive' : '', className)}
             />
+            {errors.line1 && <p className='text-xs text-destructive'>{errors.line1}</p>}
           </div>
           <div className='space-y-2'>
             <Input
@@ -192,7 +228,7 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
               value={manualAddress.line2}
               onChange={(e) => handleManualChange('line2', e.target.value)}
               disabled={disabled}
-              className={cn(error ? 'border-destructive' : '', className)}
+              className={className}
             />
           </div>
           <div className='grid gap-4 sm:grid-cols-2'>
@@ -202,8 +238,9 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
                 value={manualAddress.city}
                 onChange={(e) => handleManualChange('city', e.target.value)}
                 disabled={disabled}
-                className={cn(error ? 'border-destructive' : '', className)}
+                className={cn(errors.city ? 'border-destructive' : '', className)}
               />
+              {errors.city && <p className='text-xs text-destructive'>{errors.city}</p>}
             </div>
             <div className='space-y-2'>
               <Input
@@ -211,8 +248,9 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
                 value={manualAddress.region}
                 onChange={(e) => handleManualChange('region', e.target.value)}
                 disabled={disabled}
-                className={cn(error ? 'border-destructive' : '', className)}
+                className={cn(errors.region ? 'border-destructive' : '', className)}
               />
+              {errors.region && <p className='text-xs text-destructive'>{errors.region}</p>}
             </div>
           </div>
           <div className='space-y-2'>
@@ -221,8 +259,9 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
               value={manualAddress.postcode}
               onChange={(e) => handleManualChange('postcode', e.target.value)}
               disabled={disabled}
-              className={cn(error ? 'border-destructive' : '', className)}
+              className={cn(errors.postcode ? 'border-destructive' : '', className)}
             />
+            {errors.postcode && <p className='text-xs text-destructive'>{errors.postcode}</p>}
           </div>
           <Button
             type='button'
@@ -237,12 +276,12 @@ export function AddressInput({ value, onChange, disabled, className }: AddressIn
                 region: '',
                 postcode: '',
               });
+              setErrors({});
             }}
             disabled={disabled}
           >
             Use address search
           </Button>
-          {error && <p className='text-xs text-destructive'>{error}</p>}
         </div>
       )}
     </div>

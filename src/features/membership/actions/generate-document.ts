@@ -83,12 +83,10 @@ export async function generateAndSendDocument(data: DocumentData) {
 
 export async function generateIfNotSent(quoteId: string, sendAgain: boolean = false) {
   const quote = await getQuoteWithMembership(quoteId);
-  console.log('🚀 ~ generateIfNotSent ~ quote:', quote);
   if (!quote) {
     throw Error('Could not get quote');
   }
   const members = await getMembershipMembers(quote.membership_id);
-  console.log('🚀 ~ generateIfNotSent ~ members:', members);
 
   if (quote.memberships.status === 'paid' || (sendAgain && quote.memberships.status === 'sent')) {
     // Transform members data to match DocumentData interface
@@ -107,7 +105,7 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
     const durationDetails = getDurationDetails(quote.memberships.duration_type);
 
     const document = await generateAndSendDocument({
-      membership_number: 'ASK-' + new Date().getFullYear() + '-' + quote.memberships.membership_number,
+      membership_number: 'GOASK-J-98001/' + quote.memberships.membership_number,
       members: transformedMembers,
       purchase_date: formatDate(new Date(quote.memberships.created_at || '')),
       membership_type: MEMBERSHIP_TYPES[quote.memberships.membership_type as keyof typeof MEMBERSHIP_TYPES] || '',
