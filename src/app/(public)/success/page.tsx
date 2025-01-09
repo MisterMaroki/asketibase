@@ -19,17 +19,17 @@ export default async function MembershipSuccessPage({
 
   const quote = await getQuoteWithMembership(quoteId);
   if (!quote) {
-    redirect('/membership?step=5');
+    redirect('/?step=5');
   }
 
   const checkoutSession = await getStripeSession(sessionId);
   if (!checkoutSession) {
-    redirect('/membership?step=5&error=true');
+    redirect('/?step=5&error=true');
   }
 
   const res = await handlePaid(checkoutSession);
   if (!res) {
-    redirect('/membership?step=5&error=true');
+    redirect('/?step=5&error=true');
   }
 
   return (

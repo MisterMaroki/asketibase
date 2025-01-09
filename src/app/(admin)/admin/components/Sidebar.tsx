@@ -64,7 +64,7 @@ function SidebarContent({ signOut }: { signOut: () => Promise<ActionResponse> })
       </nav>
 
       <div className='border-t p-4'>
-        <Link href='/membership'>
+        <Link href='/'>
           <Button variant='ghost' className='w-full justify-start text-muted-foreground hover:text-destructive'>
             <ArrowLeft className='mr-2 h-4 w-4' />
             Back to form

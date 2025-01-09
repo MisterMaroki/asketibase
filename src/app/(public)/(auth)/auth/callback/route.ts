@@ -30,7 +30,7 @@ export async function GET(request: Request) {
         const { data: isAdmin } = await supabase.from('admins').select('id').eq('id', user.id).single();
 
         if (!isAdmin) {
-          return NextResponse.redirect(`${siteUrl}/membership`);
+          return NextResponse.redirect(`${siteUrl}/`);
         } else {
           const forwardedHost = request.headers.get('x-forwarded-host'); // original origin before load balancer
           const isLocalEnv = process.env.NODE_ENV === 'development';

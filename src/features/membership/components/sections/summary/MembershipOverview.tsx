@@ -85,7 +85,7 @@ export function MembershipOverview({ quote }: { quote: QuoteType | null }) {
     // Save current state before editing
     saveOriginalState();
     // setStep(step);
-    router.push(`/membership?step=${step}`);
+    router.push(`/?step=${step}`);
   };
 
   return (

@@ -42,13 +42,13 @@ export function MembershipDetails() {
       clearOriginalState();
       removeUnnecessaryMembers();
       // setStep(RETURN_TO_SUMMARY_STEP);
-      router.push(`/membership?step=${RETURN_TO_SUMMARY_STEP}`);
+      router.push(`/?step=${RETURN_TO_SUMMARY_STEP}`);
     } else {
       // Changes made or new flow, continue to members
       clearOriginalState();
       removeUnnecessaryMembers();
       // setStep(3);
-      router.push('/membership?step=3');
+      router.push('/?step=3');
     }
   };
 
@@ -62,7 +62,7 @@ export function MembershipDetails() {
         <Button
           variant='outline'
           onClick={() => {
-            router.push('/membership?step=1');
+            router.push('/?step=1');
           }}
           className='min-w-[100px]'
         >

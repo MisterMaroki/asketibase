@@ -13,7 +13,7 @@ export function ResetButton({ className }: { className?: string }) {
     <Button
       onClick={() => {
         reset();
-        router.push('/membership?step=1');
+        router.push('/?step=1');
       }}
       className={className}
     >

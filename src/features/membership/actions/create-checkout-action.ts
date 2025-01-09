@@ -26,7 +26,7 @@ export async function createCheckoutAction(id: string) {
 
   const quote = await getQuoteWithMembership(id);
   if (!quote) {
-    redirect(`${getURL()}/membership?step=5&error=true`);
+    redirect(`${getURL()}/?step=5&error=true`);
   }
 
   let primaryMember = await getMembershipMembers(quote.memberships.id).then((members) =>
@@ -34,7 +34,7 @@ export async function createCheckoutAction(id: string) {
   );
 
   if (!primaryMember) {
-    redirect(`${getURL()}/membership?step=5&error=true`);
+    redirect(`${getURL()}/?step=5&error=true`);
   }
 
   try {
@@ -57,7 +57,7 @@ export async function createCheckoutAction(id: string) {
       if (quote.memberships.status !== 'draft' && tx.data.status === 'paid') {
         return {
           success: true,
-          url: `${getURL()}/membership/success?quoteId=${quote.id}&sessionId=${tx.data.session_id}`,
+          url: `${getURL()}/success?quoteId=${quote.id}&sessionId=${tx.data.session_id}`,
         };
       }
       throw Error('Payment already made');
@@ -92,8 +92,8 @@ export async function createCheckoutAction(id: string) {
           quantity: 1,
         },
       ],
-      success_url: `${getURL()}/membership/success?quoteId=${quote.id}&sessionId={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${getURL()}/membership?step=5&error=true`,
+      success_url: `${getURL()}/success?quoteId=${quote.id}&sessionId={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${getURL()}/?step=5&error=true`,
     });
 
     if (!checkoutSession || !checkoutSession.url) {

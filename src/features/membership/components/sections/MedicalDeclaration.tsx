@@ -42,11 +42,11 @@ export function MedicalDeclaration() {
   const hasDeclinedMembers = Object.values(medicalState.completedMembers).some((riskLevel) => riskLevel === 2);
 
   const handleNext = () => {
-    router.replace('/membership?step=5');
+    router.replace('/?step=5');
   };
 
   const handlePrevious = () => {
-    router.push('/membership?step=3');
+    router.push('/?step=3');
   };
 
   return (

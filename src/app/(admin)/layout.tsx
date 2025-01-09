@@ -44,7 +44,7 @@ export default async function AdminRootLayout({ children }: PropsWithChildren) {
     .single();
 
   if (!isAdmin) {
-    return redirect('/membership');
+    return redirect('/');
   }
 
   return (

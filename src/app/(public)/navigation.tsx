@@ -28,13 +28,13 @@ export function Navigation({ user, isAdmin }: NavigationProps) {
   return (
     <div className='relative flex items-center gap-6'>
       <ThemeToggle />
-      <ResetButton className='hidden md:flex' />
+      {/* <ResetButton className='hidden md:flex' /> */}
       {isAdmin && (
         <Button onClick={() => router.push('/admin')} variant='sexy' className='hidden flex-shrink-0 md:flex'>
           Admin
         </Button>
       )}
-      {!!user ? (
+      {/* {!!user ? (
         <Button onClick={() => signOut()} variant='sexy' className='hidden flex-shrink-0 md:flex'>
           Sign Out
         </Button>
@@ -42,8 +42,8 @@ export function Navigation({ user, isAdmin }: NavigationProps) {
         <Button onClick={() => router.push('/login')} variant='sexy' className='hidden flex-shrink-0 md:flex'>
           Sign In
         </Button>
-      )}
-      <Sheet>
+      )} */}
+      {/* <Sheet>
         <SheetTrigger className='block md:hidden'>
           <IoMenu size={28} />
         </SheetTrigger>
@@ -69,7 +69,7 @@ export function Navigation({ user, isAdmin }: NavigationProps) {
             </SheetDescription>
           </SheetHeader>
         </SheetContent>
-      </Sheet>
+      </Sheet> */}
     </div>
   );
 }

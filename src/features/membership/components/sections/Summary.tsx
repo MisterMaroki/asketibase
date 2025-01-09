@@ -25,7 +25,7 @@ export function Summary() {
 
   useEffect(() => {
     if (members.length === 0) {
-      router.replace('/membership?step=1');
+      router.replace('/?step=1');
       // setStep(1);
     }
   }, [members, router, setStep]);

@@ -30,6 +30,8 @@ export function MembershipForm() {
     const step = searchParams.get('step');
     if (step) {
       setStep(parseInt(step, 10));
+    } else {
+      setStep(1);
     }
   }, [searchParams, setStep]);
 
