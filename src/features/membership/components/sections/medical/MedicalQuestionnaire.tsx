@@ -59,7 +59,7 @@ const QUESTIONS: Question[] = [
       'Investigations in a hospital or clinic in the last 12 months',
       'Been on a waiting list for treatment in the last 12 months',
       'Had an undiagnosed condition in the last 12 months',
-      'Taking prescribed drugs or medication (other than those listed as No Screen Conditions)',
+      'Taking prescribed drugs or medication',
     ],
     riskLevelOne: true,
     section: 'medical',

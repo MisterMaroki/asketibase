@@ -266,9 +266,6 @@ export function QuoteGenerator({
                   </svg>
                   ASKETI Global Travel Protection
                 </h3>
-                <div className='space-y-1 text-sm text-muted-foreground'>
-                  <p>Company Number: 15179780</p>
-                </div>
               </div>
 
               {/* Trust Badges */}
