@@ -167,7 +167,7 @@ export function AddressInput({ value, onChange, disabled, className, showCopyFro
             disabled={disabled}
           >
             <Copy className='mr-2 h-3 w-3' />
-            Copy from primary member
+            Copy from Primary Member
           </Button>
         )}
       </div>
