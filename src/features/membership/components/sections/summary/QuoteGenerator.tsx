@@ -264,11 +264,10 @@ export function QuoteGenerator({
 
                     <path d='M7 11V7a5 5 0 0 1 10 0v4' />
                   </svg>
-                  ASKETI Limited
+                  ASKETI Global Travel Protection
                 </h3>
                 <div className='space-y-1 text-sm text-muted-foreground'>
-                  <p>Registered in England and Wales</p>
-                  <p>Company number: 15179780</p>
+                  <p>Company Number: 15179780</p>
                 </div>
               </div>
 

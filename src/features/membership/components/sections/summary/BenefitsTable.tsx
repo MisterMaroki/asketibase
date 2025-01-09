@@ -12,21 +12,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 const KEY_BENEFITS = [
   {
     icon: HeartPulse,
-    text: 'Up to $10M Medical Coverage & Emergency Evacuation',
+    text: 'Up to $10M Medical Coverage',
+    subtext: 'Including Emergency Evacuation',
     color: 'text-rose-500',
     bgColor: 'bg-rose-50',
     ringColor: 'ring-rose-200',
   },
-  {
-    icon: Plane,
-    text: 'Worldwide Coverage',
-    color: 'text-sky-500',
-    bgColor: 'bg-sky-50',
-    ringColor: 'ring-sky-200',
-  },
+  //   {
+  //     icon: Plane,
+  //     text: 'Worldwide Coverage',
+  //     subtext: 'Travel anywhere with confidence',
+  //     color: 'text-sky-500',
+  //     bgColor: 'bg-sky-50',
+  //     ringColor: 'ring-sky-200',
+  //   },
   {
     icon: Snowflake,
-    text: 'Winter Sports',
+    text: 'Winter Sports Cover',
     color: 'text-blue-500',
     bgColor: 'bg-blue-50',
     ringColor: 'ring-blue-200',
@@ -164,45 +166,49 @@ export function BenefitsTable() {
             </div>
 
             {!isOpen && (
-              <div className='space-y-6'>
-                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+              <div className='space-y-8'>
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                   {KEY_BENEFITS.map((benefit, index) => {
                     const Icon = benefit.icon;
                     return (
                       <div
                         key={index}
-                        className='group flex items-center gap-3 rounded-lg border bg-card p-4 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5'
+                        className='group relative flex items-center gap-4 rounded-lg border bg-card p-4 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5'
                       >
                         <div
-                          className={`flex h-12 w-12 items-center justify-center rounded-lg ${benefit.bgColor} p-2 ring-1 ${benefit.ringColor} transition-colors group-hover:bg-card group-hover:ring-primary/20`}
+                          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-lg ${benefit.bgColor} p-2.5 ring-1 ${benefit.ringColor} transition-colors group-hover:bg-card group-hover:ring-primary/20`}
                         >
-                          <Icon className={`h-6 w-6 ${benefit.color}`} />
+                          <Icon className={`h-7 w-7 ${benefit.color}`} />
                         </div>
-                        <span className='text-sm font-medium leading-tight'>{benefit.text}</span>
+                        <div className='flex flex-col gap-1'>
+                          <span className='font-medium leading-tight'>{benefit.text}</span>
+                          <span className='text-sm text-muted-foreground'>{benefit.subtext}</span>
+                        </div>
                       </div>
                     );
                   })}
                 </div>
-                <div className='relative overflow-hidden rounded-lg bg-gradient-to-br from-primary/10 to-secondary/5 p-4 ring-1 ring-primary/10'>
+                <div className='relative overflow-hidden rounded-lg bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/5 p-6 ring-1 ring-primary/10'>
                   <div className='relative z-10'>
-                    <div className='flex items-center justify-between gap-4'>
-                      <p className='text-sm text-muted-foreground'>
-                        Your membership includes{' '}
-                        <span className='font-medium text-primary'>17 comprehensive benefits</span>
-                      </p>
+                    <div className='flex items-start justify-between gap-4 sm:items-center'>
+                      <div className='space-y-2'>
+                        <h4 className='font-semibold text-primary'>Comprehensive Coverage</h4>
+                        <p className='text-sm text-muted-foreground'>
+                          Your membership includes{' '}
+                          <span className='font-medium text-foreground'>17 comprehensive benefits</span>, from medical
+                          coverage to adventure sports protection.{' '}
+                          <span className='hidden sm:inline'>
+                            Click &ldquo;View All Benefits&rdquo; below for the complete breakdown of your coverage.
+                          </span>
+                        </p>
+                      </div>
                       <ChevronDown
                         className='h-5 w-5 shrink-0 animate-bounce text-primary sm:hidden'
                         aria-hidden='true'
                       />
                     </div>
-                    <p className='mt-1 text-sm text-muted-foreground'>
-                      From medical coverage to adventure sports protection.{' '}
-                      <span className='hidden sm:inline'>
-                        Click &ldquo;View All Benefits&rdquo; for the complete breakdown.
-                      </span>
-                      <span className='sm:hidden'>Tap to view all benefits.</span>
-                    </p>
                   </div>
+                  <div className='absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(0,0,0,0.02)_0%,rgba(0,0,0,0)_100%)]' />
                 </div>
               </div>
             )}
