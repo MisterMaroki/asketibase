@@ -50,9 +50,7 @@ export async function generateAndSendDocument(data: DocumentData) {
     const pdfBuffer = await renderToBuffer(MembershipDocumentPDF({ data }));
 
     const primaryMember = data.members.find((member) => member.is_primary);
-    console.log('🚀 ~ generateAndSendDocument ~ pdfBuffer:', pdfBuffer);
 
-    console.log('PDF generated successfully, sending email...');
     const emailResult = await resend.emails.send({
       from: 'Asketi <no-reply@asketi.com>',
       // to: 'omar987@hotmail.co.uk',
@@ -71,7 +69,6 @@ export async function generateAndSendDocument(data: DocumentData) {
       throw new Error('Error sending email');
     }
 
-    console.log('Email sent successfully:', emailResult);
     return true;
   } catch (error) {
     console.error('Error generating document:', error);
