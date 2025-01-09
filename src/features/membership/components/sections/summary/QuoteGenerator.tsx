@@ -239,12 +239,6 @@ export function QuoteGenerator({
         </div>
       )}
 
-      {error && (
-        <Alert variant='destructive'>
-          <AlertCircle className='h-4 w-4' />
-          <AlertDescription>{(error as unknown as FieldError)?.message || error}</AlertDescription>
-        </Alert>
-      )}
       <div className='mt-8 flex flex-col justify-end gap-4'>
         {/* Trust Building Elements */}
         {quote && (
@@ -315,10 +309,9 @@ export function QuoteGenerator({
                     strokeWidth='2'
                     strokeLinecap='round'
                     strokeLinejoin='round'
-                    className='text-blue-600'
+                    className='text-red-600'
                   >
-                    <path d='M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10Z' />
-                    <path d='m12 6 4 6-4 6-4-6 4-6Z' />
+                    <path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z' />
                   </svg>
                   <div className='text-center'>
                     <p className='text-xs font-medium'>24/7 Global Support</p>
@@ -394,10 +387,15 @@ export function QuoteGenerator({
             </div>
           </div>
         )}
-        {errorParam && (
+
+        {(errorParam || error) && (
           <Alert variant='destructive'>
             <AlertCircle className='h-4 w-4' />
-            <AlertDescription>There was an error processing your payment. Please try again.</AlertDescription>
+            <AlertDescription>
+              {error
+                ? (error as unknown as FieldError)?.message || error
+                : 'There was an error processing your payment. Please try again.'}
+            </AlertDescription>
           </Alert>
         )}
         <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='w-full'>
