@@ -45,8 +45,6 @@ export interface DocumentData {
 }
 
 export async function generateAndSendDocument(data: DocumentData) {
-  console.log('🚀 ~ generateAndSendDocument ~ data:', data);
-  console.log('Starting document generation...');
   try {
     // Generate PDF buffer from the React component
     const pdfBuffer = await renderToBuffer(MembershipDocumentPDF({ data }));
@@ -56,7 +54,7 @@ export async function generateAndSendDocument(data: DocumentData) {
 
     console.log('PDF generated successfully, sending email...');
     const emailResult = await resend.emails.send({
-      from: 'Asketi <no-reply@matsync.co.uk>',
+      from: 'Asketi <no-reply@asketi.com>',
       // to: 'omar987@hotmail.co.uk',
       to: primaryMember?.email || '',
       subject: 'Your ASKETI Membership Document',
