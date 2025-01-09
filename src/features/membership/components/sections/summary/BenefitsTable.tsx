@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, HeartPulse, Plane, Shield, Snowflake, Waves } from 'lucide-react';
+import { ChevronDown, Fish, HeartPulse, Plane, Shield, Snowflake, Waves } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,22 +13,44 @@ const KEY_BENEFITS = [
   {
     icon: HeartPulse,
     text: 'Up to $10M Medical Coverage',
-    color: 'text-primary',
+    color: 'text-rose-500',
+    bgColor: 'bg-rose-50',
+    ringColor: 'ring-rose-200',
   },
   {
     icon: Plane,
     text: 'Worldwide Coverage',
-    color: 'text-secondary',
+    color: 'text-sky-500',
+    bgColor: 'bg-sky-50',
+    ringColor: 'ring-sky-200',
   },
   {
     icon: Snowflake,
-    text: 'Winter Sports & Cruise',
-    color: 'text-primary',
+    text: 'Winter Sports',
+    color: 'text-blue-500',
+    bgColor: 'bg-blue-50',
+    ringColor: 'ring-blue-200',
   },
   {
     icon: Waves,
+    text: 'Cruise Cover',
+    color: 'text-cyan-500',
+    bgColor: 'bg-cyan-50',
+    ringColor: 'ring-cyan-200',
+  },
+  {
+    icon: Fish,
+    text: 'Dive Cover',
+    color: 'text-emerald-500',
+    bgColor: 'bg-emerald-50',
+    ringColor: 'ring-emerald-200',
+  },
+  {
+    icon: HeartPulse,
     text: 'Emergency Evacuation',
-    color: 'text-secondary',
+    color: 'text-purple-500',
+    bgColor: 'bg-purple-50',
+    ringColor: 'ring-purple-200',
   },
 ];
 
@@ -126,7 +148,7 @@ export function BenefitsTable() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Card className='w-full overflow-hidden bg-gradient-to-br from-background to-muted/50'>
+    <Card className='w-full overflow-hidden bg-gradient-to-br from-card/30 to-muted/10'>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <div className='cursor-pointer space-y-6 p-4 transition-colors hover:bg-muted/50 sm:p-6'>
@@ -150,20 +172,20 @@ export function BenefitsTable() {
 
             {!isOpen && (
               <div className='space-y-6'>
-                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4'>
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
                   {KEY_BENEFITS.map((benefit, index) => {
                     const Icon = benefit.icon;
                     return (
                       <div
                         key={index}
-                        className='group flex items-center gap-3 rounded-lg border bg-card p-3 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5'
+                        className='group flex items-center gap-3 rounded-lg border bg-card p-4 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5'
                       >
                         <div
-                          className={`flex h-8 w-8 items-center justify-center rounded-lg bg-background p-2 ring-1 ring-border/50 ${benefit.color} transition-colors group-hover:bg-card group-hover:ring-primary/20`}
+                          className={`flex h-12 w-12 items-center justify-center rounded-lg ${benefit.bgColor} p-2 ring-1 ${benefit.ringColor} transition-colors group-hover:bg-card group-hover:ring-primary/20`}
                         >
-                          <Icon className='h-4 w-4' />
+                          <Icon className={`h-6 w-6 ${benefit.color}`} />
                         </div>
-                        <span className='text-sm font-medium'>{benefit.text}</span>
+                        <span className='text-sm font-medium leading-tight'>{benefit.text}</span>
                       </div>
                     );
                   })}
