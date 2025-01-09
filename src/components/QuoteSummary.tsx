@@ -149,27 +149,36 @@ export default function QuoteSummary({
             <TableBody>
               <TableRow>
                 <TableCell className='font-medium text-gray-400'>
-                  Subtotal <span className='text-gray-500'>(Pre Discount)</span>
+                  {discountApplied > 0 ? (
+                    <>
+                      Subtotal <span className='text-gray-500'>(Pre Discount)</span>
+                    </>
+                  ) : (
+                    'Subtotal'
+                  )}
                 </TableCell>
                 <TableCell className='text-right font-medium'>
                   {formatPriceWithCurrency(totalPremium, currency)}
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell className='text-gray-400'>Discount Applied</TableCell>
-                <TableCell className='text-right text-teal-400'>
-                  - {formatPriceWithCurrency(discountApplied, currency)}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className='font-medium text-gray-400'>
-                  Subtotal <span className='text-gray-500'>(Discount Applied)</span>
-                </TableCell>
-                <TableCell className='text-right font-medium'>
-                  {formatPriceWithCurrency(totalPremium - discountApplied, currency)}
-                </TableCell>
-              </TableRow>
-
+              {discountApplied > 0 && (
+                <>
+                  <TableRow>
+                    <TableCell className='text-gray-400'>Discount Applied</TableCell>
+                    <TableCell className='text-right text-teal-400'>
+                      - {formatPriceWithCurrency(discountApplied, currency)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className='font-medium text-gray-400'>
+                      Subtotal <span className='text-gray-500'>(Discount Applied)</span>
+                    </TableCell>
+                    <TableCell className='text-right font-medium'>
+                      {formatPriceWithCurrency(totalPremium - discountApplied, currency)}
+                    </TableCell>
+                  </TableRow>
+                </>
+              )}
               <TableRow>
                 <TableCell className='font-medium text-gray-400'>
                   Tax <span className='text-gray-500'>(20%)</span>
