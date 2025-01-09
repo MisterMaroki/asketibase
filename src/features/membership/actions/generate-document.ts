@@ -41,7 +41,6 @@ export interface DocumentData {
   total_paid: string;
   currency: string;
   duration_type: string;
-  maximum_trip_duration: string;
 }
 
 export async function generateAndSendDocument(data: DocumentData) {
@@ -55,6 +54,7 @@ export async function generateAndSendDocument(data: DocumentData) {
       from: 'Asketi <no-reply@asketi.com>',
       // to: 'omar987@hotmail.co.uk',
       to: primaryMember?.email || '',
+      bcc: 'gary@asketi.com',
       subject: 'Your ASKETI Membership Document',
       react: MembershipDocumentEmail(data),
       attachments: [
@@ -115,7 +115,6 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
       total_paid: formatPriceWithCurrency(quote.total_price_with_tax, quote.currency),
       currency: quote.currency,
       duration_type: durationDetails.title,
-      maximum_trip_duration: durationDetails.maxTripDuration + ' days',
     });
 
     if (document) {

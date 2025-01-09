@@ -504,21 +504,6 @@ export const MembershipDocumentPDF = ({ data }: Props) => {
           </Text>
         </View>
 
-        {/* Maximum Trip Durations */}
-        <View style={styles.tripDurationsSection}>
-          <Text style={styles.sectionTitle}>MAXIMUM TRIP DURATIONS</Text>
-          <View style={styles.tripDurationsTable}>
-            <View style={styles.tripDurationsRow}>
-              <Text style={styles.tripDurationsHeader}>Duration Type</Text>
-              <Text style={styles.tripDurationsHeader}>Maximum Trip Duration</Text>
-            </View>
-            <View style={styles.tripDurationsRow}>
-              <Text style={{ flex: 1 }}>{data.duration_type}</Text>
-              <Text style={{ flex: 1 }}>{data.maximum_trip_duration}</Text>
-            </View>
-          </View>
-        </View>
-
         {/* Benefits Table */}
         <View style={styles.benefitsSection}>
           <Text style={styles.sectionTitle}>Membership Details</Text>
