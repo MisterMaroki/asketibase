@@ -46,8 +46,13 @@ export function DurationOptions() {
           return (
             <Label
               key={key}
-              className='group flex cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-accent/5 hover:text-accent-foreground active:bg-accent/10 sm:space-x-4 sm:p-4 [&:has([data-state=checked])]:border-primary'
+              className='group relative flex cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-accent/5 hover:text-accent-foreground active:bg-accent/10 sm:space-x-4 sm:p-4 [&:has([data-state=checked])]:border-primary'
             >
+              {key === DURATION_TYPES.multi_trip && (
+                <span className='absolute -top-2 right-4 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground'>
+                  RECOMMENDED
+                </span>
+              )}
               <RadioGroupItem value={key} id={key} className='sr-only mt-1' />
               {Icon && (
                 <Icon className='mt-0.5 h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary group-[&:has([data-state=checked])]:text-primary' />
