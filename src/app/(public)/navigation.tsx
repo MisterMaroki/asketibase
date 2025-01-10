@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { ResetButton } from '@/components/reset';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/libs/supabase/types';
@@ -21,9 +22,12 @@ export function Navigation({ user, isAdmin }: NavigationProps) {
       <ThemeToggle />
       {/* <ResetButton className='hidden md:flex' /> */}
       {isAdmin && (
-        <Button onClick={() => router.push('/admin')} variant='sexy' className='hidden flex-shrink-0 md:flex'>
-          Admin
-        </Button>
+        <>
+          <Button onClick={() => router.push('/admin')} variant='sexy' className='hidden flex-shrink-0 md:flex'>
+            Admin
+          </Button>
+          <ResetButton />
+        </>
       )}
       {/* {!!user ? (
         <Button onClick={() => signOut()} variant='sexy' className='hidden flex-shrink-0 md:flex'>

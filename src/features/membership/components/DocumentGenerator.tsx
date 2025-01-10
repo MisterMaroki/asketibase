@@ -6,6 +6,7 @@ import { AnimatedTick, AnimatedWarning } from '@/components/ui/animated-tick';
 import { Button } from '@/components/ui/button';
 import { TypewriterEffect } from '@/components/ui/typewriter-effect';
 import { generateIfNotSent } from '@/features/membership/actions/generate-document';
+import { useMembershipStore } from '@/store/membership-store';
 import { cn } from '@/utils/cn';
 
 interface DocumentGeneratorProps {
@@ -27,10 +28,15 @@ const ERROR_MESSAGES = [
 ];
 
 export function DocumentGenerator({ quoteId, hasSentEmail }: DocumentGeneratorProps) {
+  const { reset } = useMembershipStore();
   const [messages, setMessages] = useState(['Payment successful.']);
   const [isGenerating, setIsGenerating] = useState(true);
   const [error, setError] = useState(false);
   const [isComplete, setIsComplete] = useState(hasSentEmail);
+
+  useEffect(() => {
+    reset();
+  }, []);
 
   useEffect(() => {
     const generateDocuments = async () => {

@@ -137,6 +137,7 @@ export function QuoteGenerator({
         const result = await createCheckoutAction(quote.id);
         if (result.success && result.url) {
           window.location.href = result.url;
+          setIsLoading(false);
           return;
         }
         if (result.error) {
@@ -168,14 +169,17 @@ export function QuoteGenerator({
     }
 
     try {
+      if (!coverageType || !durationType || !membershipType || !startDate || !currency || !members) {
+        throw new Error('Missing required fields');
+      }
       // Generate quote
       const quote = await generateQuoteAction({
-        membershipType: membershipType!,
-        coverageType: coverageType!,
-        durationType: durationType!,
-        startDate: startDate!,
-        endDate: endDate,
-        currency: currency!,
+        membershipType,
+        coverageType,
+        durationType,
+        startDate,
+        endDate,
+        currency,
         members: members.map((member, i) => ({ ...member, isPrimary: i === 0 })) as MemberSchema[],
         referralCode,
         referralSource,

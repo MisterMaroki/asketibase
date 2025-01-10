@@ -23,15 +23,18 @@ export function MembershipDetails() {
     clearOriginalState,
     originalState,
     currency,
+    coverageType,
   } = useMembershipStore();
 
   const canContinue = () => {
+    if (!durationType) return false;
+    if (!currency) return false;
+    if (!coverageType) return false;
     // For single trip, require both start and end date
     if (durationType === 'single_trip') {
       return startDate && endDate;
     }
 
-    if (!currency) return false;
     // For other types, only start date is required
     return !!startDate;
   };

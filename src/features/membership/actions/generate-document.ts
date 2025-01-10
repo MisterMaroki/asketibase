@@ -1,5 +1,6 @@
 'use server';
 
+import { differenceInYears } from 'date-fns';
 import { Resend } from 'resend';
 
 import { COVERAGE_TYPES, getDurationDetails, MEMBERSHIP_TYPES } from '@/constants';
@@ -116,7 +117,7 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
           ...member,
           contact_number: member.country_code + member.contact_number || '',
           home_phone: member.home_phone || '',
-          age: member.date_of_birth ? new Date().getFullYear() - new Date(member.date_of_birth).getFullYear() + '' : '',
+          age: differenceInYears(new Date(), new Date(member.date_of_birth)) + '',
           has_declaration: member.has_conditions ? 'Yes' : 'No',
           address: member.address || '',
         })) || [];

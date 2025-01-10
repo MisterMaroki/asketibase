@@ -1,5 +1,7 @@
 'use server';
 
+import { differenceInYears } from 'date-fns';
+
 import { DURATION_TYPES } from '@/constants';
 import { getExchangeRate } from '@/libs/exchange-rates/get-rate';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
@@ -133,7 +135,7 @@ export async function generateQuoteAction(data: MembershipSchema) {
         const countryNationality = countryPrices.find((cp) => cp.id === member.nationality);
 
         // Calculate age factor
-        const age = calculateAge(new Date(member.dateOfBirth));
+        const age = differenceInYears(new Date(), new Date(member.dateOfBirth));
         const ageFactor = ageFactors.find((af) => age >= af.min_age && age <= af.max_age)?.daily_rate || 0;
 
         // Get coverage factor
@@ -271,16 +273,6 @@ export async function generateQuoteAction(data: MembershipSchema) {
       error: 'Failed to generate quote',
     };
   }
-}
-
-function calculateAge(birthDate: Date): number {
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
 }
 
 function calculateEndDate(startDate: string, durationType: keyof typeof DURATION_TYPES): string {

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { checkReferralCode, ReferralCode } from '@/features/membership/controllers/check-referral-code';
 
 import { Member, Membership, Quote } from '../types';
 
@@ -25,7 +26,20 @@ interface DetailsPanelProps {
 export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<Membership | null>(null);
+  console.log('🚀 ~ DetailsPanel ~ data:', data);
   const [error, setError] = useState<string | null>(null);
+
+  const [referralCode, setReferralCode] = useState<ReferralCode | null>(null);
+
+  useEffect(() => {
+    if (open && id && data?.quotes?.[0]?.referral_code_id) {
+      const fetchReferralCode = async () => {
+        const code = await checkReferralCode(data.quotes?.[0]?.referral_code_id || '');
+        setReferralCode(code);
+      };
+      fetchReferralCode();
+    }
+  }, [open, id]);
 
   useEffect(() => {
     if (open && id) {
@@ -243,6 +257,7 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                     <span className='text-muted-foreground'>
                       Residence: {member.country_of_residence || 'Not specified'}
                     </span>
+                    {member.address && <span className='text-muted-foreground'>{member.address}</span>}
                   </div>
                 </div>
                 {formattedPhoneNumber && (
@@ -339,10 +354,25 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
                   <span>{format(new Date(data.end_date), 'PPP')}</span>
                 </div>
               )}
-              {data.created_at && (
+              <div className='flex justify-between'>
+                <span className='text-muted-foreground'>Created At</span>
+                <span>{data.created_at ? format(new Date(data.created_at), 'PPP p') : 'N/A'}</span>
+              </div>
+              {data.referral_source && (
                 <div className='flex justify-between'>
-                  <span className='text-muted-foreground'>Created At</span>
-                  <span>{format(new Date(data.created_at), 'PPP p')}</span>
+                  <span className='text-muted-foreground'>Referral Source</span>
+                  <span>{data.referral_source}</span>
+                </div>
+              )}
+              {quote && (
+                <div className='flex justify-between'>
+                  <span className='text-muted-foreground'>Referral Code</span>
+                  <span className='text-muted-foreground'>{referralCode?.code || 'N/A'}</span>
+                  {referralCode && (
+                    <Badge variant='secondary' className='h-6 px-3 text-xs'>
+                      Applied {referralCode?.discount_percent}%
+                    </Badge>
+                  )}
                 </div>
               )}
               {quote && (
