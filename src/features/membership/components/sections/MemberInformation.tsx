@@ -32,16 +32,18 @@ export function MemberInformation() {
   const handleNext = () => {
     if ((originalState && !hasStateChanged()) || allMembersScreeningComplete) {
       clearOriginalState();
-      router.push(`/?step=${RETURN_TO_SUMMARY_STEP}`);
+      // router.push(`/?step=${RETURN_TO_SUMMARY_STEP}`);
+      setStep(RETURN_TO_SUMMARY_STEP);
     } else {
       clearOriginalState();
-      router.replace('/?step=4');
+      // router.replace('/?step=4');
+      setStep(4);
     }
   };
 
   const handlePrevious = () => {
     setStep(2);
-    router.replace('/?step=2');
+    // router.replace('/?step=2');
   };
 
   return (

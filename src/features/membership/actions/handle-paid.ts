@@ -6,8 +6,14 @@ import { getQuoteWithMembership, updateApplication } from '../controllers/quote-
 import { upsertPayment } from '../controllers/upsert-payment';
 
 import { generateIfNotSent } from './generate-document';
+import { logOperation } from './log-action';
 
 export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
+  await logOperation({
+    level: 'info',
+    operation: 'handle_paid_started',
+    details: { checkoutSession },
+  });
   const quoteId = checkoutSession.metadata?.quoteId;
   if (!quoteId) {
     throw Error('Could not get quoteId');
@@ -39,6 +45,12 @@ export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
     // user_id: membership.user_id || '',
     quote_id: quote.id,
     status: 'paid',
+  });
+
+  await logOperation({
+    level: 'info',
+    operation: 'handle_paid_completed',
+    details: { payment },
   });
 
   generateIfNotSent(quote.id);

@@ -1,19 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { IoMenu } from 'react-icons/io5';
 
-import { AccountMenu } from '@/components/account-menu';
-import { Logo } from '@/components/logo';
-import { ResetButton } from '@/components/reset';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTrigger } from '@/components/ui/sheet';
-import { getUser } from '@/features/membership/controllers/get-user';
-import { Database, Tables } from '@/libs/supabase/types';
-
-import { signOut } from './(auth)/auth-actions';
+import { Tables } from '@/libs/supabase/types';
 
 // import { signOut } from './(auth)/auth-actions';
 

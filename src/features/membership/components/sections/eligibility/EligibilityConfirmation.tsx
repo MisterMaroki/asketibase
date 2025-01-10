@@ -28,14 +28,14 @@ export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
       });
 
       setEligibility(true);
-      // setStep(2);
-      router.push('/?step=2');
+      setStep(2);
+      // router.push('/?step=2');
     } catch (error) {
       console.error('Failed to log eligibility acceptance:', error);
       // Continue with navigation even if logging fails
       setEligibility(true);
-      // setStep(2);
-      router.push('/?step=2');
+      setStep(2);
+      // router.push('/?step=2');
     }
   };
 

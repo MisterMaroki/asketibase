@@ -9,8 +9,15 @@ import { createMember } from '../controllers/members';
 import { validateApplication } from '../validations/membership';
 import { MembershipSchema } from '../validations/schemas';
 
+import { logOperation } from './log-action';
+
 export async function generateQuoteAction(data: MembershipSchema) {
   try {
+    await logOperation({
+      level: 'info',
+      operation: 'generate_quote_started',
+      details: data,
+    });
     const valid = validateApplication(data);
     if (!valid.success) {
       throw new Error(JSON.stringify(valid.errors));
@@ -20,6 +27,11 @@ export async function generateQuoteAction(data: MembershipSchema) {
     let discountObject = null;
     if (data.referralCode && data.referralCode.length > 5) {
       const referralCode = await checkReferralCode(data.referralCode);
+      logOperation({
+        level: 'info',
+        operation: 'check_referral_code',
+        details: { referralCode },
+      });
       if (!referralCode) {
         discountObject = null;
       }
@@ -28,7 +40,6 @@ export async function generateQuoteAction(data: MembershipSchema) {
 
     // Calculate number of days based on duration type
     let numberOfDays = 0;
-    console.log('🚀 ~ generateQuoteAction ~ durationType:', data.durationType);
     switch (data.durationType) {
       case 'expat_year':
         numberOfDays = 365; // 365 - 1 day
@@ -223,6 +234,12 @@ export async function generateQuoteAction(data: MembershipSchema) {
 
     if (quoteError) throw new Error('Failed to create quote');
 
+    await logOperation({
+      level: 'info',
+      operation: 'create_quote',
+      details: { quote },
+    });
+
     return {
       success: true,
       data: {
@@ -242,6 +259,12 @@ export async function generateQuoteAction(data: MembershipSchema) {
       },
     };
   } catch (error) {
+    await logOperation({
+      level: 'error',
+      operation: 'generate_quote_failed',
+      error: error as Error,
+      details: { data },
+    });
     console.error('Error generating quote:', error);
     return {
       success: false,

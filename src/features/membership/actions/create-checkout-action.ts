@@ -12,6 +12,8 @@ import { getURL } from '@/utils/get-url';
 
 import { getMembershipMembers } from '../controllers/members';
 
+import { logOperation } from './log-action';
+
 export async function createCheckoutAction(id: string) {
   // // 1. Get the user from session
   // const user = await getUser();
@@ -23,6 +25,12 @@ export async function createCheckoutAction(id: string) {
   //     error: 'No user logged in.',
   //   };
   // }
+
+  await logOperation({
+    level: 'info',
+    operation: 'checkout_action_started',
+    details: { id },
+  });
 
   const quote = await getQuoteWithMembership(id);
   if (!quote) {
@@ -100,8 +108,20 @@ export async function createCheckoutAction(id: string) {
       throw Error('checkoutSession is not defined');
     }
 
+    await logOperation({
+      level: 'info',
+      operation: 'create_checkout_action',
+      details: { checkoutSession },
+    });
+
     return { success: true, url: checkoutSession.url };
   } catch (error) {
+    await logOperation({
+      level: 'error',
+      operation: 'create_checkout_action',
+      error: error as Error,
+      details: { quote },
+    });
     console.error('Error creating checkout:', error);
     return {
       success: false,

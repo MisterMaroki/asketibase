@@ -84,8 +84,8 @@ export function MembershipOverview({ quote }: { quote: QuoteType | null }) {
   const handleEdit = (step: number) => {
     // Save current state before editing
     saveOriginalState();
-    // setStep(step);
-    router.push(`/?step=${step}`);
+    setStep(step);
+    // router.push(`/?step=${step}`);
   };
 
   return (

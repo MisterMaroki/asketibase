@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { ClipboardCheck, FileText, Stethoscope, UserCog, Users } from 'lucide-react';
 
 import { useMembershipStore } from '@/store/membership-store';
@@ -22,18 +21,23 @@ const steps = [
 ];
 
 export function MembershipForm() {
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
 
   const { currentStep, setStep } = useMembershipStore((state) => state);
 
   useEffect(() => {
-    const step = searchParams.get('step');
-    if (step) {
-      setStep(parseInt(step, 10));
-    } else {
-      setStep(1);
-    }
-  }, [searchParams, setStep]);
+    // when step changes, scroll to the top
+    window.scrollTo(0, 0);
+  }, [currentStep]);
+
+  // useEffect(() => {
+  //   const step = searchParams.get('step');
+  //   if (step) {
+  //     setStep(parseInt(step, 10));
+  //   } else {
+  //     setStep(1);
+  //   }
+  // }, [searchParams, setStep]);
 
   return (
     <div className='container relative mx-auto max-w-3xl px-4 py-8'>

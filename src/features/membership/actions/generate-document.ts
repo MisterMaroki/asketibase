@@ -12,6 +12,8 @@ import { MembershipDocumentPDF } from '../../emails/MembershipDocumentPDF';
 import { getMembershipMembers } from '../controllers/members';
 import { getQuoteWithMembership, updateApplication } from '../controllers/quote-memberships';
 
+import { logOperation } from './log-action';
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export interface DocumentData {
@@ -45,6 +47,12 @@ export interface DocumentData {
 
 export async function generateAndSendDocument(data: DocumentData) {
   try {
+    await logOperation({
+      level: 'info',
+      operation: 'generate_and_send_document_started',
+      details: { data },
+    });
+
     // Generate PDF buffer from the React component
     const pdfBuffer = await renderToBuffer(MembershipDocumentPDF({ data }));
 
@@ -69,14 +77,30 @@ export async function generateAndSendDocument(data: DocumentData) {
       throw new Error('Error sending email');
     }
 
+    await logOperation({
+      level: 'info',
+      operation: 'generate_and_send_document_completed',
+      details: { emailResult },
+    });
+
     return true;
   } catch (error) {
-    console.error('Error generating document:', error);
+    await logOperation({
+      level: 'error',
+      operation: 'generate_and_send_document_failed',
+      error: error as Error,
+      details: { data },
+    });
     throw error;
   }
 }
 
 export async function generateIfNotSent(quoteId: string, sendAgain: boolean = false) {
+  await logOperation({
+    level: 'info',
+    operation: 'generate_if_not_sent_started',
+    details: { quoteId, sendAgain },
+  });
   const quote = await getQuoteWithMembership(quoteId);
   if (!quote) {
     throw Error('Could not get quote');
@@ -115,6 +139,12 @@ export async function generateIfNotSent(quoteId: string, sendAgain: boolean = fa
       total_paid: formatPriceWithCurrency(quote.total_price_with_tax, quote.currency),
       currency: quote.currency,
       duration_type: durationDetails.title,
+    });
+
+    await logOperation({
+      level: 'info',
+      operation: 'generate_if_not_sent_completed',
+      details: { document },
     });
 
     if (document) {
