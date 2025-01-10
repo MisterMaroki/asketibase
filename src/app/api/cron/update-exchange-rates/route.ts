@@ -5,10 +5,25 @@ import { updateExchangeRates } from '@/libs/exchange-rates/update-rates';
 
 export async function GET(request: Request) {
   try {
-    // Verify the request is from a trusted source (e.g., cron job service)
+    // Log the incoming request headers for debugging
     const authHeader = request.headers.get('authorization');
+    console.log('Received auth header:', authHeader);
+    console.log('Expected auth header:', `Bearer ${process.env.CRON_SECRET}`);
+
+    // Check if auth header exists
+    if (!authHeader) {
+      return new NextResponse(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Verify the request is from a trusted source
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse(JSON.stringify({ error: 'Invalid authorization token' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const result = await updateExchangeRates();
