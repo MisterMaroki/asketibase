@@ -14,6 +14,7 @@ import {
   Menu,
   Percent,
   Receipt,
+  ScrollText,
   Settings,
   Shield,
   Users,
@@ -33,6 +34,7 @@ const navigation = [
   { name: 'Members', href: '/admin/members', icon: Users },
   { name: 'Pricing', href: '/admin/pricing', icon: Coins },
   { name: 'Discount Codes', href: '/admin/discount-codes', icon: Percent },
+  { name: 'Logs', href: '/admin/logs', icon: ScrollText },
   // { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 

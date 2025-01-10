@@ -11,6 +11,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
@@ -22,6 +23,10 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   isLoading?: boolean;
   from?: 'memberships' | 'quotes' | 'members' | undefined;
+  onRowClick?: (row: TData) => void;
+  pageSize?: number;
+  sorting?: SortingState;
+  onSortingChange?: (sorting: SortingState) => void;
 }
 
 export function DataTable<TData extends { id: string }, TValue>({
@@ -29,9 +34,22 @@ export function DataTable<TData extends { id: string }, TValue>({
   data,
   isLoading = false,
   from,
+  onRowClick,
+  pageSize = 10,
+  sorting,
+  onSortingChange,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [internalSorting, setInternalSorting] = useState<SortingState>([]);
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
+
+  const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+    const newSorting = typeof updater === 'function' ? updater(sorting || internalSorting) : updater;
+    if (onSortingChange) {
+      onSortingChange(newSorting);
+    } else {
+      setInternalSorting(newSorting);
+    }
+  };
 
   const table = useReactTable({
     data,
@@ -39,9 +57,14 @@ export function DataTable<TData extends { id: string }, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     state: {
-      sorting,
+      sorting: sorting || internalSorting,
+    },
+    initialState: {
+      pagination: {
+        pageSize,
+      },
     },
   });
 
@@ -75,7 +98,13 @@ export function DataTable<TData extends { id: string }, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className='cursor-pointer'
-                  onClick={() => setSelectedRow((row.original as { id: string }).id)}
+                  onClick={() => {
+                    if (onRowClick) {
+                      onRowClick(row.original);
+                    } else if (from) {
+                      setSelectedRow((row.original as { id: string }).id);
+                    }
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
