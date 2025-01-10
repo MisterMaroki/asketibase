@@ -29,6 +29,11 @@ export async function handlePaid(checkoutSession: Stripe.Checkout.Session) {
   }
 
   if (membership.status !== 'draft') {
+    await logOperation({
+      level: 'info',
+      operation: 'handle_paid_already_paid',
+      details: { quoteId, membership },
+    });
     return true;
   }
 
