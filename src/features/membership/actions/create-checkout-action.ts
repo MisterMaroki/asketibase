@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
-import { getDurationDetails } from '@/constants';
+import { COVERAGE_TYPES, getDurationDetails, MEMBERSHIP_TYPES } from '@/constants';
 import { getOrCreateCustomer } from '@/features/membership/controllers/get-or-create-customer';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { getQuoteWithMembership } from '@/features/membership/controllers/quote-memberships';
@@ -91,8 +91,8 @@ export async function createCheckoutAction(id: string) {
             currency: quote.currency,
             product_data: {
               name: 'Asketi Membership',
-              description: `Membership Type: ${quote.memberships.membership_type} |
-              Coverage Type: ${quote.memberships.coverage_type} |
+              description: `Membership Type: ${MEMBERSHIP_TYPES[quote.memberships.membership_type as keyof typeof MEMBERSHIP_TYPES]} |
+              Coverage Type: ${COVERAGE_TYPES[quote.memberships.coverage_type as keyof typeof COVERAGE_TYPES]} |
               Duration Type: ${getDurationDetails(quote.memberships.duration_type).title}`,
             },
             unit_amount: Math.round(quote.total_price_with_tax * 100),

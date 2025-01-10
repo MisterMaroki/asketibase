@@ -16,7 +16,7 @@ const membershipIcons = {
 } as const;
 
 const coverageIcons = {
-  WORLDWIDE: Globe,
+  BASIC: Globe,
   PLATINUM: Award,
 } as const;
 

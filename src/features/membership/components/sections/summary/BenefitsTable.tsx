@@ -18,14 +18,6 @@ const KEY_BENEFITS = [
     bgColor: 'bg-rose-50',
     ringColor: 'ring-rose-200',
   },
-  //   {
-  //     icon: Plane,
-  //     text: 'Worldwide Coverage',
-  //     subtext: 'Travel anywhere with confidence',
-  //     color: 'text-sky-500',
-  //     bgColor: 'bg-sky-50',
-  //     ringColor: 'ring-sky-200',
-  //   },
   {
     icon: Snowflake,
     text: 'Winter Sports Cover',

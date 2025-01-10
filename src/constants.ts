@@ -5,7 +5,7 @@ export const MEMBERSHIP_TYPES = {
 } as const;
 
 export const COVERAGE_TYPES = {
-  WORLDWIDE: 'Worldwide (excluding USA, Canada, Mexico, Greenland, Bermuda & Caribbean)',
+  BASIC: 'Worldwide (excluding USA, Canada, Mexico, Greenland, Bermuda & Caribbean)',
   PLATINUM: 'Worldwide',
 } as const;
 

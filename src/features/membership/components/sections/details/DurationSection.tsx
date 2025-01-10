@@ -9,12 +9,7 @@ import { DateSelector } from './duration/DateSelector';
 import { DurationOptions } from './duration/DurationOptions';
 
 export function DurationSection() {
-  const { startDate, endDate, setStartDate, setEndDate, durationType, coverageType } = useMembershipStore();
-  console.log('🚀 ~ DurationSection ~ startDate:', startDate);
-  // const cardRef = useAutoScroll<HTMLDivElement>([coverageType]);
-
-  // Only show duration section if coverage type is selected
-  // if (!coverageType) return null;
+  const { startDate, endDate, setStartDate, setEndDate, durationType } = useMembershipStore();
 
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
