@@ -125,11 +125,11 @@ export function AuthUI({
       {mode === 'signup' && (
         <span className='text-neutral5 m-auto max-w-sm text-sm'>
           By clicking continue, you agree to our{' '}
-          <Link href='/terms' className='underline'>
+          <Link href='https://www.asketi.com/terms-of-use' className='underline'>
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href='/privacy' className='underline'>
+          <Link href='https://www.asketi.com/privacy-policy' className='underline'>
             Privacy Policy
           </Link>
           .

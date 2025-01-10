@@ -18,3 +18,13 @@ export async function checkReferralCode(code: string): Promise<ReferralCode | nu
 
   return data as ReferralCode;
 }
+
+export async function getReferralCode(id: string): Promise<ReferralCode | null> {
+  const { data, error } = await supabaseAdminClient.from('fires').select('*').eq('id', id).single();
+
+  if (error) {
+    return null;
+  }
+
+  return data;
+}

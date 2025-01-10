@@ -5,6 +5,7 @@ import { ArrowUpDown } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { formatPriceWithCurrency } from '@/libs/membership/currency';
 import { Tables } from '@/libs/supabase/types';
 import { ColumnDef } from '@tanstack/react-table';
 
@@ -90,7 +91,7 @@ export const columns: ColumnDef<Membership>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='w-full justify-start font-medium hover:bg-transparent'
         >
-          Coverage
+          Location Coverage
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );
@@ -177,11 +178,7 @@ export const columns: ColumnDef<Membership>[] = [
       const latestQuote = quotes[0]; // Assuming quotes are ordered by created_at desc
       if (!latestQuote || latestQuote.gbp_total === null) return <div className='pl-4'>-</div>;
 
-      return (
-        <div className='pl-4'>
-          £{latestQuote.gbp_total.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </div>
-      );
+      return <div className='pl-4'>{formatPriceWithCurrency(latestQuote.gbp_total, 'GBP')}</div>;
     },
     sortingFn: (rowA, rowB) => {
       const quotesA = rowA.getValue('quotes') as Quote[];

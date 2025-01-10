@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Tables } from '@/libs/supabase/types';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { MemberActions } from './MemberActions';
-
 type Member = Tables<'members'> & {
   memberships: {
     id: string;

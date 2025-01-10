@@ -3,9 +3,10 @@
 import { format } from 'date-fns';
 
 import { Badge } from '@/components/ui/badge';
+import { formatPriceWithCurrency } from '@/libs/membership/currency';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Member, Membership, Quote } from '../../types';
+import { Membership, Quote } from '../../types';
 
 export const columns: ColumnDef<Quote & { memberships: Membership }, any>[] = [
   {
@@ -60,7 +61,7 @@ export const columns: ColumnDef<Quote & { memberships: Membership }, any>[] = [
     cell: ({ row }) => {
       const currency = row.original.currency;
       const price = row.getValue('base_price') as number;
-      return `${currency}${price.toLocaleString()}`;
+      return `${formatPriceWithCurrency(price, currency)}`;
     },
   },
   {
@@ -69,7 +70,7 @@ export const columns: ColumnDef<Quote & { memberships: Membership }, any>[] = [
     cell: ({ row }) => {
       const currency = row.original.currency;
       const tax = row.getValue('tax_amount') as number;
-      return `${currency}${tax.toLocaleString()}`;
+      return `${formatPriceWithCurrency(tax, currency)}`;
     },
   },
   {
@@ -78,12 +79,7 @@ export const columns: ColumnDef<Quote & { memberships: Membership }, any>[] = [
     cell: ({ row }) => {
       const currency = row.original.currency;
       const total = row.getValue('total_price_with_tax') as number;
-      return (
-        <span className='font-medium'>
-          {currency}
-          {total.toLocaleString()}
-        </span>
-      );
+      return `${formatPriceWithCurrency(total, currency)}`;
     },
   },
   {
@@ -91,7 +87,7 @@ export const columns: ColumnDef<Quote & { memberships: Membership }, any>[] = [
     header: 'GBP Total',
     cell: ({ row }) => {
       const total = row.getValue('gbp_total') as number;
-      return `GBP${total.toLocaleString()}`;
+      return `${formatPriceWithCurrency(total, 'GBP')}`;
     },
   },
 ];

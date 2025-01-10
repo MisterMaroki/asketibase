@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { differenceInYears, format } from 'date-fns';
-import { Calculator, Calendar, Globe2, Loader2, Mail, MapPin, Phone, User } from 'lucide-react';
+import { Calendar, Loader2, Mail, MapPin, Phone, User } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { checkReferralCode, ReferralCode } from '@/features/membership/controllers/check-referral-code';
+import { getReferralCode, ReferralCode } from '@/features/membership/controllers/check-referral-code';
 
 import { Member, Membership, Quote } from '../types';
 
@@ -26,20 +26,30 @@ interface DetailsPanelProps {
 export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<Membership | null>(null);
-  console.log('🚀 ~ DetailsPanel ~ data:', data);
   const [error, setError] = useState<string | null>(null);
 
   const [referralCode, setReferralCode] = useState<ReferralCode | null>(null);
 
   useEffect(() => {
-    if (open && id && data?.quotes?.[0]?.referral_code_id) {
-      const fetchReferralCode = async () => {
-        const code = await checkReferralCode(data.quotes?.[0]?.referral_code_id || '');
+    const fetchReferralCode = async () => {
+      if (!data?.quotes?.[0]?.referral_code_id) {
+        setReferralCode(null);
+        return;
+      }
+
+      try {
+        const code = await getReferralCode(data.quotes[0].referral_code_id);
         setReferralCode(code);
-      };
+      } catch (error) {
+        console.error('Error fetching referral code:', error);
+        setReferralCode(null);
+      }
+    };
+
+    if (open && data) {
       fetchReferralCode();
     }
-  }, [open, id]);
+  }, [open, data]);
 
   useEffect(() => {
     if (open && id) {
@@ -187,12 +197,9 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
       return `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`);
     });
 
-    console.log('Member data:', sortedMembers);
-
     return (
       <div className='space-y-3'>
         {sortedMembers.map((member: Member) => {
-          console.log('Rendering member:', member);
           const cleanPhoneNumber = member.contact_number?.replace(/\s+/g, '').replace(/^0+/, ''); // Remove leading zeros
           const formattedPhoneNumber =
             member.contact_number && member.country_code

@@ -357,14 +357,14 @@ export function QuoteGenerator({
             <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
               {/* Legal Links */}
               <div className='flex flex-wrap gap-x-6 gap-y-2 text-sm'>
-                <a href='https://asketi.com/terms' className='text-primary hover:underline'>
+                <a href='https://www.asketi.com/terms-of-use' className='text-primary hover:underline'>
                   Terms & Conditions
                 </a>
-                <a href='https://asketi.com/privacy' className='text-primary hover:underline'>
+                <a href='https://www.asketi.com/privacy-policy' className='text-primary hover:underline'>
                   Privacy Policy
                 </a>
-                <a href='https://asketi.com/legal' className='text-primary hover:underline'>
-                  Legal Information
+                <a href='https://www.asketi.com/privacy-policy-1' className='text-primary hover:underline'>
+                  Slavery and Human Trafficking
                 </a>
               </div>
 
@@ -398,6 +398,7 @@ export function QuoteGenerator({
             </AlertDescription>
           </Alert>
         )}
+
         <Button onClick={handleGenerateQuote} disabled={!canContinue || isLoading} className='w-full'>
           {isLoading ? (
             <>

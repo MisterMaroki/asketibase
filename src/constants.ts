@@ -9,7 +9,6 @@ export const COVERAGE_TYPES = {
   PLATINUM: 'Worldwide',
 } as const;
 
-// Duration types must match the database values
 export const DURATION_TYPES = {
   expat_year: 'expat_year',
   multi_trip: 'multi_trip',
