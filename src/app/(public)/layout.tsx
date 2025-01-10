@@ -39,11 +39,17 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body className={cn('font-sans antialiased', inter.className)}>
         <ThemeProvider>
           <Toaster />
-          <div className='m-auto flex max-w-[1440px] flex-col px-2 md:px-4'>
+          <div className='m-auto flex h-[95dvh] max-w-[1440px] flex-col px-2 md:px-4'>
             <AppBar />
             <div className='absolute inset-0' />
             <main className='relative flex-1'>
               <div className='relative h-full'>{children}</div>
+              {/* Help Text */}
+              <div className='flex-1 text-center text-sm text-muted-foreground'>
+                <p className='pb-6'>
+                  Need help? Contact our support team at <a href='mailto:support@asketi.com'>support@asketi.com</a>
+                </p>
+              </div>
             </main>
           </div>
           <Analytics />
