@@ -74,6 +74,8 @@ export default async function MembershipsPage() {
       )
     `,
     )
+    // not 'draft'
+    .not('status', 'eq', 'draft')
     .order('created_at', { ascending: false });
 
   return (

@@ -320,8 +320,11 @@ export function DetailsPanel({ type, id, open, onOpenChange }: DetailsPanelProps
               <Badge variant='outline' className='h-6 w-fit px-3 text-sm capitalize'>
                 {data.status}
               </Badge>
-              <Badge variant={riskLevel === 1 ? 'destructive' : 'secondary'} className='h-6 w-fit px-3 text-sm'>
-                Risk Level {riskLevel}
+              <Badge
+                variant={riskLevel === 1 ? 'destructive' : 'secondary'}
+                className='h-6 w-fit shrink-0 px-3 text-sm'
+              >
+                Risk {riskLevel}
               </Badge>
             </div>
           </div>

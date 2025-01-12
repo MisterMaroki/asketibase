@@ -17,6 +17,18 @@ export const columns: ColumnDef<Quote & { memberships: Membership }, any>[] = [
     },
   },
   {
+    accessorKey: 'memberships.status',
+    header: 'Status',
+    cell: ({ row }) => {
+      const status = row.original.memberships.status;
+      return (
+        <Badge variant='outline' className='capitalize'>
+          {status}
+        </Badge>
+      );
+    },
+  },
+  {
     id: 'customer',
     header: 'Customer',
     cell: ({ row }) => {
