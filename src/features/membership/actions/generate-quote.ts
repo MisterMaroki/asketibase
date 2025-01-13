@@ -7,13 +7,14 @@ import { getExchangeRate } from '@/libs/exchange-rates/get-rate';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
 import { checkReferralCode } from '../controllers/check-referral-code';
+import { getMembershipBySession } from '../controllers/manage-session';
 import { createMember } from '../controllers/members';
 import { validateApplication } from '../validations/membership';
 import { MembershipSchema } from '../validations/schemas';
 
 import { logOperation } from './log-action';
 
-export async function generateQuoteAction(data: MembershipSchema) {
+export async function generateQuoteAction(data: MembershipSchema & { sessionId?: string }) {
   try {
     await logOperation({
       level: 'info',
@@ -24,6 +25,13 @@ export async function generateQuoteAction(data: MembershipSchema) {
     if (!valid.success) {
       throw new Error(JSON.stringify(valid.errors));
     }
+
+    // Check if there's an existing membership for this session
+    let existingMembership = null;
+    if (!data.sessionId) {
+      throw new Error('Session ID is required');
+    }
+    existingMembership = await getMembershipBySession(data.sessionId);
 
     // Check referral code if provided
     let discountObject = null;
@@ -108,22 +116,41 @@ export async function generateQuoteAction(data: MembershipSchema) {
 
     if (medicalError) throw new Error('Failed to fetch medical factors');
 
-    // 1. Create a new membership record
-    const { data: membership, error: membershipError } = await supabaseAdminClient
-      .from('memberships')
-      .insert({
-        // user_id:we set this in the create-checkout-action
-        membership_type: data.membershipType,
-        coverage_type: data.coverageType,
-        duration_type: data.durationType as 'expat_year' | 'multi_trip' | 'single_trip',
-        referral_source: data.referralSource,
-        start_date: data.startDate,
-        end_date: data.endDate || calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
-      })
-      .select()
-      .single();
+    // Create or update membership record
+    const membershipData = {
+      membership_type: data.membershipType,
+      coverage_type: data.coverageType,
+      duration_type: data.durationType as 'expat_year' | 'multi_trip' | 'single_trip',
+      referral_source: data.referralSource,
+      start_date: data.startDate,
+      end_date: data.endDate || calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
+      session_id: data.sessionId,
+    };
 
-    if (membershipError) throw new Error('Failed to create membership', membershipError);
+    let membership;
+    if (existingMembership) {
+      const { data: updatedMembership, error: membershipError } = await supabaseAdminClient
+        .from('memberships')
+        .update(membershipData)
+        .eq('id', existingMembership.id)
+        .select()
+        .single();
+
+      if (membershipError) throw new Error('Failed to update membership');
+      membership = updatedMembership;
+
+      // Delete existing members
+      await supabaseAdminClient.from('members').delete().eq('membership_id', existingMembership.id);
+    } else {
+      const { data: newMembership, error: membershipError } = await supabaseAdminClient
+        .from('memberships')
+        .insert(membershipData)
+        .select()
+        .single();
+
+      if (membershipError) throw new Error('Failed to create membership');
+      membership = newMembership;
+    }
 
     // Calculate price for each member
     const memberPrices = data.members

@@ -304,6 +304,24 @@ export type Database = {
           },
         ]
       }
+      membership_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       memberships: {
         Row: {
           coverage_type: string
@@ -314,6 +332,7 @@ export type Database = {
           membership_number: number
           membership_type: string
           referral_source: string | null
+          session_id: string | null
           start_date: string
           status: Database["public"]["Enums"]["membership_status"]
           updated_at: string | null
@@ -328,6 +347,7 @@ export type Database = {
           membership_number?: number
           membership_type: string
           referral_source?: string | null
+          session_id?: string | null
           start_date: string
           status?: Database["public"]["Enums"]["membership_status"]
           updated_at?: string | null
@@ -342,6 +362,7 @@ export type Database = {
           membership_number?: number
           membership_type?: string
           referral_source?: string | null
+          session_id?: string | null
           start_date?: string
           status?: Database["public"]["Enums"]["membership_status"]
           updated_at?: string | null
@@ -353,6 +374,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memberships_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "membership_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -574,7 +602,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_membership_status: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       duration_type: "expat_year" | "multi_trip" | "single_trip"

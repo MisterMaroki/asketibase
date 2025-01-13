@@ -38,6 +38,7 @@ export type MembershipState = {
   referralCode: string;
   referralSource: string;
   quoteId: string | null;
+  sessionId: string | null;
   originalState: {
     membershipType: keyof typeof MEMBERSHIP_TYPES | null;
     coverageType: keyof typeof COVERAGE_TYPES | null;
@@ -61,6 +62,7 @@ export type MembershipState = {
   setEndDate: (date: string | null) => void;
   setReferralSource: (source: string) => void;
   setQuoteId: (id: string | null) => void;
+  setSessionId: (id: string | null) => void;
   addMember: (member: Omit<Member, 'id'>) => void;
   updateMember: (id: string, member: Partial<Member>) => void;
   saveOriginalState: () => void;
@@ -86,12 +88,11 @@ const defaultState = {
   currency: '',
   startDate: '',
   endDate: '',
-  // members: [defaultMember],
   members: [],
-  // referralCode: 'WELCOME10',
   referralCode: '',
   referralSource: '',
   quoteId: null,
+  sessionId: null,
   originalState: null,
   medicalState: {
     memberConditions: {},
@@ -139,6 +140,7 @@ export const useMembershipStore = create<MembershipState>()(
       setEndDate: (date) => set({ endDate: date }),
       setReferralSource: (source) => set({ referralSource: source }),
       setQuoteId: (id) => set({ quoteId: id }),
+      setSessionId: (id) => set({ sessionId: id }),
       addMember: (member) =>
         set((state) => ({
           members: [...state.members, { ...member, id: nanoid() }],

@@ -73,6 +73,7 @@ export function QuoteGenerator({
     medicalState,
     quoteId,
     setQuoteId,
+    sessionId,
   } = useMembershipStore();
   const router = useRouter();
 
@@ -169,11 +170,12 @@ export function QuoteGenerator({
     }
 
     try {
-      if (!coverageType || !durationType || !membershipType || !startDate || !currency || !members) {
+      if (!coverageType || !durationType || !membershipType || !startDate || !currency || !members || !sessionId) {
         throw new Error('Missing required fields');
       }
       // Generate quote
       const quote = await generateQuoteAction({
+        sessionId,
         membershipType,
         coverageType,
         durationType,
