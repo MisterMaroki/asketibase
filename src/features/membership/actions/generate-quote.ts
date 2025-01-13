@@ -237,6 +237,25 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
       dailyTotal: mp.dailyTotal * exchangeRate,
     }));
 
+    
+    // Delete any existing quotes for this membership
+    if (existingMembership) {
+      const { error: deleteError } = await supabaseAdminClient
+        .from('quotes')
+        .delete()
+        .eq('membership_id', membership.id);
+
+      if (deleteError) {
+        console.error('Error deleting existing quotes:', deleteError);
+      }
+
+      await logOperation({
+        level: 'info',
+        operation: 'delete_existing_quotes',
+        details: { membership_id: membership.id },
+      });
+    }
+
     // Create quote record with amounts in chosen currency and GBP total
     const { data: quote, error: quoteError } = await supabaseAdminClient
       .from('quotes')
@@ -265,7 +284,7 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
 
     await logOperation({
       level: 'info',
-      operation: 'create_quote',
+      operation: 'create_quote_success',
       details: { quote },
     });
 
