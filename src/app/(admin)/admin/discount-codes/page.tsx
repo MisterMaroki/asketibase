@@ -17,10 +17,10 @@ export default async function DiscountCodesPage() {
   return (
     <main className='container mx-auto'>
       <div className='mb-8 flex items-center justify-between'>
-        <h1 className='flex items-center gap-2 text-3xl font-bold'>
+        <h2 className='flex items-center gap-2 text-3xl font-bold'>
           <Percent className='h-8 w-8 text-primary' />
           Discount Codes
-        </h1>
+        </h2>
         <CreateDiscountCode />
       </div>
 

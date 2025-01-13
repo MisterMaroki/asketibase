@@ -300,7 +300,13 @@ export default async function AdminPage() {
     }, []) || [];
 
   const totalMemberships = memberships?.length || 0;
-  const activeMemberships = statusCounts.find((s) => s.status === 'active')?.count || 0;
+  const activeMembers =
+    memberships?.reduce(
+      (acc, membership) => (membership.status === 'active' ? acc + (membership.members?.length || 0) : acc),
+      0,
+    ) || 0;
+
+  // const activeMembers = statusCounts.find((s) => s.status === 'active')?.count || 0;
   const pendingMemberships = statusCounts.find((s) => s.status === 'draft')?.count || 0;
   const recentAlerts = 0;
 
@@ -386,7 +392,7 @@ export default async function AdminPage() {
       <Suspense fallback={<LoadingState />}>
         <MetricCards
           totalMemberships={totalMemberships}
-          activeMembers={activeMemberships}
+          activeMembers={activeMembers}
           pendingMemberships={pendingMemberships}
           recentAlerts={recentAlerts}
         />
