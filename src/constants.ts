@@ -18,7 +18,7 @@ export const DURATION_TYPES = {
 export const DURATION_MAX_TRIP_DURATION = {
   expat_year: 365,
   multi_trip: 31,
-  single_trip: 180,
+  single_trip: 365,
 } as const;
 
 export const getDurationDetails = (durationType: keyof typeof DURATION_TYPES) => {
@@ -38,7 +38,7 @@ export const DURATION_DETAILS = {
   },
   single_trip: {
     title: 'Single Trip Cover',
-    description: 'Policy Holder Specifies Coverage Duration: Minimum 2 Days; Maximum 180 Day',
+    description: 'Policy Holder Specifies Coverage Duration: Minimum 2 Days; Maximum 365 Days',
     maxTripDuration: DURATION_MAX_TRIP_DURATION.single_trip,
   },
 } as const;

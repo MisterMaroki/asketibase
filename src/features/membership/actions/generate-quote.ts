@@ -67,7 +67,7 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
         }
         const start = new Date(data.startDate);
         const end = new Date(data.endDate);
-        numberOfDays = Math.min(Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)), 180);
+        numberOfDays = Math.min(Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)), 365);
         break;
     }
 

@@ -40,7 +40,7 @@ export function DateSelector({
     minDate.setDate(minDate.getDate() + 2); // Minimum 2 days
 
     const maxDate = new Date(startDate);
-    maxDate.setDate(maxDate.getDate() + 180); // Maximum 180 days
+    maxDate.setDate(maxDate.getDate() + 365); // Maximum 365 days
 
     return {
       min: minDate,
