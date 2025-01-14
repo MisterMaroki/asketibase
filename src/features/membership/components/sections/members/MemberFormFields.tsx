@@ -230,6 +230,7 @@ export function MemberFormFields({
         <Label htmlFor='contactNumber'>Mobile Number</Label>
         <PhoneInput
           countryCode={watch('countryCode')}
+          autoComplete='tel'
           onCountryCodeChange={(value) => handleFieldUpdate('countryCode', value)}
           {...registerWithOnChange('contactNumber')}
           error={touchedFields.contactNumber && !!errors.contactNumber}
@@ -248,7 +249,6 @@ export function MemberFormFields({
           {...registerWithOnChange('landlineNumber')}
           type='tel'
           id='landlineNumber'
-          autoComplete='tel'
           placeholder='Enter your landline number'
           className={cn(touchedFields.landlineNumber && errors.landlineNumber && 'border-destructive')}
         />
