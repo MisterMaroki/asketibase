@@ -6,7 +6,7 @@ export async function createSession() {
   const { data: session, error } = await supabaseAdminClient.from('membership_sessions').insert({}).select().single();
 
   if (error) {
-    console.error('Error creating session:', error);
+    // console.error('Error creating session:', error);
     throw new Error('Failed to create session');
   }
 
@@ -21,7 +21,7 @@ export async function getSession(sessionId: string) {
     .single();
 
   if (error) {
-    console.error('Error getting session:', error);
+    // console.error('Error getting session:', error);
     return null;
   }
 
@@ -36,7 +36,7 @@ export async function getMembershipBySession(sessionId: string) {
     .single();
 
   if (error) {
-    console.error('Error getting membership by session:', error);
+    // console.error('Error getting membership by session:', error);
     return null;
   }
 
