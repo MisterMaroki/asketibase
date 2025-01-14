@@ -20,7 +20,6 @@ export default function MembershipPage() {
     async function initSession() {
       try {
         const session = await createSession();
-        console.log('🚀 ~ initSession ~ session:', session);
         if (session) {
           setSessionId(session.id);
         }

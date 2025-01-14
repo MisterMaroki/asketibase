@@ -50,13 +50,19 @@ export function MembershipOverview({ quote }: { quote: QuoteType | null }) {
     const validateCode = async () => {
       if (!referralCode) {
         setValidDiscount(null);
+        setIsValidatingCode(false);
         return;
       }
 
       setIsValidatingCode(true);
       try {
         const result = await checkReferralCode(referralCode);
-        setValidDiscount(result?.discount_percent || null);
+
+        if (!result || result.discount_percent === null) {
+          throw new Error('Invalid discount code');
+        }
+
+        setValidDiscount(result.discount_percent);
       } catch (error) {
         setValidDiscount(null);
       } finally {

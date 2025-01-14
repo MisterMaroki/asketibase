@@ -239,7 +239,7 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
     }));
 
     // Delete any existing quotes for this membership
-    if (existingMembership) {
+    if (membership) {
       const { error: deleteError } = await supabaseAdminClient
         .from('quotes')
         .delete()
@@ -247,13 +247,13 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
 
       if (deleteError) {
         console.error('Error deleting existing quotes:', deleteError);
+      } else {
+        await logOperation({
+          level: 'info',
+          operation: 'delete_existing_quotes',
+          details: { membership_id: membership.id },
+        });
       }
-
-      await logOperation({
-        level: 'info',
-        operation: 'delete_existing_quotes',
-        details: { membership_id: membership.id },
-      });
     }
 
     // Create quote record with amounts in chosen currency and GBP total

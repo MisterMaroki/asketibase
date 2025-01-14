@@ -137,20 +137,24 @@ export function QuoteGenerator({
     const code = searchParams.get('code');
 
     if (code === 'WELCOME10' && code !== referralCode) {
-      // Set the referral code
-      setReferralCode(code);
+      const applyDiscountCode = async () => {
+        setIsLoading(true);
+        setError(null);
 
-      // If we have all necessary data, generate a new quote
-      if (membershipType && coverageType && durationType && startDate && currency && members && sessionId) {
-        const generateNewQuote = async () => {
-          setIsLoading(true);
-          setError(null);
+        try {
+          // First set the referral code
+          setReferralCode(code);
 
-          try {
+          // Wait a bit for the code to be validated
+          await new Promise((resolve) => setTimeout(resolve, 800));
+
+          // If we have all necessary data, generate a new quote
+          if (membershipType && coverageType && durationType && startDate && currency && members && sessionId) {
             // Clear existing quote
             onQuoteGenerated(null);
             setQuoteId(null);
 
+            // Generate new quote with discount code
             const newQuote = await generateQuoteAction({
               sessionId,
               membershipType,
@@ -160,7 +164,7 @@ export function QuoteGenerator({
               endDate,
               currency,
               members: members.map((member, i) => ({ ...member, isPrimary: i === 0 })) as MemberSchema[],
-              referralCode: code,
+              referralCode: code, // Use the code directly here
               referralSource,
               medicalState,
             });
@@ -171,23 +175,23 @@ export function QuoteGenerator({
 
             setQuoteId(newQuote.data.id);
             onQuoteGenerated(newQuote.data);
-
-            // Clean up the URL without refreshing the page
-            const params = new URLSearchParams(searchParams);
-            params.delete('code');
-            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-          } catch (err) {
-            console.error('Failed to apply discount code:', err);
-            setError(err instanceof Error ? err.message : 'Failed to apply discount code');
-          } finally {
-            setIsLoading(false);
           }
-        };
 
-        generateNewQuote();
-      }
+          // Clean up the URL without refreshing the page
+          const params = new URLSearchParams(searchParams);
+          params.delete('code');
+          router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        } catch (err) {
+          console.error('Failed to apply discount code:', err);
+          setError(err instanceof Error ? err.message : 'Failed to apply discount code');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      applyDiscountCode();
     }
-  }, [searchParams, referralCode]);
+  }, [searchParams]);
 
   const handleGenerateQuote = async () => {
     if (quote) {
