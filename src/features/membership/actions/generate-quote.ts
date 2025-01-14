@@ -5,6 +5,7 @@ import { differenceInYears } from 'date-fns';
 import { DURATION_TYPES } from '@/constants';
 import { getExchangeRate } from '@/libs/exchange-rates/get-rate';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
+import { Database } from '@/libs/supabase/types';
 
 import { checkReferralCode } from '../controllers/check-referral-code';
 import { getMembershipBySession } from '../controllers/manage-session';
@@ -127,7 +128,7 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
       session_id: data.sessionId,
     };
 
-    let membership;
+    let membership: Database['public']['Tables']['memberships']['Row'];
     if (existingMembership) {
       const { data: updatedMembership, error: membershipError } = await supabaseAdminClient
         .from('memberships')
@@ -237,7 +238,6 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
       dailyTotal: mp.dailyTotal * exchangeRate,
     }));
 
-    
     // Delete any existing quotes for this membership
     if (existingMembership) {
       const { error: deleteError } = await supabaseAdminClient

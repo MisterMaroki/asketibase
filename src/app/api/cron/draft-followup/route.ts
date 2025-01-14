@@ -1,15 +1,24 @@
-import { headers } from 'next/headers';
+'use server';
+
 import { NextResponse } from 'next/server';
 
 import { DraftFollowupEmail } from '@/features/emails/draft-followup';
 import { resendClient } from '@/libs/resend/resend-client';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
-export const dynamic = 'force-dynamic';
+export async function GET(request: Request) {
+  // Log the incoming request headers for debugging
+  const authHeader = request.headers.get('authorization');
+  console.log('Received auth header:', authHeader);
+  console.log('Expected auth header:', `Bearer ${process.env.CRON_SECRET}`);
 
-export async function GET() {
-  const headersList = await headers();
-  const authHeader = headersList.get('authorization');
+  // Check if auth header exists
+  if (!authHeader) {
+    return new NextResponse(JSON.stringify({ error: 'Missing authorization header' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new NextResponse('Unauthorized', { status: 401 });
