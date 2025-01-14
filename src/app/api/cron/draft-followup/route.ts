@@ -6,7 +6,7 @@ import { DraftFollowupEmail } from '@/features/emails/draft-followup';
 import { resendClient } from '@/libs/resend/resend-client';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   // Log the incoming request headers for debugging
   const authHeader = request.headers.get('authorization');
   console.log('Received auth header:', authHeader);
@@ -34,11 +34,11 @@ export async function GET(request: Request) {
       .lt('updated_at', fifteenMinutesAgo)
       .is('followup_sent', null);
 
-    if (membershipError) throw membershipError;
+    // if (membershipError) throw membershipError;
 
-    if (!memberships || memberships.length === 0) {
-      return NextResponse.json({ message: 'No draft memberships to process' });
-    }
+    // if (!memberships || memberships.length === 0) {
+    //   return NextResponse.json({ message: 'No draft memberships to process' });
+    // }
 
     // const emailPromises = memberships.map(async (membership) => {
     //   const primaryMember = membership.members.find((m) => m.is_primary);
