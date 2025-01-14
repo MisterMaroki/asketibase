@@ -1,6 +1,6 @@
 'use client';
 
-import { differenceInDays, differenceInMonths, differenceInYears } from 'date-fns';
+import { addMonths, addYears, differenceInDays, differenceInMonths, differenceInYears } from 'date-fns';
 import { Calendar, CalendarClock, Plane } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
@@ -20,9 +20,22 @@ export function DurationOptions() {
   const getDurationText = () => {
     if (!startDate || !endDate) return null;
 
-    const years = differenceInYears(endDate, startDate);
-    const months = differenceInMonths(endDate, startDate) % 12;
-    const days = differenceInDays(endDate, startDate) % 30;
+    const startDateTime = new Date(startDate);
+    const endDateTime = new Date(endDate);
+
+    const years = differenceInYears(endDateTime, startDateTime);
+    let remainingDate = startDateTime;
+
+    if (years > 0) {
+      remainingDate = addYears(remainingDate, years);
+    }
+
+    const months = differenceInMonths(endDateTime, remainingDate);
+    if (months > 0) {
+      remainingDate = addMonths(remainingDate, months);
+    }
+
+    const days = differenceInDays(endDateTime, remainingDate);
 
     const parts = [];
     if (years > 0) parts.push(`${years} ${years === 1 ? 'year' : 'years'}`);
@@ -41,7 +54,11 @@ export function DurationOptions() {
         onValueChange={(value) => setDurationType(value as keyof typeof DURATION_TYPES)}
         className='grid gap-3 sm:gap-4'
       >
-        {Object.entries(DURATION_DETAILS).map(([key, { title, description }]) => {
+        {Object.entries({
+          // [DURATION_TYPES.expat_year]: DURATION_DETAILS.expat_year,
+          [DURATION_TYPES.multi_trip]: DURATION_DETAILS.multi_trip,
+          [DURATION_TYPES.single_trip]: DURATION_DETAILS.single_trip,
+        }).map(([key, { title, description }]) => {
           const Icon = durationIcons[key as keyof typeof DURATION_TYPES];
           return (
             <Label
