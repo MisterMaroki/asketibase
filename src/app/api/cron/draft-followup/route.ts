@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server';
 
 import { DraftFollowupEmail } from '@/features/emails/draft-followup';
+import { logOperation } from '@/features/membership/actions/log-action';
 import { resendClient } from '@/libs/resend/resend-client';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
@@ -25,49 +26,66 @@ export async function POST(request: Request) {
   }
 
   try {
+    logOperation({
+      level: 'info',
+      operation: 'draft_followups_started',
+      details: {
+        message: 'Starting draft followups',
+      },
+    });
+
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
 
     const { data: memberships, error: membershipError } = await supabaseAdminClient
       .from('memberships')
       .select('*, members!inner(*)')
       .eq('status', 'draft')
-      .lt('updated_at', fifteenMinutesAgo)
+      .lte('updated_at', fifteenMinutesAgo)
       .is('followup_sent', null);
 
-    // if (membershipError) throw membershipError;
+    if (membershipError) throw membershipError;
 
-    // if (!memberships || memberships.length === 0) {
-    //   return NextResponse.json({ message: 'No draft memberships to process' });
-    // }
+    if (!memberships || memberships.length === 0) {
+      return NextResponse.json({ message: 'No draft memberships to process' });
+    }
 
-    // const emailPromises = memberships.map(async (membership) => {
-    //   const primaryMember = membership.members.find((m) => m.is_primary);
-    //   if (!primaryMember) return;
+    const emailPromises = memberships.map(async (membership) => {
+      const primaryMember = membership.members.find((m) => m.is_primary);
+      if (!primaryMember) return;
 
-    //   try {
-    await resendClient.emails.send({
-      from: 'ASKETI <memberships@asketi.com>',
-      // to: primaryMember.email,
-      to: 'omar987@hotmail.co.uk',
-      subject: 'Complete Your ASKETI Membership Application',
-      react: DraftFollowupEmail({
-        // firstName: primaryMember.first_name,
-        // membershipNumber: `GOASK-J-98001/${membership.membership_number}`,
-        firstName: 'Omar',
-        membershipNumber: `GOASK-J-98001/123456`,
-      }),
+      try {
+        await resendClient.emails.send({
+          from: 'ASKETI <memberships@asketi.com>',
+          to: primaryMember.email,
+          // to: 'omar987@hotmail.co.uk',
+          subject: 'Complete Your ASKETI Membership Application',
+          react: DraftFollowupEmail({
+            firstName: primaryMember.first_name,
+            membershipNumber: `GOASK-J-98001/${membership.membership_number}`,
+            // firstName: 'Omar',
+            // membershipNumber: `GOASK-J-98001/123456`,
+          }),
+        });
+
+        logOperation({
+          level: 'info',
+          operation: 'draft_followup_sent',
+          details: {
+            membershipId: membership.id,
+            emailSent: true,
+          },
+        });
+
+        await supabaseAdminClient
+          .from('memberships')
+          .update({ followup_sent: new Date().toISOString() })
+          .eq('id', membership.id);
+      } catch (error) {
+        console.error('Error sending email:', error);
+      }
     });
 
-    //     await supabaseAdminClient
-    //       .from('memberships')
-    //       .update({ followup_sent: new Date().toISOString() })
-    //       .eq('id', membership.id);
-    //   } catch (error) {
-    //     console.error('Error sending email:', error);
-    //   }
-    // });
-
-    // await Promise.all(emailPromises);
+    await Promise.all(emailPromises);
 
     return NextResponse.json({
       success: true,
