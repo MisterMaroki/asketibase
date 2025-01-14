@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { FieldError } from 'react-hook-form';
 
@@ -74,8 +74,10 @@ export function QuoteGenerator({
     quoteId,
     setQuoteId,
     sessionId,
+    setReferralCode,
   } = useMembershipStore();
   const router = useRouter();
+  const pathname = usePathname();
 
   // Load quote from quoteId if available
   useEffect(() => {
@@ -129,6 +131,63 @@ export function QuoteGenerator({
       }, 100);
     }
   }, [errorParam]);
+
+  // Handle discount code from URL params
+  useEffect(() => {
+    const code = searchParams.get('code');
+
+    if (code === 'WELCOME10' && code !== referralCode) {
+      // Set the referral code
+      setReferralCode(code);
+
+      // If we have all necessary data, generate a new quote
+      if (membershipType && coverageType && durationType && startDate && currency && members && sessionId) {
+        const generateNewQuote = async () => {
+          setIsLoading(true);
+          setError(null);
+
+          try {
+            // Clear existing quote
+            onQuoteGenerated(null);
+            setQuoteId(null);
+
+            const newQuote = await generateQuoteAction({
+              sessionId,
+              membershipType,
+              coverageType,
+              durationType,
+              startDate,
+              endDate,
+              currency,
+              members: members.map((member, i) => ({ ...member, isPrimary: i === 0 })) as MemberSchema[],
+              referralCode: code,
+              referralSource,
+              medicalState,
+            });
+
+            if (!newQuote.success || !newQuote.data) {
+              throw new Error('Failed to generate quote with discount code');
+            }
+
+            setQuoteId(newQuote.data.id);
+            onQuoteGenerated(newQuote.data);
+
+            // Clean up the URL without refreshing the page
+            const params = new URLSearchParams(searchParams);
+            params.delete('code');
+            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+          } catch (err) {
+            console.error('Failed to apply discount code:', err);
+            setError(err instanceof Error ? err.message : 'Failed to apply discount code');
+          } finally {
+            setIsLoading(false);
+          }
+        };
+
+        generateNewQuote();
+      }
+    }
+  }, [searchParams, referralCode]);
 
   const handleGenerateQuote = async () => {
     if (quote) {

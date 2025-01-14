@@ -322,6 +322,7 @@ export type Database = {
           created_at: string | null;
           duration_type: Database['public']['Enums']['duration_type'];
           end_date: string | null;
+          followup_sent: string | null;
           id: string;
           membership_number: number;
           membership_type: string;
@@ -337,6 +338,7 @@ export type Database = {
           created_at?: string | null;
           duration_type: Database['public']['Enums']['duration_type'];
           end_date?: string | null;
+          followup_sent?: string | null;
           id?: string;
           membership_number?: number;
           membership_type: string;
@@ -352,6 +354,7 @@ export type Database = {
           created_at?: string | null;
           duration_type?: Database['public']['Enums']['duration_type'];
           end_date?: string | null;
+          followup_sent?: string | null;
           id?: string;
           membership_number?: number;
           membership_type?: string;

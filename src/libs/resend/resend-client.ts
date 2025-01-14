@@ -1,3 +1,5 @@
+'use server';
+
 import { Resend } from 'resend';
 
 import { getEnvVar } from '@/utils/get-env-var';
