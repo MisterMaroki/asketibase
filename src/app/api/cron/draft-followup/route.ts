@@ -71,7 +71,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      processed: memberships.length,
+      processed: memberships?.length || 0,
     });
   } catch (error: unknown) {
     console.error('Error in draft followup cron:', error);
