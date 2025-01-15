@@ -49,8 +49,6 @@ export const MEMBER_LIMITS = {
   FAMILY: 15,
 } as const;
 
-export const HIGH_RISK_COUNTRIES = ['Russia', 'China', 'Iran', 'North Korea', 'Cuba', 'Belarus'] as const;
-
 export const CURRENCIES = [
   { code: 'USD', symbol: '$' },
   { code: 'EUR', symbol: '€' },

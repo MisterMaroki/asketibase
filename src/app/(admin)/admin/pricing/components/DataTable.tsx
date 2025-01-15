@@ -2,13 +2,11 @@
 
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
@@ -17,7 +15,7 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  onSave: (id: string, updates: Partial<TData>) => Promise<void>;
+  onSave?: (id: string, updates: Partial<TData>) => Promise<void>;
 }
 
 export function DataTable<TData, TValue>({ columns, data, onSave }: DataTableProps<TData, TValue>) {
@@ -27,7 +25,6 @@ export function DataTable<TData, TValue>({ columns, data, onSave }: DataTablePro
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     meta: {
@@ -71,14 +68,6 @@ export function DataTable<TData, TValue>({ columns, data, onSave }: DataTablePro
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className='flex items-center justify-end space-x-2 py-4'>
-        <Button variant='outline' size='sm' onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-          Previous
-        </Button>
-        <Button variant='outline' size='sm' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-          Next
-        </Button>
       </div>
     </div>
   );

@@ -7,16 +7,19 @@ import { LoadingState } from '@/features/membership/components/LoadingState';
 
 import { getAgeFactors } from './age-factors/actions';
 import { AgeFactorsTable } from './age-factors/components/AgeFactorsTable';
-import { CountryBasePricesTable } from './components/CountryBasePricesTable';
+import { CountryBasePricesTable } from './country-prices/components/CountryBasePricesTable';
+import { getCoverageFactors } from './coverage-factors/actions';
+import { CoverageFactorsTable } from './coverage-factors/components/CoverageFactorsTable';
 import { getMedicalRiskFactors } from './medical-risk/actions';
 import { MedicalRiskFactorsTable } from './medical-risk/components/MedicalRiskFactorsTable';
 import { getCountryBasePrices } from './actions';
 
 export default async function PricingPage() {
-  const [prices, medicalRiskFactors, ageFactors] = await Promise.all([
+  const [prices, medicalRiskFactors, ageFactors, coverageFactors] = await Promise.all([
     getCountryBasePrices(),
     getMedicalRiskFactors(),
     getAgeFactors(),
+    getCoverageFactors(),
   ]);
 
   return (
@@ -30,6 +33,7 @@ export default async function PricingPage() {
           <TabsTrigger value='country-prices'>Country Prices</TabsTrigger>
           <TabsTrigger value='medical-risk'>Medical Factors</TabsTrigger>
           <TabsTrigger value='age-factors'>Age Factors</TabsTrigger>
+          <TabsTrigger value='location-factors'>Location Factors</TabsTrigger>
         </TabsList>
         <TabsContent value='country-prices'>
           <Suspense fallback={<LoadingState />}>
@@ -44,6 +48,11 @@ export default async function PricingPage() {
         <TabsContent value='age-factors'>
           <Suspense fallback={<LoadingState />}>
             <AgeFactorsTable data={ageFactors} />
+          </Suspense>
+        </TabsContent>
+        <TabsContent value='location-factors'>
+          <Suspense fallback={<LoadingState />}>
+            <CoverageFactorsTable data={coverageFactors} />
           </Suspense>
         </TabsContent>
       </Tabs>

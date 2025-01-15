@@ -10,5 +10,5 @@ interface CountryBasePricesTableProps {
 }
 
 export function CountryBasePricesTable({ data }: CountryBasePricesTableProps) {
-  return <DataTable columns={columns} data={data} />;
+  return <DataTable columns={columns} data={data} pageSize={500} />;
 }

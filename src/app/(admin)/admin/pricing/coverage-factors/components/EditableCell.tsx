@@ -8,28 +8,27 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { Tables } from '@/libs/supabase/types';
 
-import { updateCountryBasePrice } from '../actions';
+import { updateCoverageFactor } from '../actions';
 
 interface EditableCellProps {
   id: string;
-  value: string | number;
-  field: keyof Tables<'country_base_prices'>;
-  type?: 'text' | 'number';
+  value: number;
+  field: keyof Tables<'coverage_factors'>;
 }
 
-export function EditableCell({ id, value: initialValue, field, type = 'text' }: EditableCellProps) {
+export function EditableCell({ id, value: initialValue, field }: EditableCellProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState<typeof initialValue>(initialValue);
   const toast = useToast();
+
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      const response = await updateCountryBasePrice(id, { [field]: value });
-
-      if (!response?.success) {
-        throw new Error(response?.error || `Failed to update ${field}`);
-      }
+      await updateCoverageFactor({
+        id,
+        dailyRate: value,
+      });
 
       toast.toast({
         title: `${field} updated successfully`,
@@ -51,10 +50,12 @@ export function EditableCell({ id, value: initialValue, field, type = 'text' }: 
     return (
       <div className='flex items-center gap-2'>
         <Input
-          type={type}
+          type='number'
           value={value}
-          onChange={(e) => setValue(type === 'number' ? parseFloat(e.target.value) : e.target.value)}
+          onChange={(e) => setValue(parseFloat(e.target.value))}
           className='h-8'
+          step='0.01'
+          min='0'
         />
         <Button size='sm' variant='ghost' onClick={handleSave} disabled={isLoading}>
           {isLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : <Check className='h-4 w-4 shrink-0' />}
@@ -76,7 +77,7 @@ export function EditableCell({ id, value: initialValue, field, type = 'text' }: 
 
   return (
     <div className='cursor-pointer hover:underline' onClick={() => setIsEditing(true)}>
-      {type === 'number' ? (value as number).toLocaleString() : value}
+      {value.toLocaleString()}
     </div>
   );
 }

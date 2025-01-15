@@ -1,11 +1,9 @@
 'use client';
 
-import React from 'react';
-
 import { Tables } from '@/libs/supabase/types';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { EditableCell } from '../country-prices/components/EditableCell';
+import { EditableCell } from './EditableCell';
 
 type CountryBasePrice = Tables<'country_base_prices'>;
 
