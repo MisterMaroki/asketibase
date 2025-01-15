@@ -29,12 +29,14 @@ export default async function PricingPage() {
         Pricing Management
       </CardTitle>
       <Tabs defaultValue='country-prices'>
-        <TabsList className=''>
-          <TabsTrigger value='country-prices'>Country Prices</TabsTrigger>
-          <TabsTrigger value='medical-risk'>Medical Factors</TabsTrigger>
-          <TabsTrigger value='age-factors'>Age Factors</TabsTrigger>
-          <TabsTrigger value='location-factors'>Location Factors</TabsTrigger>
-        </TabsList>
+        <div className='relative w-full md:w-fit'>
+          <TabsList className='flex w-full overflow-x-auto whitespace-nowrap'>
+            <TabsTrigger value='country-prices'>Countries</TabsTrigger>
+            <TabsTrigger value='medical-risk'>Medical</TabsTrigger>
+            <TabsTrigger value='age-factors'>Age</TabsTrigger>
+            <TabsTrigger value='location-factors'>Location</TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value='country-prices'>
           <Suspense fallback={<LoadingState />}>
             <CountryBasePricesTable data={prices} />
