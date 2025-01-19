@@ -130,38 +130,44 @@ export default async function AdminPage() {
   // Get view events
   const { data: allViewChecks } = await supabaseAdminClient
     .from('logs')
-    .select('*')
-    .eq('operation', 'view_eligibility');
+    .select('count', { count: 'exact' })
+    .eq('operation', 'view_eligibility')
+    .single();
 
   const { data: last24HourViews } = await supabaseAdminClient
     .from('logs')
-    .select('*')
+    .select('count', { count: 'exact' })
     .eq('operation', 'view_eligibility')
-    .gte('timestamp', last24HoursISO);
+    .gte('timestamp', last24HoursISO)
+    .single();
 
   const { data: last7DayViews } = await supabaseAdminClient
     .from('logs')
-    .select('*')
+    .select('count', { count: 'exact' })
     .eq('operation', 'view_eligibility')
-    .gte('timestamp', last7DaysISO);
+    .gte('timestamp', last7DaysISO)
+    .single();
 
   // Get accept events
   const { data: allAcceptChecks } = await supabaseAdminClient
     .from('logs')
-    .select('*')
-    .eq('operation', 'accept_eligibility');
+    .select('count', { count: 'exact' })
+    .eq('operation', 'accept_eligibility')
+    .single();
 
   const { data: last24HourAccepts } = await supabaseAdminClient
     .from('logs')
-    .select('*')
+    .select('count', { count: 'exact' })
     .eq('operation', 'accept_eligibility')
-    .gte('timestamp', last24HoursISO);
+    .gte('timestamp', last24HoursISO)
+    .single();
 
   const { data: last7DayAccepts } = await supabaseAdminClient
     .from('logs')
-    .select('*')
+    .select('count', { count: 'exact' })
     .eq('operation', 'accept_eligibility')
-    .gte('timestamp', last7DaysISO);
+    .gte('timestamp', last7DaysISO)
+    .single();
 
   const calculateConversionRate = (numerator: number, denominator: number) => {
     if (denominator === 0) return 0;
@@ -332,14 +338,14 @@ export default async function AdminPage() {
   const conversionFunnelStats: ConversionFunnelStats[] = [
     {
       period: 'Last 24 Hours',
-      viewEligibility: last24HourViews?.length || 0,
-      acceptEligibility: last24HourAccepts?.length || 0,
+      viewEligibility: last24HourViews?.count || 0,
+      acceptEligibility: last24HourAccepts?.count || 0,
       draftMemberships: getDraftMembershipsCount(last24HoursISO),
       convertedCustomers: getConvertedMembershipsCount(last24HoursISO),
-      viewToAcceptRate: calculateConversionRate(last24HourAccepts?.length || 0, last24HourViews?.length || 0),
+      viewToAcceptRate: calculateConversionRate(last24HourAccepts?.count || 0, last24HourViews?.count || 0),
       acceptToQuoteRate: calculateConversionRate(
         getDraftMembershipsCount(last24HoursISO),
-        last24HourAccepts?.length || 0,
+        last24HourAccepts?.count || 0,
       ),
       quoteToCustomerRate: calculateConversionRate(
         getConvertedMembershipsCount(last24HoursISO),
@@ -347,36 +353,36 @@ export default async function AdminPage() {
       ),
       overallConversionRate: calculateConversionRate(
         getConvertedMembershipsCount(last24HoursISO),
-        last24HourViews?.length || 0,
+        last24HourViews?.count || 0,
       ),
     },
     {
       period: 'Last 7 Days',
-      viewEligibility: last7DayViews?.length || 0,
-      acceptEligibility: last7DayAccepts?.length || 0,
+      viewEligibility: last7DayViews?.count || 0,
+      acceptEligibility: last7DayAccepts?.count || 0,
       draftMemberships: getDraftMembershipsCount(last7DaysISO),
       convertedCustomers: getConvertedMembershipsCount(last7DaysISO),
-      viewToAcceptRate: calculateConversionRate(last7DayAccepts?.length || 0, last7DayViews?.length || 0),
-      acceptToQuoteRate: calculateConversionRate(getDraftMembershipsCount(last7DaysISO), last7DayAccepts?.length || 0),
+      viewToAcceptRate: calculateConversionRate(last7DayAccepts?.count || 0, last7DayViews?.count || 0),
+      acceptToQuoteRate: calculateConversionRate(getDraftMembershipsCount(last7DaysISO), last7DayAccepts?.count || 0),
       quoteToCustomerRate: calculateConversionRate(
         getConvertedMembershipsCount(last7DaysISO),
         getDraftMembershipsCount(last7DaysISO),
       ),
       overallConversionRate: calculateConversionRate(
         getConvertedMembershipsCount(last7DaysISO),
-        last7DayViews?.length || 0,
+        last7DayViews?.count || 0,
       ),
     },
     {
       period: 'All Time',
-      viewEligibility: allViewChecks?.length || 0,
-      acceptEligibility: allAcceptChecks?.length || 0,
+      viewEligibility: allViewChecks?.count || 0,
+      acceptEligibility: allAcceptChecks?.count || 0,
       draftMemberships: getDraftMembershipsCount(),
       convertedCustomers: getConvertedMembershipsCount(),
-      viewToAcceptRate: calculateConversionRate(allAcceptChecks?.length || 0, allViewChecks?.length || 0),
-      acceptToQuoteRate: calculateConversionRate(getDraftMembershipsCount(), allAcceptChecks?.length || 0),
+      viewToAcceptRate: calculateConversionRate(allAcceptChecks?.count || 0, allViewChecks?.count || 0),
+      acceptToQuoteRate: calculateConversionRate(getDraftMembershipsCount(), allAcceptChecks?.count || 0),
       quoteToCustomerRate: calculateConversionRate(getConvertedMembershipsCount(), getDraftMembershipsCount()),
-      overallConversionRate: calculateConversionRate(getConvertedMembershipsCount(), allViewChecks?.length || 0),
+      overallConversionRate: calculateConversionRate(getConvertedMembershipsCount(), allViewChecks?.count || 0),
     },
   ];
 
