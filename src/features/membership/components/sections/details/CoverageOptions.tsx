@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Award, Globe, Shield, User, UserPlus, Users } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,11 +23,6 @@ const coverageIcons = {
 export function CoverageOptions() {
   const { membershipType, coverageType, setMembershipType, setCoverageType, currency } = useMembershipStore();
   const currencySymbol = getCurrencySymbol(currency);
-
-  useEffect(() => {
-    setMembershipType('INDIVIDUAL');
-    setCoverageType('BASIC');
-  }, []);
 
   return (
     <Card className='animate-slide-down'>
