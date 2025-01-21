@@ -154,7 +154,7 @@ export function AddressInput({ value, onChange, disabled, className, showCopyFro
   return (
     <div className='space-y-2'>
       <div className='flex items-center justify-between'>
-        <Label htmlFor='address'>Home Address</Label>
+        <Label htmlFor='address'>Home Address *</Label>
         {showCopyFromPrimary && members.length > 0 && (
           <Button
             type='button'

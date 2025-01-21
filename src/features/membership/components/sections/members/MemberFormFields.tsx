@@ -103,7 +103,7 @@ export function MemberFormFields({
       {/* Salutation field */}
       <div className='grid gap-4 sm:grid-cols-3'>
         <div className='space-y-2'>
-          <Label htmlFor='salutation'>Salutation</Label>
+          <Label htmlFor='salutation'>Salutation *</Label>
           <Select
             value={watch('salutation')}
             onValueChange={(value) => handleFieldUpdate('salutation', value)}
@@ -128,7 +128,7 @@ export function MemberFormFields({
           )}
         </div>
         <div className='space-y-2 sm:col-span-2'>
-          <Label htmlFor='firstName'>First Name</Label>
+          <Label htmlFor='firstName'>First Name *</Label>
           <Input
             {...registerWithOnChange('firstName')}
             autoComplete='given-name'
@@ -142,7 +142,7 @@ export function MemberFormFields({
 
       {/* Last Name field */}
       <div className='space-y-2'>
-        <Label htmlFor='lastName'>Surname</Label>
+        <Label htmlFor='lastName'>Surname *</Label>
         <Input
           {...registerWithOnChange('lastName')}
           autoComplete='family-name'
@@ -156,7 +156,7 @@ export function MemberFormFields({
       {/* Date of Birth and Gender fields */}
       <div className='grid gap-4 sm:grid-cols-2'>
         <div className='space-y-2'>
-          <Label htmlFor='dob'>Date of Birth</Label>
+          <Label htmlFor='dob'>Date of Birth *</Label>
           <DOBInput
             value={dateValue}
             onChange={handleDateChange}
@@ -168,7 +168,7 @@ export function MemberFormFields({
         </div>
 
         <div className='space-y-2'>
-          <Label>Gender on Passport</Label>
+          <Label>Gender on Passport *</Label>
           <div className='flex space-x-4'>
             <Button
               type='button'
@@ -199,7 +199,7 @@ export function MemberFormFields({
 
       {/* Nationality field */}
       <div className='space-y-2'>
-        <Label htmlFor='nationality'>Nationality</Label>
+        <Label htmlFor='nationality'>Nationality *</Label>
         <Select
           value={watch('nationality')}
           onValueChange={(value) => handleFieldUpdate('nationality', value)}
@@ -227,7 +227,7 @@ export function MemberFormFields({
 
       {/* Contact Information */}
       <div className='space-y-2'>
-        <Label htmlFor='contactNumber'>Mobile Number</Label>
+        <Label htmlFor='contactNumber'>Mobile Number *</Label>
         <PhoneInput
           countryCode={watch('countryCode')}
           autoComplete='tel'
@@ -259,7 +259,7 @@ export function MemberFormFields({
 
       {/* Email field */}
       <div className='space-y-2'>
-        <Label htmlFor='email'>Email Address</Label>
+        <Label htmlFor='email'>Email Address *</Label>
         <Input
           {...registerWithOnChange('email')}
           type='email'
@@ -271,7 +271,7 @@ export function MemberFormFields({
 
       {/* Country of Residence field */}
       <div className='space-y-2'>
-        <Label htmlFor='countryOfResidence'>Country of Residence</Label>
+        <Label htmlFor='countryOfResidence'>Country of Residence *</Label>
         <Select
           value={watch('countryOfResidence')}
           onValueChange={(value) => handleFieldUpdate('countryOfResidence', value)}
