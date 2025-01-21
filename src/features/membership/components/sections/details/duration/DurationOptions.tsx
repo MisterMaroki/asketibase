@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { addMonths, addYears, differenceInDays, differenceInMonths, differenceInYears } from 'date-fns';
 import { Calendar, CalendarClock, Plane } from 'lucide-react';
 
@@ -46,6 +47,10 @@ export function DurationOptions() {
   };
 
   const durationText = getDurationText();
+
+  useEffect(() => {
+    setDurationType(DURATION_TYPES.multi_trip);
+  }, []);
 
   return (
     <div className='space-y-4 px-1 sm:px-0'>

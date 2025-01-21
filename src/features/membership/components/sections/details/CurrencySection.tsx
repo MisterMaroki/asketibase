@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Globe2 } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,10 @@ import { useMembershipStore } from '@/store/membership-store';
 
 export function CurrencySection() {
   const { currency, setCurrency } = useMembershipStore();
+
+  useEffect(() => {
+    setCurrency('USD');
+  }, []);
 
   return (
     <Card className='animate-slide-down'>

@@ -11,10 +11,10 @@ import { MEDICAL_DISCLAIMER } from '@/libs/membership/eligibility';
 import { useMembershipStore } from '@/store/membership-store';
 
 export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
-  const router = useRouter();
-  const { eligibilityAccepted, setEligibility, setStep } = useMembershipStore();
+  const { setEligibility, setStep } = useMembershipStore();
 
   const handleContinue = async () => {
+    setEligibility(true);
     try {
       await logOperation({
         level: 'info',
@@ -72,20 +72,7 @@ export function EligibilityConfirmation({ hideOn }: { hideOn: 'md' | 'sm' }) {
         </div>
       </div>
 
-      <div className='flex items-start space-x-3 rounded-lg bg-secondary/5 p-6'>
-        <Checkbox
-          id='eligibility'
-          checked={eligibilityAccepted}
-          onCheckedChange={handleCheckboxChange}
-          className='mt-1'
-        />
-        <Label htmlFor='eligibility' className='cursor-pointer text-sm leading-relaxed'>
-          I confirm that I have read, understood, and meet the eligibility requirements and medical disclaimers stated
-          above.
-        </Label>
-      </div>
-
-      <Button onClick={handleContinue} disabled={!eligibilityAccepted} className='w-full py-5'>
+      <Button onClick={handleContinue} className='w-full py-5'>
         Continue to Membership Details
       </Button>
     </div>
