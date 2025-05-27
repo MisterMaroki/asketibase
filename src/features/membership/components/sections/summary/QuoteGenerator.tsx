@@ -75,6 +75,7 @@ export function QuoteGenerator({
     setQuoteId,
     sessionId,
     setReferralCode,
+    setReferralSource,
   } = useMembershipStore();
   const router = useRouter();
   const pathname = usePathname();
@@ -132,7 +133,7 @@ export function QuoteGenerator({
     }
   }, [errorParam]);
 
-  // Handle discount code from URL params
+  // Handle discount code for WELCOME10 from URL params
   useEffect(() => {
     const code = searchParams.get('code');
 
@@ -164,7 +165,7 @@ export function QuoteGenerator({
               endDate,
               currency,
               members: members.map((member, i) => ({ ...member, isPrimary: i === 0 })) as MemberSchema[],
-              referralCode: code, // Use the code directly here
+              referralCode: code,
               referralSource,
               medicalState,
             });
@@ -184,6 +185,67 @@ export function QuoteGenerator({
         } catch (err) {
           console.error('Failed to apply discount code:', err);
           setError(err instanceof Error ? err.message : 'Failed to apply discount code');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      applyDiscountCode();
+    }
+  }, [searchParams]);
+
+  // Handle discount code for WELCOME10 from URL params
+  useEffect(() => {
+    const source = searchParams.get('source');
+
+    if (source) {
+      const applyDiscountCode = async () => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+          // First set the referral code
+          setReferralSource(source);
+
+          // Wait a bit for the code to be validated
+          await new Promise((resolve) => setTimeout(resolve, 800));
+
+          // If we have all necessary data, generate a new quote
+          if (membershipType && coverageType && durationType && startDate && currency && members && sessionId) {
+            // Clear existing quote
+            onQuoteGenerated(null);
+            setQuoteId(null);
+
+            // Generate new quote with discount code
+            const newQuote = await generateQuoteAction({
+              sessionId,
+              membershipType,
+              coverageType,
+              durationType,
+              startDate,
+              endDate,
+              currency,
+              members: members.map((member, i) => ({ ...member, isPrimary: i === 0 })) as MemberSchema[],
+              referralCode,
+              referralSource: source,
+              medicalState,
+            });
+
+            if (!newQuote.success || !newQuote.data) {
+              throw new Error('Failed to generate quote with source');
+            }
+
+            setQuoteId(newQuote.data.id);
+            onQuoteGenerated(newQuote.data);
+          }
+
+          // Clean up the URL without refreshing the page
+          const params = new URLSearchParams(searchParams);
+          params.delete('source');
+          router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        } catch (err) {
+          console.error('Failed to apply source:', err);
+          setError(err instanceof Error ? err.message : 'Failed to apply source');
         } finally {
           setIsLoading(false);
         }
