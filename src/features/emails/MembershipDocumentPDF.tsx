@@ -16,15 +16,15 @@ Font.register({
   src: 'Helvetica-Bold',
 });
 // Register Aptos font
-Font.register({
-  family: 'Aptos',
-  fonts: [
-    {
-      fontFamily: 'Aptos',
-      src: fontPath,
-    },
-  ],
-});
+// Font.register({
+//   family: 'Aptos',
+//   fonts: [
+//     {
+//       fontFamily: 'Aptos',
+//       src: fontPath,
+//     },
+//   ],
+// });
 
 export const styles = StyleSheet.create({
   logo: {

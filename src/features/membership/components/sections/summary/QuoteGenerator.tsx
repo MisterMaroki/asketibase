@@ -5,7 +5,6 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { FieldError } from 'react-hook-form';
 
-import { AuthModal } from '@/components/auth-modal';
 import QuoteSummary from '@/components/QuoteSummary';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
