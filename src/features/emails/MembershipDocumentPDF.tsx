@@ -9,8 +9,6 @@ const fontPath = `${process.cwd()}/public/fonts/Aptos.ttf`;
 // const boldFontPath = `${process.cwd()}/public/fonts/AptosBold.ttf`;
 const logoPath = `${process.cwd()}/public/logo.png`;
 
-// try {
-
 Font.register({
   family: 'Helvetica-Bold',
   src: 'Helvetica-Bold',

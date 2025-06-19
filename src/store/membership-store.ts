@@ -37,6 +37,7 @@ export type MembershipState = {
   members: Member[];
   referralCode: string;
   referralSource: string;
+  affiliateCode: string;
   quoteId: string | null;
   sessionId: string | null;
   originalState: {
@@ -71,6 +72,7 @@ export type MembershipState = {
   hasStateChanged: () => boolean;
   removeMember: (id: string) => void;
   setReferralCode: (code: string) => void;
+  setAffiliateCode: (code: string) => void;
   setMedicalState: (state: MembershipState['medicalState']) => void;
   clearMedicalState: () => void;
   setError: (field: string, message: string) => void;
@@ -91,6 +93,7 @@ const defaultState = {
   members: [],
   referralCode: '',
   referralSource: '',
+  affiliateCode: '',
   quoteId: null,
   sessionId: null,
   originalState: null,
@@ -185,6 +188,7 @@ export const useMembershipStore = create<MembershipState>()(
           members: state.members.filter((m) => m.id !== id),
         })),
       setReferralCode: (code) => set({ referralCode: code }),
+      setAffiliateCode: (code) => set({ affiliateCode: code }),
       setMedicalState: (state) => set({ medicalState: state }),
       clearMedicalState: () =>
         set({

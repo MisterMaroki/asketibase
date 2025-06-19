@@ -276,6 +276,7 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
         discount_amount: discountAmount,
         referral_code_id: discountObject?.id || null,
         exchange_rate: exchangeRate,
+        affiliate_code: data.affiliateCode || null,
       })
       .select()
       .single();
@@ -304,6 +305,7 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
         discountApplied: discountAmount,
         finalPremium: totalPriceWithTax,
         referralCode: data.referralCode || '',
+        affiliateCode: data.affiliateCode || '',
       },
     };
   } catch (error) {

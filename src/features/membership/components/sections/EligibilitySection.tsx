@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardTitle } from '@/components/ui/card';
+import { useMembershipStore } from '@/store/membership-store';
 
 import { logOperation } from '../../actions/log-action';
 
@@ -19,6 +21,16 @@ export function EligibilitySection() {
       },
     });
   }, []);
+
+  const { affiliateCode, setAffiliateCode } = useMembershipStore();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const code = searchParams.get('affiliate');
+    if (code && code !== affiliateCode) {
+      setAffiliateCode(code);
+    }
+  }, [searchParams]);
 
   return (
     <div className='space-y-6'>

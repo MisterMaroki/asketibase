@@ -66,6 +66,7 @@ export const membershipSchema = z.object({
   members: z.array(memberSchema).min(1, 'At least one member is required'),
   referralCode: z.string().optional(),
   referralSource: z.string(),
+  affiliateCode: z.string().optional(),
   medicalState: z.object({
     memberConditions: z.record(z.string(), z.boolean()),
     completedMembers: z.record(z.string(), z.number()),

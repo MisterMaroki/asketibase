@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { Percent } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingState } from '@/features/membership/components/LoadingState';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
 
