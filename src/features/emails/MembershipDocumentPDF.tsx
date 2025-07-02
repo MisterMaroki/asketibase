@@ -4,25 +4,12 @@ import { DocumentData } from '../membership/actions/generate-document';
 
 import MembershipLongText from './MembershipLongText';
 
-// Debug logging for file existence
-const fontPath = `${process.cwd()}/public/fonts/Aptos.ttf`;
-// const boldFontPath = `${process.cwd()}/public/fonts/AptosBold.ttf`;
 const logoPath = `${process.cwd()}/public/logo.png`;
 
 Font.register({
   family: 'Helvetica-Bold',
   src: 'Helvetica-Bold',
 });
-// Register Aptos font
-// Font.register({
-//   family: 'Aptos',
-//   fonts: [
-//     {
-//       fontFamily: 'Aptos',
-//       src: fontPath,
-//     },
-//   ],
-// });
 
 export const styles = StyleSheet.create({
   logo: {
@@ -34,7 +21,6 @@ export const styles = StyleSheet.create({
     paddingTop: 220,
     paddingBottom: 50,
     paddingHorizontal: 40,
-    fontFamily: 'Aptos',
     fontSize: 12,
     backgroundColor: '#fff',
     color: '#333333',
