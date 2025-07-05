@@ -1,7 +1,6 @@
 import { PropsWithChildren } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { headers } from 'next/headers';
 
 import { Logo } from '@/components/logo';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -34,16 +33,7 @@ export const metadata: Metadata = {
   description: 'Global travel protection for modern global citizens',
 };
 
-export default async function RootLayout({ children }: PropsWithChildren) {
-  const headersList = await headers();
-  const url = headersList.get('x-url') || headersList.get('referer') || '';
-  const pathname = url ? new URL(url).pathname : '';
-  const isAuthPage = pathname.startsWith('/login');
-
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
-
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={cn('font-sans antialiased', inter.className)}>

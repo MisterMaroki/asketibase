@@ -1,0 +1,18 @@
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.d.ts
+!src/**/*.d.ts
+
+# Config files that don't need linting
+next.config.js
+postcss.config.js
+tailwind.config.ts
+prettier.config.js 

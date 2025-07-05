@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { COVERAGE_TYPES, getDurationDetails, MEMBERSHIP_TYPES } from '@/constants';
 import { getOrCreateCustomer } from '@/features/membership/controllers/get-or-create-customer';
-import { getUser } from '@/features/membership/controllers/get-user';
 import { getQuoteWithMembership } from '@/features/membership/controllers/quote-memberships';
 import { stripeAdmin } from '@/libs/stripe/stripe-admin';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
@@ -14,7 +13,7 @@ import { getMembershipMembers } from '../controllers/members';
 
 import { logOperation } from './log-action';
 
-export async function createCheckoutAction(id: string) {
+export async function createCheckoutAction(id: string, isAfrica: boolean = false) {
   // // 1. Get the user from session
   // const user = await getUser();
 
@@ -34,15 +33,15 @@ export async function createCheckoutAction(id: string) {
 
   const quote = await getQuoteWithMembership(id);
   if (!quote) {
-    redirect(`${getURL()}/?step=5&error=true`);
+    redirect(`${getURL(isAfrica ? '/africa' : '')}/?step=5&error=true`);
   }
 
-  let primaryMember = await getMembershipMembers(quote.memberships.id).then((members) =>
+  const primaryMember = await getMembershipMembers(quote.memberships.id).then((members) =>
     members?.find((member) => member.is_primary),
   );
 
   if (!primaryMember) {
-    redirect(`${getURL()}/?step=5&error=true`);
+    redirect(`${getURL(isAfrica ? '/africa' : '')}/?step=5&error=true`);
   }
 
   try {
@@ -65,7 +64,7 @@ export async function createCheckoutAction(id: string) {
       if (quote.memberships.status !== 'draft' && tx.data.status === 'paid') {
         return {
           success: true,
-          url: `${getURL()}/success?quoteId=${quote.id}&sessionId=${tx.data.session_id}`,
+          url: `${getURL(isAfrica ? '/africa' : '')}/success?quoteId=${quote.id}&sessionId=${tx.data.session_id}`,
         };
       }
       throw Error('Payment already made');
@@ -100,8 +99,8 @@ export async function createCheckoutAction(id: string) {
           quantity: 1,
         },
       ],
-      success_url: `${getURL()}/success?quoteId=${quote.id}&sessionId={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${getURL()}/?step=5&error=true`,
+      success_url: `${getURL(isAfrica ? '/africa' : '')}/success?quoteId=${quote.id}&sessionId={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${getURL(isAfrica ? '/africa' : '')}/?step=5&error=true`,
     });
 
     if (!checkoutSession || !checkoutSession.url) {

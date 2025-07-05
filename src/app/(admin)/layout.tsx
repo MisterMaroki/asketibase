@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { getAdminProjectAccess } from '@/features/admin/get-admin-project-access';
 import { createSupabaseServerClient } from '@/libs/supabase/server-client';
 import { cn } from '@/utils/cn';
 
@@ -14,22 +15,20 @@ import { Sidebar } from './admin/components/Sidebar';
 
 import '@/styles/globals.css';
 
+const inter = Inter({ subsets: ['latin'] });
+
 export const dynamic = 'force-dynamic';
 
-const inter = Inter({
-  subsets: ['latin'],
-});
-
-export const viewport: Viewport = {
-  viewportFit: 'cover',
-  initialScale: 1,
-  width: 'device-width',
-  maximumScale: 1,
+export const metadata: Metadata = {
+  title: 'Admin Dashboard | ASKETI',
+  description: 'ASKETI Admin Dashboard',
 };
 
-export const metadata: Metadata = {
-  title: 'ASKETI Global Travel Protection',
-  description: 'Global travel protection for modern global citizens',
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default async function AdminRootLayout({ children }: PropsWithChildren) {
@@ -47,6 +46,9 @@ export default async function AdminRootLayout({ children }: PropsWithChildren) {
     return redirect('/');
   }
 
+  // Get admin project access
+  const projectAccess = await getAdminProjectAccess();
+
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={cn('font-sans antialiased', inter.className)}>
@@ -54,7 +56,11 @@ export default async function AdminRootLayout({ children }: PropsWithChildren) {
           <Toaster />
           <div className='flex flex-col px-2 md:px-4'>
             <main className='relative flex-1'>
-              <Sidebar signOut={signOut} />
+              <Sidebar
+                signOut={signOut}
+                availableProjects={projectAccess?.projects || []}
+                isSuper={projectAccess?.isSuper || false}
+              />
               <div className='relative h-full max-w-[1880px] pt-8 md:ml-64'>{children}</div>
             </main>
           </div>

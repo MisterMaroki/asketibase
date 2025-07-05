@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Shield } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getProjectFilterFromParams } from '@/features/admin/get-admin-project-access';
 import { LoadingState } from '@/features/membership/components/LoadingState';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { supabaseAdminClient } from '@/libs/supabase/supabase-admin';
@@ -85,306 +86,172 @@ interface ConversionFunnelStats {
   overallConversionRate: number;
 }
 
-export default async function AdminPage() {
-  async function getGreeting() {
-    const user = await getUser();
-    const hour = new Date().getHours();
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
 
-    if (hour < 6) {
-      return `Early bird catches the worm, ${user?.first_name}!`;
-    } else if (hour < 12) {
-      return `Good morning, ${user?.first_name}!`;
-    } else if (hour < 18) {
-      return `Good afternoon, ${user?.first_name}!`;
-    } else if (hour < 20) {
-      return `Good evening, ${user?.first_name}!`;
-    } else {
-      return `Working late, ${user?.first_name}!`;
-    }
-  }
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  // Get project filter from URL params
+  const projectFilter = await getProjectFilterFromParams(searchParams);
 
-  const { data: memberships } = await supabaseAdminClient
+  const user = await getUser();
+  if (!user) return null;
+
+  // Get membership IDs for the project filter
+  const { data: membershipIds } = await supabaseAdminClient
     .from('memberships')
-    .select(
-      `
-      *,
-      quotes (
-        *
-      ),
-      members (
-        *
-      )
-      `,
-    )
-    .order('created_at', { ascending: false });
+    .select('id')
+    .in('project_code', projectFilter);
 
-  // Get eligibility check events
-  const now = new Date();
-  const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const membershipIdsList = membershipIds?.map((m) => m.id) || [];
 
-  // Format dates in ISO format with timezone for Postgres timestamp comparison
-  const last24HoursISO = last24Hours.toISOString();
-  const last7DaysISO = last7Days.toISOString();
+  // Get total memberships
+  const { count: totalMemberships } = await supabaseAdminClient
+    .from('memberships')
+    .select('id', { count: 'exact' })
+    .in('project_code', projectFilter);
 
-  // Get view events
-  const { data: allViewChecks } = await supabaseAdminClient
-    .from('logs')
-    .select('count', { count: 'exact' })
-    .eq('operation', 'view_eligibility')
-    .single();
+  // Get active members
+  const { count: activeMembers } = await supabaseAdminClient
+    .from('members')
+    .select('id', { count: 'exact' })
+    .in('membership_id', membershipIdsList);
 
-  const { data: last24HourViews } = await supabaseAdminClient
-    .from('logs')
-    .select('count', { count: 'exact' })
-    .eq('operation', 'view_eligibility')
-    .gte('timestamp', last24HoursISO)
-    .single();
+  // Get pending memberships
+  const { count: pendingMemberships } = await supabaseAdminClient
+    .from('memberships')
+    .select('id', { count: 'exact' })
+    .eq('status', 'paid')
+    .in('project_code', projectFilter);
 
-  const { data: last7DayViews } = await supabaseAdminClient
-    .from('logs')
-    .select('count', { count: 'exact' })
-    .eq('operation', 'view_eligibility')
-    .gte('timestamp', last7DaysISO)
-    .single();
-
-  // Get accept events
-  const { data: allAcceptChecks } = await supabaseAdminClient
-    .from('logs')
-    .select('count', { count: 'exact' })
-    .eq('operation', 'accept_eligibility')
-    .single();
-
-  const { data: last24HourAccepts } = await supabaseAdminClient
-    .from('logs')
-    .select('count', { count: 'exact' })
-    .eq('operation', 'accept_eligibility')
-    .gte('timestamp', last24HoursISO)
-    .single();
-
-  const { data: last7DayAccepts } = await supabaseAdminClient
-    .from('logs')
-    .select('count', { count: 'exact' })
-    .eq('operation', 'accept_eligibility')
-    .gte('timestamp', last7DaysISO)
-    .single();
-
-  const calculateConversionRate = (numerator: number, denominator: number) => {
-    if (denominator === 0) return 0;
-    return (numerator / denominator) * 100;
-  };
-
-  // Calculate totals by currency
-  const currencyTotals: CurrencyTotal[] =
-    memberships?.reduce((acc: CurrencyTotal[], membership) => {
-      membership.quotes?.forEach((quote) => {
-        const isWrittenBusiness = membership.status !== 'draft';
-        const existingCurrency = acc.find((c) => c.currency === quote.currency);
-        const netAmount = quote.total_price_with_tax - quote.tax_amount;
-        const gbpTotal = netAmount / (quote.exchange_rate || 1);
-        // Calculate the proportion of each component in GBP
-        const totalWithoutTax = quote.total_price_with_tax - quote.tax_amount;
-        const basePriceRatio = quote.base_price / totalWithoutTax;
-        const medicalLoadingRatio = quote.medical_loading_price / totalWithoutTax;
-        const coverageLoadingRatio = quote.coverage_loading_price / totalWithoutTax;
-        const discountRatio = quote.discount_amount / totalWithoutTax;
-
-        // Calculate GBP values for each component using exchange rate
-        const gbpBasePrice = quote.base_price / (quote.exchange_rate || 1);
-        const gbpMedicalLoading = quote.medical_loading_price / (quote.exchange_rate || 1);
-        const gbpCoverageLoading = quote.coverage_loading_price / (quote.exchange_rate || 1);
-        const gbpDiscount = quote.discount_amount / (quote.exchange_rate || 1);
-
-        if (existingCurrency) {
-          existingCurrency.total += quote.total_price_with_tax;
-          existingCurrency.gbpEquivalent += gbpTotal;
-          existingCurrency.basePrice += quote.base_price;
-          existingCurrency.medicalLoadingPrice += quote.medical_loading_price;
-          existingCurrency.coverageLoadingPrice += quote.coverage_loading_price;
-          existingCurrency.discountAmount += quote.discount_amount;
-          existingCurrency.exchange_rate = quote.exchange_rate;
-
-          if (isWrittenBusiness) {
-            existingCurrency.writtenTotal += quote.total_price_with_tax;
-            existingCurrency.writtenGbpEquivalent += gbpTotal;
-            existingCurrency.writtenBasePrice += gbpBasePrice;
-            existingCurrency.writtenMedicalLoadingPrice += gbpMedicalLoading;
-            existingCurrency.writtenCoverageLoadingPrice += gbpCoverageLoading;
-            existingCurrency.writtenDiscountAmount += gbpDiscount;
-          } else {
-            existingCurrency.quotedTotal += quote.total_price_with_tax;
-            existingCurrency.quotedGbpEquivalent += gbpTotal;
-            existingCurrency.quotedBasePrice += gbpBasePrice;
-            existingCurrency.quotedMedicalLoadingPrice += gbpMedicalLoading;
-            existingCurrency.quotedCoverageLoadingPrice += gbpCoverageLoading;
-            existingCurrency.quotedDiscountAmount += gbpDiscount;
-          }
-        } else {
-          acc.push({
-            currency: quote.currency,
-            total: quote.total_price_with_tax,
-            gbpEquivalent: gbpTotal,
-            quotedTotal: isWrittenBusiness ? 0 : quote.total_price_with_tax,
-            quotedGbpEquivalent: isWrittenBusiness ? 0 : gbpTotal,
-            writtenTotal: isWrittenBusiness ? quote.total_price_with_tax : 0,
-            writtenGbpEquivalent: isWrittenBusiness ? gbpTotal : 0,
-            basePrice: quote.base_price,
-            quotedBasePrice: isWrittenBusiness ? 0 : gbpBasePrice,
-            writtenBasePrice: isWrittenBusiness ? gbpBasePrice : 0,
-            medicalLoadingPrice: quote.medical_loading_price,
-            quotedMedicalLoadingPrice: isWrittenBusiness ? 0 : gbpMedicalLoading,
-            writtenMedicalLoadingPrice: isWrittenBusiness ? gbpMedicalLoading : 0,
-            coverageLoadingPrice: quote.coverage_loading_price,
-            quotedCoverageLoadingPrice: isWrittenBusiness ? 0 : gbpCoverageLoading,
-            writtenCoverageLoadingPrice: isWrittenBusiness ? gbpCoverageLoading : 0,
-            discountAmount: quote.discount_amount,
-            quotedDiscountAmount: isWrittenBusiness ? 0 : gbpDiscount,
-            writtenDiscountAmount: isWrittenBusiness ? gbpDiscount : 0,
-            exchange_rate: quote.exchange_rate,
-          });
-        }
-      });
-      return acc;
-    }, []) || [];
-
-  // Calculate tax totals by currency
-  const taxTotals: TaxTotal[] =
-    memberships?.reduce((acc: TaxTotal[], membership) => {
-      membership.quotes?.forEach((quote) => {
-        const isWrittenBusiness = membership.status !== 'draft';
-        const existingCurrency = acc.find((c) => c.currency === quote.currency);
-        const taxRate = (quote.tax_amount / (quote.total_price_with_tax - quote.tax_amount)) * 100;
-        const gbpTaxAmount = quote.tax_amount / (quote.exchange_rate || 1);
-        const gbpTotalWithoutTax = (quote.total_price_with_tax - quote.tax_amount) / (quote.exchange_rate || 1);
-
-        if (existingCurrency) {
-          existingCurrency.taxAmount += quote.tax_amount;
-          existingCurrency.totalWithoutTax += quote.total_price_with_tax - quote.tax_amount;
-          existingCurrency.gbpEquivalent += gbpTaxAmount;
-          existingCurrency.exchange_rate = quote.exchange_rate;
-
-          if (isWrittenBusiness) {
-            existingCurrency.writtenTaxAmount += quote.tax_amount;
-            existingCurrency.writtenTotalWithoutTax += quote.total_price_with_tax - quote.tax_amount;
-            existingCurrency.writtenGbpEquivalent += gbpTaxAmount;
-          } else {
-            existingCurrency.quotedTaxAmount += quote.tax_amount;
-            existingCurrency.quotedTotalWithoutTax += quote.total_price_with_tax - quote.tax_amount;
-            existingCurrency.quotedGbpEquivalent += gbpTaxAmount;
-          }
-        } else {
-          acc.push({
-            currency: quote.currency,
-            taxAmount: quote.tax_amount,
-            totalWithoutTax: quote.total_price_with_tax - quote.tax_amount,
-            taxRate: taxRate,
-            gbpEquivalent: gbpTaxAmount,
-            quotedTaxAmount: isWrittenBusiness ? 0 : quote.tax_amount,
-            quotedTotalWithoutTax: isWrittenBusiness ? 0 : quote.total_price_with_tax - quote.tax_amount,
-            quotedGbpEquivalent: isWrittenBusiness ? 0 : gbpTaxAmount,
-            writtenTaxAmount: isWrittenBusiness ? quote.tax_amount : 0,
-            writtenTotalWithoutTax: isWrittenBusiness ? quote.total_price_with_tax - quote.tax_amount : 0,
-            writtenGbpEquivalent: isWrittenBusiness ? gbpTaxAmount : 0,
-            exchange_rate: quote.exchange_rate,
-          });
-        }
-      });
-      return acc;
-    }, []) || [];
-
-  // Calculate membership status counts
-  const statusCounts: StatusCount[] =
-    memberships?.reduce((acc: StatusCount[], membership) => {
-      const status = membership.status || 'unknown';
-      const existingStatus = acc.find((s) => s.status === status);
-      if (existingStatus) {
-        existingStatus.count += 1;
-      } else {
-        acc.push({ status, count: 1 });
-      }
-      return acc;
-    }, []) || [];
-
-  const totalMemberships = memberships?.length || 0;
-  const activeMembers =
-    memberships?.reduce(
-      (acc, membership) => (membership.status === 'active' ? acc + (membership.members?.length || 0) : acc),
-      0,
-    ) || 0;
-
-  // const activeMembers = statusCounts.find((s) => s.status === 'active')?.count || 0;
-  const pendingMemberships = statusCounts.find((s) => s.status === 'draft')?.count || 0;
   const recentAlerts = 0;
 
-  // Calculate conversion funnel stats
-  const getDraftMembershipsCount = (since?: string) => {
-    if (!memberships) return 0;
-    return memberships.filter((membership) => {
-      const isDraft = membership.status === 'draft';
-      if (!since) return isDraft;
-      return isDraft && membership.created_at && new Date(membership.created_at) >= new Date(since);
-    }).length;
+  const conversionFunnelStats = await supabaseAdminClient
+    .from('memberships')
+    .select('status')
+    .in('project_code', projectFilter);
+
+  const funnelData = conversionFunnelStats.data?.reduce(
+    (acc, membership) => {
+      acc[membership.status] = (acc[membership.status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const conversions = {
+    draft: funnelData?.draft || 0,
+    paid: funnelData?.paid || 0,
+    sent: funnelData?.sent || 0,
+    active: funnelData?.active || 0,
+    expired: funnelData?.expired || 0,
   };
 
-  const getConvertedMembershipsCount = (since?: string) => {
-    if (!memberships) return 0;
-    return memberships.filter((membership) => {
-      const isConverted = membership.status && membership.status !== 'draft';
-      if (!since) return isConverted;
-      return isConverted && membership.created_at && new Date(membership.created_at) >= new Date(since);
-    }).length;
-  };
-
-  const conversionFunnelStats: ConversionFunnelStats[] = [
-    {
-      period: 'Last 24 Hours',
-      viewEligibility: last24HourViews?.count || 0,
-      acceptEligibility: last24HourAccepts?.count || 0,
-      draftMemberships: getDraftMembershipsCount(last24HoursISO),
-      convertedCustomers: getConvertedMembershipsCount(last24HoursISO),
-      viewToAcceptRate: calculateConversionRate(last24HourAccepts?.count || 0, last24HourViews?.count || 0),
-      acceptToQuoteRate: calculateConversionRate(
-        getDraftMembershipsCount(last24HoursISO),
-        last24HourAccepts?.count || 0,
-      ),
-      quoteToCustomerRate: calculateConversionRate(
-        getConvertedMembershipsCount(last24HoursISO),
-        getDraftMembershipsCount(last24HoursISO),
-      ),
-      overallConversionRate: calculateConversionRate(
-        getConvertedMembershipsCount(last24HoursISO),
-        last24HourViews?.count || 0,
-      ),
-    },
-    {
-      period: 'Last 7 Days',
-      viewEligibility: last7DayViews?.count || 0,
-      acceptEligibility: last7DayAccepts?.count || 0,
-      draftMemberships: getDraftMembershipsCount(last7DaysISO),
-      convertedCustomers: getConvertedMembershipsCount(last7DaysISO),
-      viewToAcceptRate: calculateConversionRate(last7DayAccepts?.count || 0, last7DayViews?.count || 0),
-      acceptToQuoteRate: calculateConversionRate(getDraftMembershipsCount(last7DaysISO), last7DayAccepts?.count || 0),
-      quoteToCustomerRate: calculateConversionRate(
-        getConvertedMembershipsCount(last7DaysISO),
-        getDraftMembershipsCount(last7DaysISO),
-      ),
-      overallConversionRate: calculateConversionRate(
-        getConvertedMembershipsCount(last7DaysISO),
-        last7DayViews?.count || 0,
-      ),
-    },
+  // Create conversion funnel stats in expected format
+  const conversionStats = [
     {
       period: 'All Time',
-      viewEligibility: allViewChecks?.count || 0,
-      acceptEligibility: allAcceptChecks?.count || 0,
-      draftMemberships: getDraftMembershipsCount(),
-      convertedCustomers: getConvertedMembershipsCount(),
-      viewToAcceptRate: calculateConversionRate(allAcceptChecks?.count || 0, allViewChecks?.count || 0),
-      acceptToQuoteRate: calculateConversionRate(getDraftMembershipsCount(), allAcceptChecks?.count || 0),
-      quoteToCustomerRate: calculateConversionRate(getConvertedMembershipsCount(), getDraftMembershipsCount()),
-      overallConversionRate: calculateConversionRate(getConvertedMembershipsCount(), allViewChecks?.count || 0),
+      viewEligibility: 0,
+      acceptEligibility: 0,
+      draftMemberships: conversions.draft,
+      convertedCustomers: conversions.paid + conversions.sent + conversions.active,
+      viewToAcceptRate: 0,
+      acceptToQuoteRate: 0,
+      quoteToCustomerRate:
+        conversions.draft > 0
+          ? ((conversions.paid + conversions.sent + conversions.active) / conversions.draft) * 100
+          : 0,
+      overallConversionRate: 0,
     },
   ];
+
+  // Get currency totals
+  const { data: quotesData } = await supabaseAdminClient
+    .from('quotes')
+    .select(
+      'currency, base_price, total_price, gbp_total, medical_loading_price, coverage_loading_price, discount_amount, exchange_rate, membership_id',
+    )
+    .in('membership_id', membershipIdsList);
+
+  const currencyTotals =
+    quotesData?.reduce(
+      (acc, quote) => {
+        const currency = quote.currency || 'GBP';
+        if (!acc[currency]) {
+          acc[currency] = {
+            currency,
+            total: 0,
+            gbpEquivalent: 0,
+            quotedTotal: 0,
+            quotedGbpEquivalent: 0,
+            writtenTotal: 0,
+            writtenGbpEquivalent: 0,
+            basePrice: 0,
+            quotedBasePrice: 0,
+            writtenBasePrice: 0,
+            medicalLoadingPrice: 0,
+            quotedMedicalLoadingPrice: 0,
+            writtenMedicalLoadingPrice: 0,
+            coverageLoadingPrice: 0,
+            quotedCoverageLoadingPrice: 0,
+            writtenCoverageLoadingPrice: 0,
+            discountAmount: 0,
+            quotedDiscountAmount: 0,
+            writtenDiscountAmount: 0,
+            exchange_rate: quote.exchange_rate || 1,
+          };
+        }
+
+        acc[currency].total += quote.total_price || 0;
+        acc[currency].gbpEquivalent += quote.gbp_total || 0;
+        acc[currency].quotedTotal += quote.total_price || 0;
+        acc[currency].quotedGbpEquivalent += quote.gbp_total || 0;
+        acc[currency].basePrice += quote.base_price || 0;
+        acc[currency].quotedBasePrice += quote.base_price || 0;
+        acc[currency].medicalLoadingPrice += quote.medical_loading_price || 0;
+        acc[currency].quotedMedicalLoadingPrice += quote.medical_loading_price || 0;
+        acc[currency].coverageLoadingPrice += quote.coverage_loading_price || 0;
+        acc[currency].quotedCoverageLoadingPrice += quote.coverage_loading_price || 0;
+        acc[currency].discountAmount += quote.discount_amount || 0;
+        acc[currency].quotedDiscountAmount += quote.discount_amount || 0;
+
+        return acc;
+      },
+      {} as Record<string, any>,
+    ) || {};
+
+  const { data: taxData } = await supabaseAdminClient
+    .from('quotes')
+    .select('tax_amount, currency, membership_id, total_price_with_tax, exchange_rate')
+    .in('membership_id', membershipIdsList);
+
+  const taxTotals =
+    taxData?.reduce(
+      (acc, quote) => {
+        const currency = quote.currency || 'GBP';
+        if (!acc[currency]) {
+          acc[currency] = {
+            currency,
+            tax: 0,
+            quotedTax: 0,
+            writtenTax: 0,
+          };
+        }
+
+        acc[currency].tax += quote.tax_amount || 0;
+        acc[currency].quotedTax += quote.tax_amount || 0;
+
+        return acc;
+      },
+      {} as Record<string, any>,
+    ) || {};
 
   return (
     <main className='container space-y-4 px-4 pb-4 sm:space-y-6 sm:px-6 sm:pb-6'>
@@ -397,9 +264,9 @@ export default async function AdminPage() {
 
       <Suspense fallback={<LoadingState />}>
         <MetricCards
-          totalMemberships={totalMemberships}
-          activeMembers={activeMembers}
-          pendingMemberships={pendingMemberships}
+          totalMemberships={totalMemberships || 0}
+          activeMembers={activeMembers || 0}
+          pendingMemberships={pendingMemberships || 0}
           recentAlerts={recentAlerts}
         />
       </Suspense>
@@ -407,7 +274,7 @@ export default async function AdminPage() {
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
         <Card className='sm:col-span-2'>
           <Suspense fallback={<LoadingState />}>
-            <ConversionFunnel stats={conversionFunnelStats} />
+            <ConversionFunnel stats={conversionStats} />
           </Suspense>
         </Card>
 
@@ -416,7 +283,7 @@ export default async function AdminPage() {
             <CardTitle>Financial Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <FinancialOverview currencyTotals={currencyTotals} taxTotals={taxTotals} />
+            <FinancialOverview currencyTotals={Object.values(currencyTotals)} taxTotals={Object.values(taxTotals)} />
           </CardContent>
         </Card>
       </div>

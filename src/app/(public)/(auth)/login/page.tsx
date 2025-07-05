@@ -3,7 +3,7 @@ import { AuthUI } from '../auth-ui';
 
 export default async function Login() {
   return (
-    <section className='py-xl m-auto flex h-full max-w-lg items-center'>
+    <section className='flex h-full w-full items-center justify-center'>
       <AuthUI
         signInWithEmail={signInWithEmail}
         // signInWithOAuth={signInWithOAuth}

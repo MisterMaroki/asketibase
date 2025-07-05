@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { headers } from 'next/headers';
 
+import { Navigation } from '@/app/africa/navigation';
 import { Logo } from '@/components/logo';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Background } from '@/components/ui/background';
@@ -11,8 +11,6 @@ import { checkAdmin } from '@/features/admin/check-admin';
 import { getUser } from '@/features/membership/controllers/get-user';
 import { cn } from '@/utils/cn';
 import { Analytics } from '@vercel/analytics/react';
-
-import { Navigation } from './navigation';
 
 import '@/styles/globals.css';
 
@@ -34,36 +32,18 @@ export const metadata: Metadata = {
   description: 'Global travel protection for modern global citizens',
 };
 
-export default async function RootLayout({ children }: PropsWithChildren) {
-  const headersList = await headers();
-  const url = headersList.get('x-url') || headersList.get('referer') || '';
-  const pathname = url ? new URL(url).pathname : '';
-  const isAuthPage = pathname.startsWith('/login');
-
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
-
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={cn('font-sans antialiased', inter.className)}>
         <ThemeProvider>
           <Toaster />
-          <div className='m-auto flex h-[95dvh] max-w-[1440px] flex-col px-2 md:px-4'>
+
+          <div className='flex h-full w-full flex-col bg-gradient-to-br from-slate-900 via-black to-slate-800'>
             <AppBar />
-            <div className='absolute inset-0' />
-            <main className='relative flex-1'>
-              <div className='relative h-full'>{children}</div>
-              {/* Help Text */}
-              <div className='flex-1 text-center text-sm text-muted-foreground'>
-                <p className='pb-6'>
-                  Need help? Contact our support team at <a href='mailto:support@asketi.com'>support@asketi.com</a>
-                </p>
-              </div>
-            </main>
+            {children}
           </div>
           <Analytics />
-          <Background />
         </ThemeProvider>
       </body>
     </html>
@@ -83,8 +63,8 @@ async function AppBar() {
 
   return (
     <header className='z-50 flex items-center justify-between p-4 md:p-6'>
-      <Logo />
-      <Navigation user={user} isAdmin={isAdmin} />
+      <Logo white />
+      <Navigation user={user} isAdmin={isAdmin} white />
     </header>
   );
 }

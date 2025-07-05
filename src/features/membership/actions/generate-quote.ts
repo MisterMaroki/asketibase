@@ -15,7 +15,9 @@ import { MembershipSchema } from '../validations/schemas';
 
 import { logOperation } from './log-action';
 
-export async function generateQuoteAction(data: MembershipSchema & { sessionId?: string }) {
+export async function generateQuoteAction(
+  data: MembershipSchema & { sessionId?: string; projectCode?: 'main' | 'africa' },
+) {
   try {
     await logOperation({
       level: 'info',
@@ -28,14 +30,14 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
     }
 
     // Check if there's an existing membership for this session
-    let existingMembership = null;
+    let existingMembership: Database['public']['Tables']['memberships']['Row'] | null = null;
     if (!data.sessionId) {
       throw new Error('Session ID is required');
     }
     existingMembership = await getMembershipBySession(data.sessionId);
 
     // Check referral code if provided
-    let discountObject = null;
+    let discountObject: { id: string; discount_percent: number } | null = null;
     if (data.referralCode && data.referralCode.length > 5) {
       const referralCode = await checkReferralCode(data.referralCode);
       logOperation({
@@ -45,8 +47,9 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
       });
       if (!referralCode) {
         discountObject = null;
+      } else {
+        discountObject = referralCode;
       }
-      discountObject = referralCode;
     }
 
     // Calculate number of days based on duration type
@@ -126,6 +129,7 @@ export async function generateQuoteAction(data: MembershipSchema & { sessionId?:
       start_date: data.startDate,
       end_date: data.endDate || calculateEndDate(data.startDate, data.durationType as keyof typeof DURATION_TYPES),
       session_id: data.sessionId,
+      project_code: data.projectCode || 'main',
     };
 
     let membership: Database['public']['Tables']['memberships']['Row'];

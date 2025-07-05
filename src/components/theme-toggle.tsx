@@ -5,7 +5,7 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
 
-export function ThemeToggle() {
+export function ThemeToggle({ white = false }: { white?: boolean }) {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -13,6 +13,7 @@ export function ThemeToggle() {
       variant='ghost'
       size='icon'
       className='h-9 w-9'
+      style={{ filter: white ? 'invert(1)' : 'invert(0)' }}
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
       <Sun className='h-4 w-4 rotate-0 scale-100 transition-all dark:rotate-90 dark:scale-0' />

@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import { Button } from '@/components/ui/button';
 import { MEMBER_LIMITS } from '@/constants';
 import { isMemberValid } from '@/features/membership/validations/member';
@@ -14,7 +12,6 @@ import { SingleMemberForm } from './members/SingleMemberForm';
 const RETURN_TO_SUMMARY_STEP = 5;
 
 export function MemberInformation() {
-  const router = useRouter();
   const { setStep, membershipType, members, hasStateChanged, clearOriginalState, originalState, medicalState } =
     useMembershipStore();
 

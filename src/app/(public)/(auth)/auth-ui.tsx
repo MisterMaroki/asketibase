@@ -12,8 +12,13 @@ import { ActionResponse } from '@/types/action-response';
 import { signInWithEmailAndPassword } from './auth-actions';
 
 const titleMap = {
-  login: 'Login to ASKETI',
+  login: 'Welcome Back',
   signup: 'Join ASKETI',
+} as const;
+
+const subtitleMap = {
+  login: 'Sign in to your account',
+  signup: 'Create your account',
 } as const;
 
 export function AuthUI({
@@ -50,52 +55,104 @@ export function AuthUI({
   }
 
   return (
-    <section className='mt-16 flex w-full flex-col rounded-lg p-10 px-4 text-center'>
-      <div className='flex flex-col gap-4'>
-        <h1 className='text-3xl text-black dark:text-white'>{titleMap[mode]}</h1>
-      </div>
-      {/* <button
-          className='flex items-center justify-center gap-2 rounded-md bg-blue-500 py-4 font-medium text-white transition-all hover:bg-blue-400 disabled:bg-neutral-700'
-          onClick={() => handleOAuthClick('google')}
-          disabled={pending}
-        >
-          <IoLogoGoogle size={20} />j
-          Continue with Google
-        </button> */}
-      {/* 
-        <button
-          className='flex items-center justify-center gap-2 rounded-md bg-black py-4 font-medium text-white transition-all hover:bg-gray-700 disabled:bg-neutral-700'
-          onClick={() => handleOAuthClick('apple')}
-          disabled={pending}
-        >
-          <IoLogoApple size={20} />
-          Continue with Apple
-        </button> */}
-
-      <form onSubmit={handleEmailSubmit}>
-        <div className='flex w-full flex-col gap-4 p-8'>
-          <Input type='email' name='email' placeholder='Enter your email' aria-label='Enter your email' autoFocus />
-          <Input type='password' name='password' placeholder='Enter your password' aria-label='Enter your password' />
-          <div className='mt-4 flex justify-end gap-2'>
-            <Button variant='secondary' type='submit' disabled={pending}>
-              Submit
-            </Button>
-          </div>
+    <div className='flex items-center justify-center'>
+      <div className='w-full max-w-md'>
+        {/* Decorative elements */}
+        <div className='pointer-events-none absolute inset-0 overflow-hidden'>
+          <div className='absolute left-1/4 top-1/4 h-32 w-32 animate-pulse rounded-full bg-emerald-400/10 blur-xl' />
+          <div className='absolute bottom-1/4 right-1/4 h-24 w-24 animate-pulse rounded-full bg-emerald-300/10 blur-xl delay-1000' />
         </div>
-      </form>
-      {mode === 'signup' && (
-        <span className='text-neutral5 m-auto max-w-sm text-sm'>
-          By clicking continue, you agree to our{' '}
-          <Link href='https://www.asketi.com/terms-of-use' className='underline'>
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link href='https://www.asketi.com/privacy-policy' className='underline'>
-            Privacy Policy
-          </Link>
-          .
-        </span>
-      )}
-    </section>
+
+        {/* Main card */}
+        <div className='relative rounded-2xl border border-slate-700/50 bg-slate-800/50 p-8 shadow-2xl backdrop-blur-sm'>
+          {/* Header */}
+          <div className='mb-8 text-center'>
+            <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-lg'>
+              <svg className='h-8 w-8 text-white' fill='currentColor' viewBox='0 0 24 24'>
+                <path d='M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z' />
+              </svg>
+            </div>
+            <h1 className='mb-2 text-3xl font-bold text-white'>{titleMap[mode]}</h1>
+            <p className='text-sm text-slate-400'>{subtitleMap[mode]}</p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleEmailSubmit} className='space-y-6'>
+            <div className='space-y-4'>
+              <div className='relative'>
+                <Input
+                  type='email'
+                  name='email'
+                  placeholder='Enter your email'
+                  aria-label='Enter your email'
+                  autoFocus
+                  className='h-12 w-full border-slate-600 bg-slate-900/50 px-4 text-white placeholder-slate-400 transition-all duration-200 focus:border-emerald-400 focus:ring-emerald-400/20'
+                />
+              </div>
+              <div className='relative'>
+                <Input
+                  type='password'
+                  name='password'
+                  placeholder='Enter your password'
+                  aria-label='Enter your password'
+                  className='h-12 w-full border-slate-600 bg-slate-900/50 px-4 text-white placeholder-slate-400 transition-all duration-200 focus:border-emerald-400 focus:ring-emerald-400/20'
+                />
+              </div>
+            </div>
+
+            <Button
+              type='submit'
+              disabled={pending}
+              className='h-12 w-full rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-emerald-500/25 disabled:cursor-not-allowed disabled:opacity-50'
+            >
+              {pending ? (
+                <div className='flex items-center gap-2'>
+                  <div className='h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white' />
+                  Signing in...
+                </div>
+              ) : (
+                'Sign In'
+              )}
+            </Button>
+          </form>
+
+          {/* Footer */}
+          {mode === 'signup' && (
+            <div className='mt-8 border-t border-slate-700/50 pt-6'>
+              <p className='text-center text-xs leading-relaxed text-slate-400'>
+                By clicking continue, you agree to our{' '}
+                <Link
+                  href='https://www.asketi.com/terms-of-use'
+                  className='text-emerald-400 underline underline-offset-2 transition-colors hover:text-emerald-300'
+                >
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link
+                  href='https://www.asketi.com/privacy-policy'
+                  className='text-emerald-400 underline underline-offset-2 transition-colors hover:text-emerald-300'
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Bottom text */}
+        <div className='mt-6 text-center'>
+          <p className='text-sm text-slate-400'>
+            {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
+            <Link
+              href={mode === 'login' ? '/signup' : '/login'}
+              className='font-medium text-emerald-400 transition-colors hover:text-emerald-300'
+            >
+              {mode === 'login' ? 'Sign up' : 'Sign in'}
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

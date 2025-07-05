@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { useTheme } from './theme-provider';
 
-export function Logo() {
+export function Logo({ white = false }: { white?: boolean }) {
   const { theme } = useTheme();
   return (
     <Link href='/' className='flex w-fit items-center gap-2'>
@@ -14,7 +14,7 @@ export function Logo() {
         width={180}
         height={100}
         priority
-        style={{ height: 'auto', filter: theme === 'dark' ? 'invert(1)' : 'invert(0)' }}
+        style={{ height: 'auto', filter: theme === 'dark' || white ? 'invert(1)' : 'invert(0)' }}
         className='h-auto transition-[filter] duration-300 dark:invert'
         quality={100}
         alt='ASKETI logo mark'

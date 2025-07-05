@@ -27,6 +27,6 @@ export const createSupabaseServerClient = async () => {
           }
         },
       },
-    }
+    },
   );
 };

@@ -55,7 +55,6 @@ export function QuoteGenerator({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // const [showAuthModal, setShowAuthModal] = useState(false);
 
   const searchParams = useSearchParams();
   const errorParam = searchParams.get('error');
@@ -80,6 +79,8 @@ export function QuoteGenerator({
   } = useMembershipStore();
   const router = useRouter();
   const pathname = usePathname();
+
+  const isAfrica = pathname.includes('/africa');
 
   // Load quote from quoteId if available
   useEffect(() => {
@@ -170,6 +171,7 @@ export function QuoteGenerator({
               referralSource,
               affiliateCode,
               medicalState,
+              projectCode: isAfrica ? 'africa' : 'main',
             });
 
             if (!newQuote.success || !newQuote.data) {
@@ -231,6 +233,7 @@ export function QuoteGenerator({
               referralSource: source,
               affiliateCode,
               medicalState,
+              projectCode: isAfrica ? 'africa' : 'main',
             });
 
             if (!newQuote.success || !newQuote.data) {
@@ -293,6 +296,7 @@ export function QuoteGenerator({
               referralSource,
               affiliateCode: code,
               medicalState,
+              projectCode: isAfrica ? 'africa' : 'main',
             });
 
             if (!newQuote.success || !newQuote.data) {
@@ -319,12 +323,19 @@ export function QuoteGenerator({
     }
   }, [searchParams]);
 
+  const clearErrorParam = () => {
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete('error');
+    router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+  };
+
   const handleGenerateQuote = async () => {
+    setIsLoading(true);
+    setError(null);
+    // Clear error param from URL without refresh
     if (quote) {
-      setIsLoading(true);
-      setError(null);
       try {
-        const result = await createCheckoutAction(quote.id);
+        const result = await createCheckoutAction(quote.id, isAfrica);
         if (result.success && result.url) {
           window.location.href = result.url;
           setIsLoading(false);
@@ -346,16 +357,11 @@ export function QuoteGenerator({
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
     onQuoteGenerated(null);
     setQuoteId(null);
 
-    // Clear error param from URL without refresh
     if (errorParam) {
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.delete('error');
-      router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+      clearErrorParam();
     }
 
     try {
@@ -376,6 +382,7 @@ export function QuoteGenerator({
         referralSource,
         affiliateCode,
         medicalState,
+        projectCode: isAfrica ? 'africa' : 'main',
       });
 
       if (!quote.success || !quote.data) {
@@ -431,7 +438,13 @@ export function QuoteGenerator({
 
       {quote && (
         <div className='mt-8'>
-          <QuoteSummary {...quote} onPressEdit={onPressEdit} />
+          <QuoteSummary
+            {...quote}
+            onPressEdit={() => {
+              onPressEdit();
+              clearErrorParam();
+            }}
+          />
         </div>
       )}
 

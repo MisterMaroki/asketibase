@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, Fish, HeartPulse, Plane, Shield, Snowflake, Waves } from 'lucide-react';
+import { ChevronDown, Fish, HeartPulse, Shield, Snowflake, Waves } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -105,8 +104,13 @@ const BENEFITS_DATA = [
     excess: '$50',
   },
   {
-    benefit: 'Personal Liability\nRented Accommodation',
-    amount: 'Up to $20,000\nUp to $2,000',
+    benefit: 'Personal Liability',
+    amount: 'Up to $20,000',
+    excess: '$100',
+  },
+  {
+    benefit: 'Rented Accommodation',
+    amount: 'Up to $2,000',
     excess: '$100',
   },
   {

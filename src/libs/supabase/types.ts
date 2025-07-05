@@ -74,6 +74,38 @@ export type Database = {
           },
         ]
       }
+      admin_project_access: {
+        Row: {
+          admin_id: string
+          created_at: string | null
+          id: string
+          project_code: Database["public"]["Enums"]["project_code"]
+          updated_at: string | null
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string | null
+          id?: string
+          project_code: Database["public"]["Enums"]["project_code"]
+          updated_at?: string | null
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string | null
+          id?: string
+          project_code?: Database["public"]["Enums"]["project_code"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_project_access_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admins: {
         Row: {
           created_at: string | null
@@ -400,6 +432,7 @@ export type Database = {
           id: string
           membership_number: number
           membership_type: string
+          project_code: Database["public"]["Enums"]["project_code"]
           referral_source: string | null
           session_id: string | null
           start_date: string
@@ -416,6 +449,7 @@ export type Database = {
           id?: string
           membership_number?: number
           membership_type: string
+          project_code?: Database["public"]["Enums"]["project_code"]
           referral_source?: string | null
           session_id?: string | null
           start_date: string
@@ -432,6 +466,7 @@ export type Database = {
           id?: string
           membership_number?: number
           membership_type?: string
+          project_code?: Database["public"]["Enums"]["project_code"]
           referral_source?: string | null
           session_id?: string | null
           start_date?: string
@@ -981,6 +1016,7 @@ export type Database = {
     Enums: {
       duration_type: "expat_year" | "multi_trip" | "single_trip"
       membership_status: "draft" | "paid" | "sent" | "active" | "expired"
+      project_code: "main" | "africa"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1098,6 +1134,7 @@ export const Constants = {
     Enums: {
       duration_type: ["expat_year", "multi_trip", "single_trip"],
       membership_status: ["draft", "paid", "sent", "active", "expired"],
+      project_code: ["main", "africa"],
     },
   },
 } as const

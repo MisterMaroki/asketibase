@@ -234,6 +234,8 @@ export function AddressInput({ value, onChange, disabled, className, showCopyFro
           <div className='space-y-2'>
             <Input
               placeholder='Address Line 1'
+              name='address-line1'
+              autoComplete='address-line1'
               value={manualAddress.line1}
               onChange={(e) => handleManualChange('line1', e.target.value)}
               disabled={disabled}
@@ -244,6 +246,8 @@ export function AddressInput({ value, onChange, disabled, className, showCopyFro
           <div className='space-y-2'>
             <Input
               placeholder='Address Line 2 (Optional)'
+              name='address-line2'
+              autoComplete='address-line2'
               value={manualAddress.line2}
               onChange={(e) => handleManualChange('line2', e.target.value)}
               disabled={disabled}
@@ -254,6 +258,8 @@ export function AddressInput({ value, onChange, disabled, className, showCopyFro
             <div className='space-y-2'>
               <Input
                 placeholder='City'
+                name='address-level2'
+                autoComplete='address-level2'
                 value={manualAddress.city}
                 onChange={(e) => handleManualChange('city', e.target.value)}
                 disabled={disabled}
@@ -264,6 +270,8 @@ export function AddressInput({ value, onChange, disabled, className, showCopyFro
             <div className='space-y-2'>
               <Input
                 placeholder='State/Region'
+                name='address-level1'
+                autoComplete='address-level1'
                 value={manualAddress.region}
                 onChange={(e) => handleManualChange('region', e.target.value)}
                 disabled={disabled}
@@ -275,6 +283,8 @@ export function AddressInput({ value, onChange, disabled, className, showCopyFro
           <div className='space-y-2'>
             <Input
               placeholder='Postal/ZIP Code'
+              name='postal-code'
+              autoComplete='postal-code'
               value={manualAddress.postcode}
               onChange={(e) => handleManualChange('postcode', e.target.value)}
               disabled={disabled}

@@ -10,5 +10,7 @@ interface DiscountCodesTableProps {
 }
 
 export function DiscountCodesTable({ data }: DiscountCodesTableProps) {
-  return <DataTable columns={columns} data={data} />;
+  return (
+    <DataTable columns={columns} data={data} searchPlaceholder='Search discount codes by name, code, or status...' />
+  );
 }

@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { COUNTRY_CODES, SALUTATIONS } from '@/constants';
+import { SALUTATIONS } from '@/constants';
 import { isMemberValid } from '@/features/membership/validations/member';
-import { type MemberSchema, memberSchema } from '@/features/membership/validations/schemas';
+import { type MemberSchema,memberSchema } from '@/features/membership/validations/schemas';
 import { Country } from '@/hooks/use-countries';
-import { Member, useMembershipStore } from '@/store/membership-store';
+import { useMembershipStore } from '@/store/membership-store';
 import { cn } from '@/utils/cn';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -99,7 +99,7 @@ export function MemberFormFields({
   );
 
   return (
-    <form id={id} onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6'>
+    <form id={id} onSubmit={handleSubmit(handleFormSubmit)} className='space-y-6' autoComplete='on' noValidate>
       {/* Salutation field */}
       <div className='grid gap-4 sm:grid-cols-3'>
         <div className='space-y-2'>
@@ -131,6 +131,8 @@ export function MemberFormFields({
           <Label htmlFor='firstName'>First Name *</Label>
           <Input
             {...registerWithOnChange('firstName')}
+            id='firstName'
+            name='firstName'
             autoComplete='given-name'
             className={cn(touchedFields.firstName && errors.firstName && 'border-destructive')}
           />
@@ -145,6 +147,8 @@ export function MemberFormFields({
         <Label htmlFor='lastName'>Surname *</Label>
         <Input
           {...registerWithOnChange('lastName')}
+          id='lastName'
+          name='lastName'
           autoComplete='family-name'
           className={cn(touchedFields.lastName && errors.lastName && 'border-destructive')}
         />
@@ -229,12 +233,12 @@ export function MemberFormFields({
       <div className='space-y-2'>
         <Label htmlFor='contactNumber'>Mobile Number *</Label>
         <PhoneInput
+          id='contactNumber'
           countryCode={watch('countryCode')}
           autoComplete='tel'
           onCountryCodeChange={(value) => handleFieldUpdate('countryCode', value)}
           {...registerWithOnChange('contactNumber')}
           error={touchedFields.contactNumber && !!errors.contactNumber}
-          // autoComplete='tel'
           placeholder='Enter your mobile number'
         />
         {touchedFields.contactNumber && errors.contactNumber && (
@@ -249,6 +253,8 @@ export function MemberFormFields({
           {...registerWithOnChange('landlineNumber')}
           type='tel'
           id='landlineNumber'
+          name='landlineNumber'
+          autoComplete='tel-local'
           placeholder='Enter your landline number'
           className={cn(touchedFields.landlineNumber && errors.landlineNumber && 'border-destructive')}
         />
@@ -263,6 +269,8 @@ export function MemberFormFields({
         <Input
           {...registerWithOnChange('email')}
           type='email'
+          id='email'
+          name='email'
           autoComplete='email'
           className={cn(touchedFields.email && errors.email && 'border-destructive')}
         />

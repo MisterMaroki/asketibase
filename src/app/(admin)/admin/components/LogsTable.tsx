@@ -212,6 +212,7 @@ export function LogsTable({ data, isLoading }: LogsTableProps) {
         pageSize={100}
         sorting={sorting}
         onSortingChange={setSorting}
+        searchPlaceholder='Search logs by operation, level, or timestamp...'
       />
       <LogDialog log={selectedLog} open={!!selectedLog} onOpenChange={(open) => !open && setSelectedLog(null)} />
     </>
