@@ -9,7 +9,7 @@ import { getAdminProjectAccess } from '@/features/admin/get-admin-project-access
 import { createSupabaseServerClient } from '@/libs/supabase/server-client';
 import { cn } from '@/utils/cn';
 
-import { signOut } from '../(public)/(auth)/auth-actions';
+import { signOut } from '../(auth)/auth-actions';
 
 import { Sidebar } from './admin/components/Sidebar';
 

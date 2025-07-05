@@ -63,7 +63,6 @@ async function AppBar() {
 
   return (
     <header className='z-50 flex items-center justify-between p-4 md:p-6'>
-      <Logo white />
       <Navigation user={user} isAdmin={isAdmin} white />
     </header>
   );

@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
@@ -67,12 +68,10 @@ export function AuthUI({
         <div className='relative rounded-2xl border border-slate-700/50 bg-slate-800/50 p-8 shadow-2xl backdrop-blur-sm'>
           {/* Header */}
           <div className='mb-8 text-center'>
-            <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-lg'>
-              <svg className='h-8 w-8 text-white' fill='currentColor' viewBox='0 0 24 24'>
-                <path d='M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z' />
-              </svg>
+            <div className='mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-emerald-400/20 to-emerald-500/20 shadow-lg'></div>
+            <div className='-mt-20 flex items-center justify-center gap-2 pb-14'>
+              <Logo white height={140} width={220} />
             </div>
-            <h1 className='mb-2 text-3xl font-bold text-white'>{titleMap[mode]}</h1>
             <p className='text-sm text-slate-400'>{subtitleMap[mode]}</p>
           </div>
 
@@ -142,15 +141,12 @@ export function AuthUI({
 
         {/* Bottom text */}
         <div className='mt-6 text-center'>
-          <p className='text-sm text-slate-400'>
-            {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
-            <Link
-              href={mode === 'login' ? '/signup' : '/login'}
-              className='font-medium text-emerald-400 transition-colors hover:text-emerald-300'
-            >
-              {mode === 'login' ? 'Sign up' : 'Sign in'}
-            </Link>
-          </p>
+          {/* Help Text */}
+          <div className='flex-1 text-center text-sm text-muted-foreground'>
+            <p className='pb-6'>
+              Need help? Contact our support team at <a href='mailto:support@asketi.com'>support@asketi.com</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
