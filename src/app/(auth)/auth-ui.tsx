@@ -69,7 +69,7 @@ export function AuthUI({
           {/* Header */}
           <div className='mb-8 text-center'>
             <div className='mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-emerald-400/20 to-emerald-500/20 shadow-lg'></div>
-            <div className='-mt-20 flex items-center justify-center gap-2 pb-14'>
+            <div className='-mt-[120px] flex items-center justify-center gap-2'>
               <Logo white height={140} width={220} />
             </div>
             <p className='text-sm text-slate-400'>{subtitleMap[mode]}</p>

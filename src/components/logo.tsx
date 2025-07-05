@@ -16,7 +16,14 @@ export function Logo({
 }) {
   const { theme } = useTheme();
   return (
-    <Link href='/' className='flex w-fit items-center gap-2'>
+    <Link
+      href='/'
+      className='flex w-fit items-center gap-2'
+      style={{
+        height,
+        width,
+      }}
+    >
       <Image
         src='/logo.png'
         width={width}
