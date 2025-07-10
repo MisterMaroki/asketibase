@@ -12,9 +12,10 @@ import { Tables } from '@/libs/supabase/types';
 interface NavigationProps {
   user: Tables<'users'> | null;
   isAdmin: boolean;
+  white?: boolean;
 }
 
-export function Navigation({ user, isAdmin }: NavigationProps) {
+export function Navigation({ user, isAdmin, white = false }: NavigationProps) {
   const router = useRouter();
 
   return (
