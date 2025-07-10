@@ -1,6 +1,6 @@
+import { PropsWithChildren } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { PropsWithChildren } from 'react';
 
 import { Navigation } from '@/app/(public)/navigation';
 import { ThemeProvider } from '@/components/theme-provider';
