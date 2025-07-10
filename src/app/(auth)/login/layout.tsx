@@ -1,11 +1,9 @@
-import { PropsWithChildren } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import { PropsWithChildren } from 'react';
 
-import { Navigation } from '@/app/africa/navigation';
-import { Logo } from '@/components/logo';
+import { Navigation } from '@/app/(public)/navigation';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Background } from '@/components/ui/background';
 import { Toaster } from '@/components/ui/toaster';
 import { checkAdmin } from '@/features/admin/check-admin';
 import { getUser } from '@/features/membership/controllers/get-user';

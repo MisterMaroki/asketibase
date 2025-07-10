@@ -11,7 +11,7 @@ import { getUser } from '@/features/membership/controllers/get-user';
 import { cn } from '@/utils/cn';
 import { Analytics } from '@vercel/analytics/react';
 
-import { Navigation } from './navigation';
+import { Navigation } from '../(public)/navigation';
 
 import '@/styles/globals.css';
 

@@ -39,8 +39,11 @@ export function AuthUI({
     setPending(true);
     const form = event.target as HTMLFormElement;
     const email = form['email'].value;
+    console.log('🚀 ~ handleEmailSubmit ~ email:', email);
     const password = form['password'].value;
+    console.log('🚀 ~ handleEmailSubmit ~ password:', password);
     const response = await signInWithEmailAndPassword(email, password);
+    console.log('🚀 ~ handleEmailSubmit ~ response:', response);
 
     if (response?.error) {
       toast({
